@@ -1,0 +1,2350 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../gestion-comics/">
+      
+      
+        <link rel="next" href="../../funcionalidades/catalogacion/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Integración ComicVine - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#integracion-comicvine" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Integración ComicVine
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../funcionalidades/catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../desarrollo/arquitectura/" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../referencia/configuracion.md" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestion-comics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestion-volumenes.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filtros-busqueda.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#que-es-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 ¿Qué es ComicVine?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracion-de-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔑 Configuración de API
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔑 Configuración de API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obtener-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Obtener API Key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configurar-en-babelcomics4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configurar en Babelcomics4
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configurar en Babelcomics4">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodo-1-variable-de-entorno" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método 1: Variable de Entorno
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodo-2-archivo-de-configuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método 2: Archivo de Configuración
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodo-3-ui-de-la-aplicacion-futuro" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método 3: UI de la Aplicación (Futuro)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cliente-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      📡 Cliente ComicVine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📡 Cliente ComicVine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-del-cliente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arquitectura del Cliente
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limites-de-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Límites de API
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#actualizacion-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Actualización de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Actualización de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-actualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Actualización
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boton-de-actualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Botón de Actualización
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proceso-de-actualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Actualización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proceso de Actualización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-busqueda-en-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Búsqueda en ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-creacion-de-issues-faltantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Creación de Issues Faltantes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-descarga-concurrente-de-imagenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Descarga Concurrente de Imágenes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-de-imagenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🖼️ Gestión de Imágenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🖼️ Gestión de Imágenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estructura-de-directorios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estructura de Directorios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generacion-de-rutas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generación de Rutas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descarga-con-reintentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Descarga con Reintentos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-y-asociacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda y Asociación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda y Asociación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#busqueda-inteligente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsqueda Inteligente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Búsqueda Inteligente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-nombre-de-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Por Nombre de Archivo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asociacion-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Asociación Automática
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#seguimiento-de-progreso" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Seguimiento de Progreso
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Seguimiento de Progreso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indicadores-visuales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Indicadores Visuales
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mensajes-de-estado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mensajes de Estado
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Casos de Uso
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Casos de Uso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-volumen-nuevo" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Volumen Nuevo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sincronizacion-periodica" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Sincronización Periódica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-catalogacion-masiva" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Catalogación Masiva
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manejo-de-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛡️ Manejo de Errores
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛡️ Manejo de Errores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#errores-comunes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Errores Comunes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategias-de-recuperacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estrategias de Recuperación
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consejos-de-optimizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 Consejos de Optimización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💡 Consejos de Optimización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uso-eficiente-de-la-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uso Eficiente de la API
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mejores-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejores Prácticas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/thumbnails.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/base-datos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/interfaz.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/modelos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/repositorios.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/api-comicvine.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/configuracion.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/troubleshooting.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/faq.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#que-es-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 ¿Qué es ComicVine?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracion-de-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔑 Configuración de API
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔑 Configuración de API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obtener-api-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      Obtener API Key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configurar-en-babelcomics4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configurar en Babelcomics4
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configurar en Babelcomics4">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodo-1-variable-de-entorno" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método 1: Variable de Entorno
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodo-2-archivo-de-configuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método 2: Archivo de Configuración
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodo-3-ui-de-la-aplicacion-futuro" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método 3: UI de la Aplicación (Futuro)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cliente-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      📡 Cliente ComicVine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📡 Cliente ComicVine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-del-cliente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arquitectura del Cliente
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limites-de-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Límites de API
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#actualizacion-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Actualización de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Actualización de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-actualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Actualización
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boton-de-actualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Botón de Actualización
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proceso-de-actualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Actualización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proceso de Actualización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-busqueda-en-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Búsqueda en ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-creacion-de-issues-faltantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Creación de Issues Faltantes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-descarga-concurrente-de-imagenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Descarga Concurrente de Imágenes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-de-imagenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🖼️ Gestión de Imágenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🖼️ Gestión de Imágenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estructura-de-directorios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estructura de Directorios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generacion-de-rutas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generación de Rutas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descarga-con-reintentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Descarga con Reintentos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-y-asociacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda y Asociación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda y Asociación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#busqueda-inteligente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsqueda Inteligente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Búsqueda Inteligente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-nombre-de-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Por Nombre de Archivo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asociacion-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Asociación Automática
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#seguimiento-de-progreso" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Seguimiento de Progreso
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Seguimiento de Progreso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indicadores-visuales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Indicadores Visuales
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mensajes-de-estado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mensajes de Estado
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Casos de Uso
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Casos de Uso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-volumen-nuevo" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Volumen Nuevo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sincronizacion-periodica" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Sincronización Periódica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-catalogacion-masiva" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Catalogación Masiva
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manejo-de-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛡️ Manejo de Errores
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛡️ Manejo de Errores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#errores-comunes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Errores Comunes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategias-de-recuperacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estrategias de Recuperación
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consejos-de-optimizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 Consejos de Optimización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💡 Consejos de Optimización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uso-eficiente-de-la-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uso Eficiente de la API
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mejores-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejores Prácticas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="integracion-comicvine">Integración ComicVine</h1>
+<p>Babelcomics4 incluye integración completa con la API de ComicVine para automatizar la catalogación y obtener metadata rica de tu colección de comics.</p>
+<h2 id="que-es-comicvine">🌐 ¿Qué es ComicVine?</h2>
+<p><a href="https://comicvine.gamespot.com/">ComicVine</a> es la base de datos de comics más completa del mundo, mantenida por GameSpot. Incluye:</p>
+<ul>
+<li><strong>📚 Volúmenes</strong>: Series completas con información detallada</li>
+<li><strong>📖 Issues</strong>: Números individuales con metadata específica</li>
+<li><strong>🏢 Publishers</strong>: Información de editoriales</li>
+<li><strong>👥 Personajes</strong>: Base de datos de personajes</li>
+<li><strong>🖼️ Imágenes</strong>: Portadas y artwork oficial</li>
+</ul>
+<h2 id="configuracion-de-api">🔑 Configuración de API</h2>
+<h3 id="obtener-api-key">Obtener API Key</h3>
+<ol>
+<li><strong>Crear cuenta</strong> en <a href="https://comicvine.gamespot.com/">ComicVine</a></li>
+<li><strong>Ir a Profile</strong> → <strong>API Key</strong></li>
+<li><strong>Generar nueva clave</strong> de API</li>
+<li><strong>Copiar la clave</strong> para configurar en Babelcomics4</li>
+</ol>
+<h3 id="configurar-en-babelcomics4">Configurar en Babelcomics4</h3>
+<h4 id="metodo-1-variable-de-entorno">Método 1: Variable de Entorno</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Agregar a ~/.bashrc o ~/.zshrc</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">COMICVINE_API_KEY</span><span class="o">=</span><span class="s2">&quot;tu-clave-de-api-aqui&quot;</span>
+
+<span class="c1"># Recargar terminal</span>
+<span class="nb">source</span><span class="w"> </span>~/.bashrc
+</code></pre></div>
+<h4 id="metodo-2-archivo-de-configuracion">Método 2: Archivo de Configuración</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># helpers/config.py</span>
+<span class="n">COMICVINE_API_KEY</span> <span class="o">=</span> <span class="s2">&quot;tu-clave-de-api-aqui&quot;</span>
+</code></pre></div>
+<h4 id="metodo-3-ui-de-la-aplicacion-futuro">Método 3: UI de la Aplicación (Futuro)</h4>
+<div class="highlight"><pre><span></span><code>┌─── Configuración ComicVine ───┐
+│ API Key: [******************] │
+│          [Validar Conexión]   │
+│                               │
+│ ✅ Conexión exitosa           │
+│ Límite: 200 req/hora          │
+└───────────────────────────────┘
+</code></pre></div>
+<h2 id="cliente-comicvine">📡 Cliente ComicVine</h2>
+<h3 id="arquitectura-del-cliente">Arquitectura del Cliente</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># helpers/comicvine_client.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicVineClient</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;COMICVINE_API_KEY&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;https://comicvine.gamespot.com/api&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_limit</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># requests per hour</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Buscar volúmenes por nombre&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_volume_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener detalles completos de un volumen&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_volume_issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener todos los issues de un volumen&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">download_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_url</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Descargar imagen desde ComicVine&quot;&quot;&quot;</span>
+</code></pre></div>
+<h3 id="limites-de-api">Límites de API</h3>
+<div class="highlight"><pre><span></span><code>┌─── Límites ComicVine ─────────┐
+│ • 200 requests/hora           │
+│ • 1 request/segundo máximo    │
+│ • Timeout: 30 segundos        │
+│ • Retry automático: 3 veces   │
+└───────────────────────────────┘
+</code></pre></div>
+<h2 id="actualizacion-de-volumenes">🔄 Actualización de Volúmenes</h2>
+<h3 id="flujo-de-actualizacion">Flujo de Actualización</h3>
+<div class="highlight"><pre><span></span><code>graph TB
+    A[Seleccionar Volumen] --&gt; B[Botón Actualizar ComicVine]
+    B --&gt; C[Buscar en API]
+    C --&gt; D[Obtener Issues Nuevos]
+    D --&gt; E[Descargar Metadata]
+    E --&gt; F[Descargar Imágenes]
+    F --&gt; G[Actualizar BD]
+    G --&gt; H[Refrescar UI]
+</code></pre></div>
+<h3 id="boton-de-actualizacion">Botón de Actualización</h3>
+<p>En la página de detalle de cada volumen:</p>
+<div class="highlight"><pre><span></span><code>┌─── Acciones del Volumen ──────┐
+│ [🔄 Actualizar ComicVine]     │
+│                               │
+│ • Buscar nuevos issues        │
+│ • Actualizar metadata         │
+│ • Descargar portadas          │
+│ • Sincronizar información     │
+└───────────────────────────────┘
+</code></pre></div>
+<h3 id="proceso-de-actualizacion">Proceso de Actualización</h3>
+<h4 id="1-busqueda-en-comicvine">1. Búsqueda en ComicVine</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_volume_from_comicvine</span><span class="p">(</span><span class="n">volume</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Actualizar volumen desde ComicVine&quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. Buscar por ID de ComicVine</span>
+    <span class="k">if</span> <span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">:</span>
+        <span class="n">volume_data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_details</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 2. Buscar por nombre si no hay ID</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">search_volumes</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">nombre</span><span class="p">)</span>
+        <span class="n">volume_data</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Mejor coincidencia</span>
+
+    <span class="c1"># 3. Obtener lista de issues</span>
+    <span class="n">issues</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_issues</span><span class="p">(</span><span class="n">volume_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">volume_data</span><span class="p">,</span> <span class="n">issues</span>
+</code></pre></div>
+<h4 id="2-creacion-de-issues-faltantes">2. Creación de Issues Faltantes</h4>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">issue_data</span> <span class="ow">in</span> <span class="n">issues</span><span class="p">:</span>
+    <span class="c1"># Verificar si el issue ya existe</span>
+    <span class="n">existing</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span>
+        <span class="n">id_volume</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">id_volume</span><span class="p">,</span>
+        <span class="n">numero</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;issue_number&#39;</span><span class="p">]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">existing</span><span class="p">:</span>
+        <span class="c1"># Crear nuevo issue</span>
+        <span class="n">new_issue</span> <span class="o">=</span> <span class="n">ComicbookInfo</span><span class="p">(</span>
+            <span class="n">titulo</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+            <span class="n">numero</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;issue_number&#39;</span><span class="p">],</span>
+            <span class="n">fecha_tapa</span><span class="o">=</span><span class="n">parse_date</span><span class="p">(</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;cover_date&#39;</span><span class="p">]),</span>
+            <span class="n">resumen</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">],</span>
+            <span class="n">id_comicvine</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_issue</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="3-descarga-concurrente-de-imagenes">3. Descarga Concurrente de Imágenes</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download_covers_in_background</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Descargar portadas en segundo plano&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">download_worker</span><span class="p">():</span>
+        <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">issues</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">portadas</span> <span class="ow">and</span> <span class="n">issue</span><span class="o">.</span><span class="n">portadas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">url_imagen</span><span class="p">:</span>
+                    <span class="n">future</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                        <span class="n">download_single_cover</span><span class="p">,</span>
+                        <span class="n">issue</span><span class="o">.</span><span class="n">portadas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">url_imagen</span><span class="p">,</span>
+                        <span class="n">issue</span><span class="o">.</span><span class="n">id_comicbook_info</span>
+                    <span class="p">)</span>
+                    <span class="n">futures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">future</span><span class="p">)</span>
+
+            <span class="c1"># Esperar a que terminen todas las descargas</span>
+            <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">:</span>
+                <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+
+        <span class="c1"># Callback en el hilo principal</span>
+        <span class="n">GLib</span><span class="o">.</span><span class="n">idle_add</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+
+    <span class="c1"># Ejecutar en hilo separado</span>
+    <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">download_worker</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="gestion-de-imagenes">🖼️ Gestión de Imágenes</h2>
+<h3 id="estructura-de-directorios">Estructura de Directorios</h3>
+<div class="highlight"><pre><span></span><code>data/thumbnails/
+├── volumes/                    # Portadas de volúmenes
+│   ├── 12345.jpg              # volume_id.jpg
+│   └── 67890.jpg
+├── comicbookinfo_issues/       # Portadas de issues
+│   ├── Superman_12345/         # volumen_id_comicvine
+│   │   ├── issue_001.jpg       # issue_id.jpg
+│   │   ├── issue_002.jpg
+│   │   └── ...
+│   └── Batman_67890/
+└── comics/                     # Thumbnails de archivos
+    ├── 1.jpg                   # comic_id.jpg
+    └── 2.jpg
+</code></pre></div>
+<h3 id="generacion-de-rutas">Generación de Rutas</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_cover_destination_path</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">issue</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generar ruta de destino para portada de issue&quot;&quot;&quot;</span>
+
+    <span class="c1"># Limpiar nombre del volumen</span>
+    <span class="n">clean_name</span> <span class="o">=</span> <span class="n">clean_volume_name</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">nombre</span><span class="p">)</span>
+
+    <span class="c1"># Crear directorio del volumen</span>
+    <span class="n">volume_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">clean_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">volume</span><span class="o">.</span><span class="n">id_volume</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Ruta completa</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="s2">&quot;data/thumbnails/comicbookinfo_issues&quot;</span><span class="p">,</span>
+        <span class="n">volume_dir</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">id_comicbook_info</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">numero</span><span class="si">}</span><span class="s2">.jpg&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<h3 id="descarga-con-reintentos">Descarga con Reintentos</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download_image_with_retry</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Descargar imagen con reintentos automáticos&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+            <span class="c1"># Crear directorio si no existe</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">destination</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># Guardar imagen</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Intento </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> fallido: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span><span class="p">)</span>  <span class="c1"># Backoff exponencial</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<h2 id="busqueda-y-asociacion">🔍 Búsqueda y Asociación</h2>
+<h3 id="busqueda-inteligente">Búsqueda Inteligente</h3>
+<h4 id="por-nombre-de-archivo">Por Nombre de Archivo</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">smart_search_by_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Búsqueda inteligente basada en nombre de archivo&quot;&quot;&quot;</span>
+
+    <span class="c1"># Extraer información del nombre</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">r</span><span class="s2">&quot;(.+?)[-_](\d+)&quot;</span><span class="p">,</span>              <span class="c1"># Serie-Numero</span>
+        <span class="sa">r</span><span class="s2">&quot;(.+?)\s+#(\d+)&quot;</span><span class="p">,</span>              <span class="c1"># Serie #Numero</span>
+        <span class="sa">r</span><span class="s2">&quot;(.+?)\s+(\d+)&quot;</span><span class="p">,</span>               <span class="c1"># Serie Numero</span>
+        <span class="sa">r</span><span class="s2">&quot;(.+?)\.(\d+)&quot;</span><span class="p">,</span>                <span class="c1"># Serie.Numero</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">serie</span><span class="p">,</span> <span class="n">numero</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+
+            <span class="c1"># Buscar en ComicVine</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">search_volumes</span><span class="p">(</span><span class="n">serie</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">numero</span>
+
+    <span class="k">return</span> <span class="p">[],</span> <span class="kc">None</span>
+</code></pre></div>
+<h4 id="asociacion-automatica">Asociación Automática</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">auto_associate_comic</span><span class="p">(</span><span class="n">comic_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Asociar automáticamente comic con ComicVine&quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. Extraer información del nombre</span>
+    <span class="n">volume_candidates</span><span class="p">,</span> <span class="n">issue_number</span> <span class="o">=</span> <span class="n">smart_search_by_filename</span><span class="p">(</span>
+        <span class="n">comic_file</span><span class="o">.</span><span class="n">filename</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 2. Filtrar por coincidencia</span>
+    <span class="n">best_match</span> <span class="o">=</span> <span class="n">find_best_volume_match</span><span class="p">(</span><span class="n">volume_candidates</span><span class="p">,</span> <span class="n">comic_file</span><span class="p">)</span>
+
+    <span class="c1"># 3. Buscar issue específico</span>
+    <span class="k">if</span> <span class="n">best_match</span> <span class="ow">and</span> <span class="n">issue_number</span><span class="p">:</span>
+        <span class="n">issues</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_issues</span><span class="p">(</span><span class="n">best_match</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+        <span class="n">issue_match</span> <span class="o">=</span> <span class="n">find_issue_by_number</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">issue_number</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">issue_match</span><span class="p">:</span>
+            <span class="c1"># 4. Crear asociación</span>
+            <span class="k">return</span> <span class="n">create_comicbook_info</span><span class="p">(</span><span class="n">issue_match</span><span class="p">,</span> <span class="n">comic_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+<h2 id="seguimiento-de-progreso">📊 Seguimiento de Progreso</h2>
+<h3 id="indicadores-visuales">Indicadores Visuales</h3>
+<p>Durante la actualización:</p>
+<div class="highlight"><pre><span></span><code>┌─── Actualizando desde ComicVine ──┐
+│                                   │
+│ 🔍 Buscando volumen...            │
+│ ████████████████████ 100%        │
+│                                   │
+│ 📖 Creando 15 issues nuevos...   │
+│ ██████████░░░░░░░░░░ 50%         │
+│                                   │
+│ 🖼️ Descargando portadas...        │
+│ ████░░░░░░░░░░░░░░░░ 25%         │
+│                                   │
+│ [Cancelar] [Minimizar]           │
+└───────────────────────────────────┘
+</code></pre></div>
+<h3 id="mensajes-de-estado">Mensajes de Estado</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ejemplos de mensajes durante actualización</span>
+<span class="n">MESSAGES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;searching&#39;</span><span class="p">:</span> <span class="s2">&quot;🔍 Buscando en ComicVine...&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;found_volume&#39;</span><span class="p">:</span> <span class="s2">&quot;✅ Volumen encontrado: </span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;fetching_issues&#39;</span><span class="p">:</span> <span class="s2">&quot;📖 Obteniendo lista de issues...&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;creating_issues&#39;</span><span class="p">:</span> <span class="s2">&quot;➕ Creando </span><span class="si">{count}</span><span class="s2"> issues nuevos...&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;downloading_covers&#39;</span><span class="p">:</span> <span class="s2">&quot;🖼️ Descargando </span><span class="si">{count}</span><span class="s2"> portadas...&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;updating_db&#39;</span><span class="p">:</span> <span class="s2">&quot;💾 Actualizando base de datos...&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;complete&#39;</span><span class="p">:</span> <span class="s2">&quot;✅ Actualización completada&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s2">&quot;❌ Error: </span><span class="si">{message}</span><span class="s2">&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="casos-de-uso">🎯 Casos de Uso</h2>
+<h3 id="1-volumen-nuevo">1. Volumen Nuevo</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Agregar volumen manualmente desde ComicVine</span>
+<span class="n">volume_id</span> <span class="o">=</span> <span class="mi">12345</span>
+<span class="n">volume_data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_details</span><span class="p">(</span><span class="n">volume_id</span><span class="p">)</span>
+
+<span class="c1"># Crear volumen en BD</span>
+<span class="n">new_volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="p">(</span>
+    <span class="n">nombre</span><span class="o">=</span><span class="n">volume_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+    <span class="n">anio_inicio</span><span class="o">=</span><span class="n">volume_data</span><span class="p">[</span><span class="s1">&#39;start_year&#39;</span><span class="p">],</span>
+    <span class="n">cantidad_numeros</span><span class="o">=</span><span class="n">volume_data</span><span class="p">[</span><span class="s1">&#39;count_of_issues&#39;</span><span class="p">],</span>
+    <span class="n">id_comicvine</span><span class="o">=</span><span class="n">volume_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Crear todos los issues</span>
+<span class="n">issues</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_issues</span><span class="p">(</span><span class="n">volume_id</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">issue_data</span> <span class="ow">in</span> <span class="n">issues</span><span class="p">:</span>
+    <span class="n">create_issue_from_comicvine</span><span class="p">(</span><span class="n">issue_data</span><span class="p">,</span> <span class="n">new_volume</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="2-sincronizacion-periodica">2. Sincronización Periódica</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Actualizar todos los volúmenes con ID ComicVine</span>
+<span class="n">volumes_to_update</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Volume</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+    <span class="n">Volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="o">.</span><span class="n">isnot</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">volume</span> <span class="ow">in</span> <span class="n">volumes_to_update</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">update_volume_from_comicvine</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ </span><span class="si">{</span><span class="n">volume</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2"> actualizado&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Error en </span><span class="si">{</span><span class="n">volume</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="3-catalogacion-masiva">3. Catalogación Masiva</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Asociar comics sin clasificar usando ComicVine</span>
+<span class="n">unclassified</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+    <span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span>
+<span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">comic</span> <span class="ow">in</span> <span class="n">unclassified</span><span class="p">:</span>
+    <span class="n">association</span> <span class="o">=</span> <span class="n">auto_associate_comic</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">association</span><span class="p">:</span>
+        <span class="n">comic</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="o">=</span> <span class="n">association</span><span class="o">.</span><span class="n">id_comicbook_info</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ </span><span class="si">{</span><span class="n">comic</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">association</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="manejo-de-errores">🛡️ Manejo de Errores</h2>
+<h3 id="errores-comunes">Errores Comunes</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ComicVineError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Errores específicos de ComicVine&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RateLimitError</span><span class="p">(</span><span class="n">ComicVineError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Límite de requests excedido&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">APIKeyError</span><span class="p">(</span><span class="n">ComicVineError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API key inválida o faltante&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">NetworkError</span><span class="p">(</span><span class="n">ComicVineError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Error de conectividad&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<h3 id="estrategias-de-recuperacion">Estrategias de Recuperación</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">robust_api_call</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Llamada robusta a la API con manejo de errores&quot;&quot;&quot;</span>
+
+    <span class="n">max_retries</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">backoff_factor</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">RateLimitError</span><span class="p">:</span>
+            <span class="c1"># Esperar hasta el siguiente período</span>
+            <span class="n">wait_time</span> <span class="o">=</span> <span class="mi">3600</span>  <span class="c1"># 1 hora</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Límite alcanzado, esperando </span><span class="si">{</span><span class="n">wait_time</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait_time</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">NetworkError</span><span class="p">:</span>
+            <span class="c1"># Reintento con backoff exponencial</span>
+            <span class="n">wait_time</span> <span class="o">=</span> <span class="n">backoff_factor</span> <span class="o">**</span> <span class="n">attempt</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error de red, reintentando en </span><span class="si">{</span><span class="n">wait_time</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait_time</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">APIKeyError</span><span class="p">:</span>
+            <span class="c1"># Error no recuperable</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;API key inválida, verificar configuración&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+
+    <span class="k">raise</span> <span class="n">ComicVineError</span><span class="p">(</span><span class="s2">&quot;Máximo de reintentos alcanzado&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="consejos-de-optimizacion">💡 Consejos de Optimización</h2>
+<h3 id="uso-eficiente-de-la-api">Uso Eficiente de la API</h3>
+<ol>
+<li><strong>Cache local</strong>: Almacenar respuestas para evitar requests duplicados</li>
+<li><strong>Batch processing</strong>: Agrupar operaciones relacionadas</li>
+<li><strong>Rate limiting</strong>: Respetar límites de 200 req/hora</li>
+<li><strong>Requests selectivos</strong>: Solo pedir datos necesarios</li>
+</ol>
+<h3 id="mejores-practicas">Mejores Prácticas</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Bueno: Request específico</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_details</span><span class="p">(</span>
+    <span class="n">volume_id</span><span class="p">,</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;start_year&#39;</span><span class="p">,</span> <span class="s1">&#39;issues&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># ❌ Malo: Request completo innecesario</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_details</span><span class="p">(</span><span class="n">volume_id</span><span class="p">)</span>  <span class="c1"># Todos los campos</span>
+</code></pre></div>
+<hr />
+<p><strong>¿Listo para dominar la búsqueda?</strong> 👉 <a href="filtros-busqueda.md">Filtros y Búsqueda</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

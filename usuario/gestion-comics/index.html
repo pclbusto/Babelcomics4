@@ -1,0 +1,2582 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../primeros-pasos/">
+      
+      
+        <link rel="next" href="../comicvine/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Gestión de Comics - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gestion-de-comics" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Gestión de Comics
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../funcionalidades/catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../desarrollo/arquitectura/" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../referencia/configuracion.md" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#importacion-de-comics" class="md-nav__link">
+    <span class="md-ellipsis">
+      📥 Importación de Comics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📥 Importación de Comics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formatos-soportados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formatos Soportados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodos-de-importacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Métodos de Importación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Métodos de Importación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-importacion-automatica-por-escaneo" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Importación Automática por Escaneo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-importacion-manual" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Importación Manual
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-arrastrar-y-soltar-futuro" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Arrastrar y Soltar (Futuro)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proceso-de-importacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Importación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proceso de Importación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pasos-detallados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pasos Detallados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#organizacion-de-comics" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 Organización de Comics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 Organización de Comics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estados-de-clasificacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estados de Clasificación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estados de Clasificación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comics-clasificados" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌈 Comics Clasificados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comics-sin-clasificar" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚫ Comics Sin Clasificar
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sistema-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sistema de Calidad
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sistema de Calidad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#puntuacion-por-estrellas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Puntuación por Estrellas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#criterios-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criterios de Calidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-de-gestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Herramientas de Gestión
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Herramientas de Gestión">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#edicion-individual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Edición Individual
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Edición Individual">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#informacion-basica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información Básica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acciones-en-lote" class="md-nav__link">
+    <span class="md-ellipsis">
+      Acciones en Lote
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Acciones en Lote">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#seleccion-multiple" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selección Múltiple
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acciones-disponibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Acciones Disponibles
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-papelera" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Papelera
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestión de Papelera">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mover-a-papelera" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mover a Papelera
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recuperar-de-papelera" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recuperar de Papelera
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sistema-de-thumbnails" class="md-nav__link">
+    <span class="md-ellipsis">
+      🖼️ Sistema de Thumbnails
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🖼️ Sistema de Thumbnails">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generacion-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generación Automática
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generación Automática">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proceso-de-generacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Generación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parámetros
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#efectos-visuales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Efectos Visuales
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Efectos Visuales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#escala-de-grises-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escala de Grises Automática
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#procesamiento-con-pillow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Procesamiento con Pillow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-y-filtrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda y Filtrado
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda y Filtrado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#busqueda-basica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsqueda Básica
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Búsqueda Básica">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campos-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Campos de Búsqueda
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-avanzados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Avanzados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros Avanzados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-clasificacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Clasificación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Calidad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-estado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Estado
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combinacion-de-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combinación de Filtros
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estadisticas-y-reportes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Estadísticas y Reportes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Estadísticas y Reportes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#informacion-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información de Colección
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distribucion-por-formato" class="md-nav__link">
+    <span class="md-ellipsis">
+      Distribución por Formato
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mantenimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ Mantenimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Mantenimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verificacion-de-integridad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verificación de Integridad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regenerar-thumbnails" class="md-nav__link">
+    <span class="md-ellipsis">
+      Regenerar Thumbnails
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limpieza-de-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limpieza de Cache
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consejos-y-mejores-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 Consejos y Mejores Prácticas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💡 Consejos y Mejores Prácticas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#organizacion-de-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Organización de Archivos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nomenclatura-recomendada" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nomenclatura Recomendada
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-eficiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo Eficiente
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestion-volumenes.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filtros-busqueda.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/thumbnails.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/base-datos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/interfaz.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/modelos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/repositorios.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/api-comicvine.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/configuracion.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/troubleshooting.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/faq.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#importacion-de-comics" class="md-nav__link">
+    <span class="md-ellipsis">
+      📥 Importación de Comics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📥 Importación de Comics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formatos-soportados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formatos Soportados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodos-de-importacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Métodos de Importación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Métodos de Importación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-importacion-automatica-por-escaneo" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Importación Automática por Escaneo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-importacion-manual" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Importación Manual
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-arrastrar-y-soltar-futuro" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Arrastrar y Soltar (Futuro)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proceso-de-importacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Importación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proceso de Importación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pasos-detallados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pasos Detallados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#organizacion-de-comics" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 Organización de Comics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 Organización de Comics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estados-de-clasificacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estados de Clasificación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estados de Clasificación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comics-clasificados" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌈 Comics Clasificados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comics-sin-clasificar" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚫ Comics Sin Clasificar
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sistema-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sistema de Calidad
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sistema de Calidad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#puntuacion-por-estrellas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Puntuación por Estrellas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#criterios-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criterios de Calidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-de-gestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Herramientas de Gestión
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Herramientas de Gestión">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#edicion-individual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Edición Individual
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Edición Individual">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#informacion-basica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información Básica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acciones-en-lote" class="md-nav__link">
+    <span class="md-ellipsis">
+      Acciones en Lote
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Acciones en Lote">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#seleccion-multiple" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selección Múltiple
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acciones-disponibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Acciones Disponibles
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-papelera" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Papelera
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestión de Papelera">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mover-a-papelera" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mover a Papelera
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recuperar-de-papelera" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recuperar de Papelera
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sistema-de-thumbnails" class="md-nav__link">
+    <span class="md-ellipsis">
+      🖼️ Sistema de Thumbnails
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🖼️ Sistema de Thumbnails">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generacion-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generación Automática
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generación Automática">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proceso-de-generacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Generación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parámetros
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#efectos-visuales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Efectos Visuales
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Efectos Visuales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#escala-de-grises-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escala de Grises Automática
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#procesamiento-con-pillow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Procesamiento con Pillow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-y-filtrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda y Filtrado
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda y Filtrado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#busqueda-basica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsqueda Básica
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Búsqueda Básica">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campos-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Campos de Búsqueda
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-avanzados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Avanzados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros Avanzados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-clasificacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Clasificación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Calidad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-estado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Estado
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combinacion-de-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combinación de Filtros
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estadisticas-y-reportes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Estadísticas y Reportes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Estadísticas y Reportes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#informacion-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información de Colección
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distribucion-por-formato" class="md-nav__link">
+    <span class="md-ellipsis">
+      Distribución por Formato
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mantenimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ Mantenimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Mantenimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verificacion-de-integridad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verificación de Integridad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regenerar-thumbnails" class="md-nav__link">
+    <span class="md-ellipsis">
+      Regenerar Thumbnails
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limpieza-de-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limpieza de Cache
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consejos-y-mejores-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 Consejos y Mejores Prácticas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💡 Consejos y Mejores Prácticas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#organizacion-de-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Organización de Archivos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nomenclatura-recomendada" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nomenclatura Recomendada
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-eficiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo Eficiente
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="gestion-de-comics">Gestión de Comics</h1>
+<p>Esta guía detalla cómo importar, organizar y gestionar tu colección de comics digitales en Babelcomics4.</p>
+<h2 id="importacion-de-comics">📥 Importación de Comics</h2>
+<h3 id="formatos-soportados">Formatos Soportados</h3>
+<p>Babelcomics4 es compatible con los siguientes formatos:</p>
+<ul>
+<li><strong>📗 CBZ</strong>: Comic Book ZIP (recomendado)</li>
+<li><strong>📘 CBR</strong>: Comic Book RAR</li>
+<li><strong>📙 PDF</strong>: Documentos PDF con comics</li>
+<li><strong>🖼️ Imágenes</strong>: JPG, PNG, WEBP (carpetas)</li>
+</ul>
+<h3 id="metodos-de-importacion">Métodos de Importación</h3>
+<h4 id="1-importacion-automatica-por-escaneo">1. Importación Automática por Escaneo</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Al iniciar la aplicación</span>
+<span class="c1"># Babelcomics4 escanea automáticamente:</span>
+./Comics/<span class="w">              </span><span class="c1"># Directorio por defecto</span>
+<span class="nv">$COMICS_PATH</span>/<span class="w">         </span><span class="c1"># Variable de entorno</span>
+~/Comics/<span class="w">             </span><span class="c1"># Directorio home del usuario</span>
+</code></pre></div>
+<h4 id="2-importacion-manual">2. Importación Manual</h4>
+<ol>
+<li><strong>Menú Archivo</strong> → <strong>Importar Comics</strong></li>
+<li><strong>Seleccionar directorio</strong> con tu colección</li>
+<li><strong>Confirmar escaneo</strong> recursivo</li>
+<li><strong>Esperar procesamiento</strong> automático</li>
+</ol>
+<h4 id="3-arrastrar-y-soltar-futuro">3. Arrastrar y Soltar (Futuro)</h4>
+<ul>
+<li>Arrastrar archivos desde el explorador</li>
+<li>Soltar en la ventana de Babelcomics4</li>
+<li>Procesamiento automático</li>
+</ul>
+<h3 id="proceso-de-importacion">Proceso de Importación</h3>
+<div class="highlight"><pre><span></span><code>graph TB
+    A[Escanear Directorios] --&gt; B[Detectar Archivos]
+    B --&gt; C[Validar Formato]
+    C --&gt; D[Extraer Metadata Básica]
+    D --&gt; E[Generar Thumbnail]
+    E --&gt; F[Guardar en BD]
+    F --&gt; G[Mostrar en UI]
+</code></pre></div>
+<h4 id="pasos-detallados">Pasos Detallados</h4>
+<ol>
+<li><strong>🔍 Escaneo</strong>: Búsqueda recursiva de archivos</li>
+<li><strong>✅ Validación</strong>: Verificación de formatos soportados</li>
+<li><strong>📋 Metadata</strong>: Extracción de información básica:</li>
+<li>Nombre del archivo</li>
+<li>Ruta completa</li>
+<li>Tamaño del archivo</li>
+<li>Fecha de modificación</li>
+<li><strong>🖼️ Thumbnail</strong>: Generación de miniatura:</li>
+<li>Primera página del comic</li>
+<li>Redimensionado automático</li>
+<li>Cache para rendimiento</li>
+<li><strong>💾 Base de Datos</strong>: Almacenamiento en SQLite:</li>
+<li>Información del archivo</li>
+<li>Estado de clasificación</li>
+<li>Metadatos básicos</li>
+</ol>
+<h2 id="organizacion-de-comics">📚 Organización de Comics</h2>
+<h3 id="estados-de-clasificacion">Estados de Clasificación</h3>
+<h4 id="comics-clasificados">🌈 Comics Clasificados</h4>
+<div class="highlight"><pre><span></span><code>┌─────────────────┐
+│   🖼️ Thumbnail  │
+│     (Color)     │
+│                 │
+│ ✅ Superman #1  │
+│ 📁 superman.cbz │
+│ ⭐⭐⭐⭐⭐     │
+│ 📖 DC Comics    │
+└─────────────────┘
+</code></pre></div>
+<p><strong>Características:</strong>
+- Thumbnail en <strong>color</strong>
+- Metadata completa de ComicVine
+- Información de volumen y número
+- Editorial y fecha de publicación
+- Puntuación de calidad</p>
+<h4 id="comics-sin-clasificar">⚫ Comics Sin Clasificar</h4>
+<div class="highlight"><pre><span></span><code>┌─────────────────┐
+│   🖼️ Thumbnail  │
+│  (Escala Grises)│
+│                 │
+│ ❌ comic001.cbz │
+│ 📁 comic001.cbz │
+│ ⭐ Sin calificar │
+│ 📖 Sin catalogar│
+└─────────────────┘
+</code></pre></div>
+<p><strong>Características:</strong>
+- Thumbnail en <strong>escala de grises</strong>
+- Solo información del archivo
+- Pendiente de catalogación
+- Sin metadata de ComicVine</p>
+<h3 id="sistema-de-calidad">Sistema de Calidad</h3>
+<h4 id="puntuacion-por-estrellas">Puntuación por Estrellas</h4>
+<div class="highlight"><pre><span></span><code>⭐     = 1 - Calidad muy baja
+⭐⭐   = 2 - Calidad baja
+⭐⭐⭐ = 3 - Calidad media
+⭐⭐⭐⭐ = 4 - Calidad buena
+⭐⭐⭐⭐⭐ = 5 - Calidad excelente
+</code></pre></div>
+<h4 id="criterios-de-calidad">Criterios de Calidad</h4>
+<ul>
+<li><strong>Resolución</strong>: Calidad de las imágenes</li>
+<li><strong>Completitud</strong>: Páginas faltantes</li>
+<li><strong>Compresión</strong>: Nivel de compresión</li>
+<li><strong>Origen</strong>: Fuente del escaneo</li>
+<li><strong>Procesamiento</strong>: Limpieza y retoque</li>
+</ul>
+<h2 id="herramientas-de-gestion">🔧 Herramientas de Gestión</h2>
+<h3 id="edicion-individual">Edición Individual</h3>
+<h4 id="informacion-basica">Información Básica</h4>
+<div class="highlight"><pre><span></span><code>┌─── Información del Comic ─────┐
+│ Título: [Superman #1        ] │
+│ Archivo: [superman_001.cbz  ] │
+│ Ruta: [/Comics/DC/superman/ ] │
+│ Tamaño: [45.2 MB           ] │
+└───────────────────────────────┘
+
+┌─── Clasificación ─────────────┐
+│ Calidad: ⭐⭐⭐⭐⭐         │
+│ Estado: ☑️ Clasificado        │
+│ Papelera: ☐ Eliminado        │
+└───────────────────────────────┘
+</code></pre></div>
+<h4 id="metadata-comicvine">Metadata ComicVine</h4>
+<div class="highlight"><pre><span></span><code>┌─── Información ComicVine ─────┐
+│ ID Issue: [38686            ] │
+│ Volumen: [Superman (2018)   ] │
+│ Número: [1                  ] │
+│ Fecha: [2018-07-04         ] │
+│ Editorial: [DC Comics       ] │
+└───────────────────────────────┘
+</code></pre></div>
+<h3 id="acciones-en-lote">Acciones en Lote</h3>
+<h4 id="seleccion-multiple">Selección Múltiple</h4>
+<ol>
+<li><strong>Activar modo selección</strong>: Click en 📊</li>
+<li><strong>Seleccionar comics</strong>: Click en las cards deseadas</li>
+<li><strong>Ejecutar acción</strong>: Desde menú contextual</li>
+</ol>
+<h4 id="acciones-disponibles">Acciones Disponibles</h4>
+<div class="highlight"><pre><span></span><code>┌─── Acciones en Lote ──────────┐
+│ 🗑️ Mover a Papelera          │
+│ ⭐ Cambiar Calidad            │
+│ 📝 Editar Información         │
+│ 🔄 Actualizar ComicVine       │
+│ 📁 Mover Archivos             │
+│ 🏷️ Aplicar Etiquetas         │
+└───────────────────────────────┘
+</code></pre></div>
+<h3 id="gestion-de-papelera">Gestión de Papelera</h3>
+<h4 id="mover-a-papelera">Mover a Papelera</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Los comics no se eliminan físicamente</span>
+<span class="c1"># Solo se marcan como &quot;en_papelera = True&quot;</span>
+<span class="c1"># Permanecen en el disco pero ocultos en la UI</span>
+</code></pre></div>
+<h4 id="recuperar-de-papelera">Recuperar de Papelera</h4>
+<ol>
+<li><strong>Activar filtros avanzados</strong></li>
+<li><strong>Incluir elementos en papelera</strong> ☑️</li>
+<li><strong>Seleccionar comics</strong> a recuperar</li>
+<li><strong>Restaurar</strong> desde menú contextual</li>
+</ol>
+<h2 id="sistema-de-thumbnails">🖼️ Sistema de Thumbnails</h2>
+<h3 id="generacion-automatica">Generación Automática</h3>
+<h4 id="proceso-de-generacion">Proceso de Generación</h4>
+<div class="highlight"><pre><span></span><code>graph LR
+    A[Archivo Comic] --&gt; B[Extraer Primera Página]
+    B --&gt; C[Redimensionar]
+    C --&gt; D[Aplicar Efectos]
+    D --&gt; E[Guardar Cache]
+</code></pre></div>
+<h4 id="parametros">Parámetros</h4>
+<ul>
+<li><strong>Tamaño</strong>: 200x300 px (proporción preservada)</li>
+<li><strong>Formato</strong>: JPEG con compresión optimizada</li>
+<li><strong>Cache</strong>: Almacenado en <code>data/thumbnails/comics/</code></li>
+</ul>
+<h3 id="efectos-visuales">Efectos Visuales</h3>
+<h4 id="escala-de-grises-automatica">Escala de Grises Automática</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Comics sin físicos → Escala de grises</span>
+<span class="k">if</span> <span class="n">comic</span><span class="o">.</span><span class="n">cantidad_adquirida</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">convert_to_grayscale</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span>
+
+<span class="c1"># Comics con físicos → Color normal</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">original_thumbnail</span>
+</code></pre></div>
+<h4 id="procesamiento-con-pillow">Procesamiento con Pillow</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">convert_to_grayscale</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convierte imagen a escala de grises preservando calidad&quot;&quot;&quot;</span>
+    <span class="c1"># Convertir a RGB si es necesario</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;RGBA&#39;</span><span class="p">,</span> <span class="s1">&#39;LA&#39;</span><span class="p">):</span>
+        <span class="n">rgb_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>
+        <span class="n">rgb_image</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rgb_image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Aplicar escala de grises</span>
+    <span class="n">grayscale</span> <span class="o">=</span> <span class="n">rgb_image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grayscale</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="busqueda-y-filtrado">🔍 Búsqueda y Filtrado</h2>
+<h3 id="busqueda-basica">Búsqueda Básica</h3>
+<div class="highlight"><pre><span></span><code>🔍 [Buscar en tu colección...]
+</code></pre></div>
+<h4 id="campos-de-busqueda">Campos de Búsqueda</h4>
+<ul>
+<li><strong>Nombre del archivo</strong>: <code>superman.cbz</code></li>
+<li><strong>Ruta completa</strong>: <code>/Comics/DC/superman/</code></li>
+<li><strong>Título catalogado</strong>: <code>Superman #1</code></li>
+<li><strong>Editorial</strong>: <code>DC Comics</code></li>
+<li><strong>Volumen</strong>: <code>Superman (2018)</code></li>
+</ul>
+<h3 id="filtros-avanzados">Filtros Avanzados</h3>
+<h4 id="filtros-de-clasificacion">Filtros de Clasificación</h4>
+<div class="highlight"><pre><span></span><code>○ Todos los comics        # Mostrar todos
+○ Solo clasificados       # Solo con metadata ComicVine
+○ Solo sin clasificar     # Solo archivos sin catalogar
+</code></pre></div>
+<h4 id="filtros-de-calidad">Filtros de Calidad</h4>
+<div class="highlight"><pre><span></span><code>Calidad mínima: [⭐] ────○──── [⭐⭐⭐⭐⭐]
+Calidad máxima: [⭐] ──────────○ [⭐⭐⭐⭐⭐]
+</code></pre></div>
+<h4 id="filtros-de-estado">Filtros de Estado</h4>
+<div class="highlight"><pre><span></span><code>☐ Incluir elementos en papelera
+☑️ Excluir archivos corruptos
+☑️ Solo archivos existentes
+</code></pre></div>
+<h3 id="combinacion-de-filtros">Combinación de Filtros</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ejemplo: Comics de alta calidad sin clasificar</span>
+<span class="p">{</span>
+    <span class="s1">&#39;classification&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>    <span class="c1"># Sin clasificar</span>
+    <span class="s1">&#39;quality_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>   <span class="c1"># 4-5 estrellas</span>
+    <span class="s1">&#39;exclude_trash&#39;</span><span class="p">:</span> <span class="kc">True</span>      <span class="c1"># No en papelera</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="estadisticas-y-reportes">📊 Estadísticas y Reportes</h2>
+<h3 id="informacion-de-coleccion">Información de Colección</h3>
+<div class="highlight"><pre><span></span><code>┌─── Estadísticas Generales ────┐
+│ Total de Comics: 1,247        │
+│ Clasificados: 892 (71.5%)     │
+│ Sin Clasificar: 355 (28.5%)   │
+│ En Papelera: 12 (1.0%)        │
+└───────────────────────────────┘
+
+┌─── Distribución por Calidad ──┐
+│ ⭐⭐⭐⭐⭐: 234 (18.8%)      │
+│ ⭐⭐⭐⭐: 445 (35.7%)        │
+│ ⭐⭐⭐: 312 (25.0%)          │
+│ ⭐⭐: 178 (14.3%)            │
+│ ⭐: 78 (6.3%)                │
+└───────────────────────────────┘
+</code></pre></div>
+<h3 id="distribucion-por-formato">Distribución por Formato</h3>
+<div class="highlight"><pre><span></span><code>📗 CBZ: 892 (71.5%)
+📘 CBR: 234 (18.8%)
+📙 PDF: 89 (7.1%)
+🖼️ IMG: 32 (2.6%)
+</code></pre></div>
+<h2 id="mantenimiento">🛠️ Mantenimiento</h2>
+<h3 id="verificacion-de-integridad">Verificación de Integridad</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verificar archivos faltantes</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">from db_manager import DatabaseManager</span>
+<span class="s2">db = DatabaseManager()</span>
+<span class="s2">db.verify_file_integrity()</span>
+<span class="s2">&quot;</span>
+</code></pre></div>
+<h3 id="regenerar-thumbnails">Regenerar Thumbnails</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Forzar regeneración de todas las miniaturas</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">from thumbnail_generator import ThumbnailGenerator</span>
+<span class="s2">gen = ThumbnailGenerator()</span>
+<span class="s2">gen.regenerate_all()</span>
+<span class="s2">&quot;</span>
+</code></pre></div>
+<h3 id="limpieza-de-cache">Limpieza de Cache</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Limpiar thumbnails huérfanos</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>data/thumbnails/comics/*
+<span class="c1"># Se regenerarán automáticamente</span>
+</code></pre></div>
+<h2 id="consejos-y-mejores-practicas">💡 Consejos y Mejores Prácticas</h2>
+<h3 id="organizacion-de-archivos">Organización de Archivos</h3>
+<div class="highlight"><pre><span></span><code>Comics/
+├── DC/
+│   ├── Batman/
+│   │   ├── Batman_001.cbz
+│   │   ├── Batman_002.cbz
+│   │   └── ...
+│   └── Superman/
+│       ├── Superman_001.cbz
+│       └── ...
+└── Marvel/
+    ├── Spider-Man/
+    └── X-Men/
+</code></pre></div>
+<h3 id="nomenclatura-recomendada">Nomenclatura Recomendada</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Formato sugerido</span>
+<span class="o">[</span>Editorial<span class="o">]</span>_<span class="o">[</span>Serie<span class="o">]</span>_<span class="o">[</span>Número<span class="o">]</span>_<span class="o">[</span>Año<span class="o">]</span>.cbz
+
+<span class="c1"># Ejemplos</span>
+DC_Batman_001_2023.cbz
+Marvel_Spider-Man_015_2022.cbz
+Image_Walking_Dead_193_2019.cbz
+</code></pre></div>
+<h3 id="flujo-de-trabajo-eficiente">Flujo de Trabajo Eficiente</h3>
+<ol>
+<li><strong>Organizar archivos</strong> en directorios lógicos</li>
+<li><strong>Importar a Babelcomics4</strong> por lotes</li>
+<li><strong>Clasificar con ComicVine</strong> usando filtros</li>
+<li><strong>Revisar y ajustar</strong> metadata manualmente</li>
+<li><strong>Mantener backup</strong> de la base de datos</li>
+</ol>
+<hr />
+<p><strong>¿Listo para gestionar volúmenes completos?</strong> 👉 <a href="gestion-volumenes.md">Gestión de Volúmenes</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

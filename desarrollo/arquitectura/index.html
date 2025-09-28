@@ -1,0 +1,2826 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../../funcionalidades/catalogacion/">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Arquitectura - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#arquitectura-del-sistema" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Arquitectura
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../usuario/instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../funcionalidades/catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../referencia/configuracion.md" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-comics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-volumenes.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/filtros-busqueda.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/thumbnails.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/base-datos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/interfaz.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ Arquitectura General
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Arquitectura General">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagrama-de-capas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Diagrama de Capas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#principios-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      Principios de Diseño
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Principios de Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-separacion-de-responsabilidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Separación de Responsabilidades
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-inversion-de-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Inversión de Dependencias
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-modularidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Modularidad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-escalabilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Escalabilidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      📁 Estructura del Proyecto
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📁 Estructura del Proyecto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#organizacion-de-directorios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Organización de Directorios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responsabilidades-por-modulo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responsabilidades por Módulo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Responsabilidades por Módulo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#capa-de-presentacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎨 Capa de Presentación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capa-de-logica-de-negocio" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧠 Capa de Lógica de Negocio
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capa-de-acceso-a-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      💾 Capa de Acceso a Datos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modelos-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗃️ Modelos de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗃️ Modelos de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-de-entidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arquitectura de Entidades
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitectura de Entidades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entidades-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Entidades Principales
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-integracion-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔗 Estrategia de Integración ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tipos-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Tipos de Volúmenes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ventajas-de-la-arquitectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Ventajas de la Arquitectura
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-de-sincronizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Operaciones de Sincronización
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujos-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Flujos de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Flujos de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-visualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Visualización
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-threading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Threading
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patrones-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Patrones de Diseño
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Patrones de Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-repository-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Repository Pattern
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Repository Pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abstraccion-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Abstracción de Datos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ventajas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ventajas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-model-view-controller-mvc" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Model-View-Controller (MVC)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Model-View-Controller (MVC)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#separacion-de-responsabilidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      Separación de Responsabilidades
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-observer-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Observer Pattern
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Observer Pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actualizacion-reactiva" class="md-nav__link">
+    <span class="md-ellipsis">
+      Actualización Reactiva
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-factory-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Factory Pattern
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Factory Pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creacion-de-cards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creación de Cards
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-de-concurrencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧵 Gestión de Concurrencia
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧵 Gestión de Concurrencia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#threading-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Threading Model
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Threading Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hilos-de-la-aplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hilos de la Aplicación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sincronizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sincronización
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-estado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Estado
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestión de Estado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estado-de-la-aplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estado de la Aplicación
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extensibilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔌 Extensibilidad
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔌 Extensibilidad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#puntos-de-extension" class="md-nav__link">
+    <span class="md-ellipsis">
+      Puntos de Extensión
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Puntos de Extensión">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-nuevos-tipos-de-cards" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Nuevos Tipos de Cards
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-nuevos-repositorios" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Nuevos Repositorios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-nuevos-servicios-externos" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Nuevos Servicios Externos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configurabilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configurabilidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metricas-y-monitoreo" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Métricas y Monitoreo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Métricas y Monitoreo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metricas-de-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Métricas de Performance
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manejo-de-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛡️ Manejo de Errores
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛡️ Manejo de Errores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estrategia de Errores
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recuperacion-graceful" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recuperación Graceful
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repositorios.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-comicvine.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/configuracion.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/troubleshooting.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/faq.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ Arquitectura General
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Arquitectura General">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagrama-de-capas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Diagrama de Capas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#principios-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      Principios de Diseño
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Principios de Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-separacion-de-responsabilidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Separación de Responsabilidades
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-inversion-de-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Inversión de Dependencias
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-modularidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Modularidad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-escalabilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Escalabilidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      📁 Estructura del Proyecto
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📁 Estructura del Proyecto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#organizacion-de-directorios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Organización de Directorios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responsabilidades-por-modulo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responsabilidades por Módulo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Responsabilidades por Módulo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#capa-de-presentacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎨 Capa de Presentación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capa-de-logica-de-negocio" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧠 Capa de Lógica de Negocio
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capa-de-acceso-a-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      💾 Capa de Acceso a Datos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modelos-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗃️ Modelos de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗃️ Modelos de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-de-entidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arquitectura de Entidades
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitectura de Entidades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entidades-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Entidades Principales
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-integracion-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔗 Estrategia de Integración ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tipos-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Tipos de Volúmenes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ventajas-de-la-arquitectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Ventajas de la Arquitectura
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-de-sincronizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Operaciones de Sincronización
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujos-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Flujos de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Flujos de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-visualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Visualización
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-threading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Threading
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patrones-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Patrones de Diseño
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Patrones de Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-repository-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Repository Pattern
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Repository Pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abstraccion-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Abstracción de Datos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ventajas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ventajas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-model-view-controller-mvc" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Model-View-Controller (MVC)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Model-View-Controller (MVC)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#separacion-de-responsabilidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      Separación de Responsabilidades
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-observer-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Observer Pattern
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Observer Pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actualizacion-reactiva" class="md-nav__link">
+    <span class="md-ellipsis">
+      Actualización Reactiva
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-factory-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Factory Pattern
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Factory Pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creacion-de-cards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creación de Cards
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-de-concurrencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧵 Gestión de Concurrencia
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧵 Gestión de Concurrencia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#threading-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Threading Model
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Threading Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hilos-de-la-aplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hilos de la Aplicación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sincronizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sincronización
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-estado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Estado
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestión de Estado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estado-de-la-aplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estado de la Aplicación
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extensibilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔌 Extensibilidad
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔌 Extensibilidad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#puntos-de-extension" class="md-nav__link">
+    <span class="md-ellipsis">
+      Puntos de Extensión
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Puntos de Extensión">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-nuevos-tipos-de-cards" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Nuevos Tipos de Cards
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-nuevos-repositorios" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Nuevos Repositorios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-nuevos-servicios-externos" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Nuevos Servicios Externos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configurabilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configurabilidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metricas-y-monitoreo" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Métricas y Monitoreo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Métricas y Monitoreo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metricas-de-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Métricas de Performance
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manejo-de-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛡️ Manejo de Errores
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛡️ Manejo de Errores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estrategia de Errores
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recuperacion-graceful" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recuperación Graceful
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="arquitectura-del-sistema">Arquitectura del Sistema</h1>
+<p>Babelcomics4 está diseñado con una arquitectura modular y escalable que separa claramente la lógica de negocio, el acceso a datos y la presentación.</p>
+<h2 id="arquitectura-general">🏗️ Arquitectura General</h2>
+<h3 id="diagrama-de-capas">Diagrama de Capas</h3>
+<div class="highlight"><pre><span></span><code>graph TB
+    subgraph &quot;Presentación&quot;
+        A[GTK4/libadwaita UI]
+        B[Navegación y Vistas]
+        C[Componentes Reutilizables]
+    end
+
+    subgraph &quot;Lógica de Negocio&quot;
+        D[Gestores de Aplicación]
+        E[Servicios ComicVine]
+        F[Procesadores de Imágenes]
+    end
+
+    subgraph &quot;Acceso a Datos&quot;
+        G[Repositorios]
+        H[Modelos SQLAlchemy]
+        I[Migraciones Alembic]
+    end
+
+    subgraph &quot;Persistencia&quot;
+        J[SQLite Database]
+        K[Sistema de Archivos]
+        L[Cache de Thumbnails]
+    end
+
+    A --&gt; D
+    B --&gt; D
+    C --&gt; D
+    D --&gt; G
+    E --&gt; G
+    F --&gt; K
+    G --&gt; H
+    H --&gt; J
+    G --&gt; I
+    I --&gt; J
+    F --&gt; L
+</code></pre></div>
+<h3 id="principios-de-diseno">Principios de Diseño</h3>
+<h4 id="1-separacion-de-responsabilidades">1. Separación de Responsabilidades</h4>
+<ul>
+<li><strong>UI</strong>: Solo manejo de interfaz y eventos</li>
+<li><strong>Lógica</strong>: Procesamiento y reglas de negocio</li>
+<li><strong>Datos</strong>: Acceso y persistencia</li>
+</ul>
+<h4 id="2-inversion-de-dependencias">2. Inversión de Dependencias</h4>
+<ul>
+<li>Las capas superiores dependen de abstracciones</li>
+<li>Uso de patrones Repository y Service</li>
+</ul>
+<h4 id="3-modularidad">3. Modularidad</h4>
+<ul>
+<li>Componentes independientes y reutilizables</li>
+<li>Bajo acoplamiento entre módulos</li>
+</ul>
+<h4 id="4-escalabilidad">4. Escalabilidad</h4>
+<ul>
+<li>Threading para operaciones pesadas</li>
+<li>Cache eficiente de recursos</li>
+<li>Paginación de datos</li>
+</ul>
+<h2 id="estructura-del-proyecto">📁 Estructura del Proyecto</h2>
+<h3 id="organizacion-de-directorios">Organización de Directorios</h3>
+<div class="highlight"><pre><span></span><code>Babelcomics4/
+├── 📄 Babelcomic4.py                 # Aplicación principal y UI
+├── 📁 entidades/                     # Modelos de dominio
+│   ├── __init__.py                   # Configuración SQLAlchemy
+│   ├── comicbook_model.py            # Modelo Comic
+│   ├── comicbook_info_model.py       # Modelo Issue/Metadata
+│   ├── comicbook_info_cover_model.py # Modelo Cover
+│   ├── volume_model.py               # Modelo Volume
+│   └── publisher_model.py            # Modelo Publisher
+├── 📁 repositories/                  # Capa de acceso a datos
+│   ├── base_repository_gtk4.py       # Repositorio base
+│   ├── comicbook_repository_gtk4.py  # Repositorio Comics
+│   ├── volume_repository.py          # Repositorio Volumes
+│   └── publisher_repository.py       # Repositorio Publishers
+├── 📁 helpers/                       # Servicios y utilidades
+│   ├── comicvine_client.py          # Cliente API ComicVine
+│   └── comicvine_helpers.py         # Utilidades ComicVine
+├── 📄 db_manager.py                 # Gestor de base de datos
+├── 📄 thumbnail_generator.py        # Generador de thumbnails
+├── 📄 comic_cards.py               # Componentes UI Cards
+├── 📄 filter_dialog.py             # Diálogos de filtro
+├── 📄 volume_detail_page.py        # Página detalle volumen
+├── 📄 selectable_card.py           # Componente selección
+├── 📁 data/                        # Datos y cache
+│   ├── babelcomics.db              # Base de datos SQLite
+│   └── thumbnails/                 # Cache de imágenes
+└── 📁 images/                      # Recursos estáticos
+</code></pre></div>
+<h3 id="responsabilidades-por-modulo">Responsabilidades por Módulo</h3>
+<h4 id="capa-de-presentacion">🎨 Capa de Presentación</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Babelcomic4.py - Aplicación principal</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicManagerApp</span><span class="p">(</span><span class="n">Adw</span><span class="o">.</span><span class="n">Application</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aplicación principal GTK4/libadwaita&quot;&quot;&quot;</span>
+    <span class="o">-</span> <span class="n">Gestión</span> <span class="n">de</span> <span class="n">ventanas</span> <span class="n">y</span> <span class="n">navegación</span>
+    <span class="o">-</span> <span class="n">Manejo</span> <span class="n">de</span> <span class="n">eventos</span> <span class="n">de</span> <span class="n">usuario</span>
+    <span class="o">-</span> <span class="n">Coordinación</span> <span class="n">entre</span> <span class="n">componentes</span> <span class="n">UI</span>
+
+<span class="c1"># comic_cards.py - Componentes UI</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicCard</span><span class="p">,</span> <span class="n">VolumeCard</span><span class="p">,</span> <span class="n">PublisherCard</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cards reutilizables para diferentes entidades&quot;&quot;&quot;</span>
+    <span class="o">-</span> <span class="n">Presentación</span> <span class="n">visual</span> <span class="n">de</span> <span class="n">datos</span>
+    <span class="o">-</span> <span class="n">Interacciones</span> <span class="n">básicas</span> <span class="p">(</span><span class="n">click</span><span class="p">,</span> <span class="n">hover</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">Carga</span> <span class="n">de</span> <span class="n">thumbnails</span>
+
+<span class="c1"># filter_dialog.py - Diálogos especializados</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AdvancedFilterDialog</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interfaz de filtros avanzados&quot;&quot;&quot;</span>
+    <span class="o">-</span> <span class="n">Configuración</span> <span class="n">de</span> <span class="n">criterios</span> <span class="n">de</span> <span class="n">filtrado</span>
+    <span class="o">-</span> <span class="n">Validación</span> <span class="n">de</span> <span class="n">entrada</span>
+    <span class="o">-</span> <span class="n">Comunicación</span> <span class="n">con</span> <span class="n">lógica</span> <span class="n">de</span> <span class="n">negocio</span>
+</code></pre></div>
+<h4 id="capa-de-logica-de-negocio">🧠 Capa de Lógica de Negocio</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># db_manager.py - Gestión de datos</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatabaseManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Coordinador de operaciones de datos&quot;&quot;&quot;</span>
+    <span class="o">-</span> <span class="n">Inicialización</span> <span class="n">de</span> <span class="n">base</span> <span class="n">de</span> <span class="n">datos</span>
+    <span class="o">-</span> <span class="n">Transacciones</span> <span class="n">complejas</span>
+    <span class="o">-</span> <span class="n">Migraciones</span> <span class="n">de</span> <span class="n">esquema</span>
+
+<span class="c1"># thumbnail_generator.py - Procesamiento de imágenes</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ThumbnailGenerator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generación y cache de thumbnails&quot;&quot;&quot;</span>
+    <span class="o">-</span> <span class="n">Extracción</span> <span class="n">de</span> <span class="n">imágenes</span> <span class="n">de</span> <span class="n">comics</span>
+    <span class="o">-</span> <span class="n">Redimensionado</span> <span class="n">y</span> <span class="n">optimización</span>
+    <span class="o">-</span> <span class="n">Cache</span> <span class="n">inteligente</span>
+
+<span class="c1"># helpers/comicvine_client.py - Integración externa</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicVineClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cliente para API ComicVine&quot;&quot;&quot;</span>
+    <span class="o">-</span> <span class="n">Autenticación</span> <span class="n">y</span> <span class="n">rate</span> <span class="n">limiting</span>
+    <span class="o">-</span> <span class="n">Búsqueda</span> <span class="n">y</span> <span class="n">descarga</span> <span class="n">de</span> <span class="n">metadata</span>
+    <span class="o">-</span> <span class="n">Manejo</span> <span class="n">de</span> <span class="n">errores</span> <span class="n">y</span> <span class="n">reintentos</span>
+</code></pre></div>
+<h4 id="capa-de-acceso-a-datos">💾 Capa de Acceso a Datos</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># repositories/base_repository_gtk4.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseRepository</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Repositorio base con funcionalidad común&quot;&quot;&quot;</span>
+    <span class="o">-</span> <span class="n">Operaciones</span> <span class="n">CRUD</span> <span class="n">básicas</span>
+    <span class="o">-</span> <span class="n">Sistema</span> <span class="n">de</span> <span class="n">filtrado</span>
+    <span class="o">-</span> <span class="n">Paginación</span> <span class="n">y</span> <span class="n">ordenamiento</span>
+
+<span class="c1"># repositories/comicbook_repository_gtk4.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicbookRepository</span><span class="p">(</span><span class="n">BaseRepository</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Repositorio específico para comics&quot;&quot;&quot;</span>
+    <span class="o">-</span> <span class="n">Consultas</span> <span class="n">complejas</span> <span class="n">de</span> <span class="n">comics</span>
+    <span class="o">-</span> <span class="n">Filtros</span> <span class="n">especializados</span> <span class="p">(</span><span class="n">clasificación</span><span class="p">,</span> <span class="n">calidad</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">Joins</span> <span class="n">con</span> <span class="n">entidades</span> <span class="n">relacionadas</span>
+</code></pre></div>
+<h2 id="modelos-de-datos">🗃️ Modelos de Datos</h2>
+<h3 id="arquitectura-de-entidades">Arquitectura de Entidades</h3>
+<p>El sistema utiliza SQLAlchemy ORM con un diseño híbrido que combina datos locales y externos:</p>
+<h4 id="entidades-principales">📊 Entidades Principales</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># entidades/volume_model.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Volume</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Volumen: Serie o colección de comics&quot;&quot;&quot;</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;volumens&#39;</span>
+
+    <span class="n">id_volume</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>           <span class="c1"># ID interno</span>
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>                 <span class="c1"># Nombre de la serie</span>
+    <span class="n">anio_inicio</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>                          <span class="c1"># Año de inicio</span>
+    <span class="n">cantidad_numeros</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>          <span class="c1"># Números totales</span>
+    <span class="n">id_comicvine</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>          <span class="c1"># ID externo ComicVine</span>
+
+    <span class="c1"># Relaciones</span>
+    <span class="n">comicbookinfos</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;ComicbookInfo&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;volume&quot;</span><span class="p">)</span>
+    <span class="n">publisher</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Publisher&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;volumes&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># entidades/comicbook_info_model.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicbookInfo</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Issue: Número individual de una serie&quot;&quot;&quot;</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;comicbooks_info&#39;</span>
+
+    <span class="n">id_comicbook_info</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># ID interno</span>
+    <span class="n">id_volume</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;volumens.id_volume&#39;</span><span class="p">))</span>  <span class="c1"># Relación con volumen</span>
+    <span class="n">numero</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>                 <span class="c1"># Número del issue</span>
+    <span class="n">titulo</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>                    <span class="c1"># Título del issue</span>
+    <span class="n">fecha_tapa</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>                           <span class="c1"># Año de publicación</span>
+    <span class="n">resumen</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>                     <span class="c1"># Descripción</span>
+
+    <span class="c1"># NOTA: NO tiene id_comicvine - se identifica por número dentro del volumen</span>
+
+    <span class="c1"># Relaciones</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Volume&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;comicbookinfos&quot;</span><span class="p">)</span>
+    <span class="n">portadas</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;ComicbookInfoCover&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;comic_info&quot;</span><span class="p">)</span>
+    <span class="n">owned_comics</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Comicbook&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;comicbook_info&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="estrategia-de-integracion-comicvine">🔗 Estrategia de Integración ComicVine</h4>
+<p><strong>Filosofía del Sistema:</strong>
+- ✅ <strong>Volúmenes locales</strong>: <code>id_comicvine = NULL</code> → Creados manualmente, control total del usuario
+- ✅ <strong>Volúmenes de ComicVine</strong>: <code>id_comicvine != NULL</code> → Sincronizables con API externa</p>
+<p><strong>Flujo de Relaciones:</strong>
+<div class="highlight"><pre><span></span><code>graph LR
+    A[ComicbookInfo] --&gt;|id_volume| B[Volume]
+    B --&gt;|id_comicvine| C[ComicVine API]
+    C --&gt;|sync data| B
+
+    B1[Volume Local&lt;br/&gt;id_comicvine=NULL] --&gt; D[Control Manual]
+    B2[Volume ComicVine&lt;br/&gt;id_comicvine=12345] --&gt; E[Auto-sync]
+</code></pre></div></p>
+<h4 id="tipos-de-volumenes">📋 Tipos de Volúmenes</h4>
+<p><strong>1. Volúmenes de ComicVine</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Ejemplo: Serie oficial catalogada</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">volumens</span><span class="w"> </span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="w"> </span><span class="n">id_comicvine</span><span class="p">,</span><span class="w"> </span><span class="n">anio_inicio</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;Batman (2016)&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">91988</span><span class="p">,</span><span class="w"> </span><span class="mi">2016</span><span class="p">);</span>
+
+<span class="c1">-- Issues se sincronizan automáticamente por número</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">comicbooks_info</span><span class="w"> </span><span class="p">(</span><span class="n">id_volume</span><span class="p">,</span><span class="w"> </span><span class="n">numero</span><span class="p">,</span><span class="w"> </span><span class="n">titulo</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;I Am Gotham, Part One&#39;</span><span class="p">);</span>
+</code></pre></div></p>
+<p><strong>2. Volúmenes Locales</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Ejemplo: Comic indie no catalogado</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">volumens</span><span class="w"> </span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="w"> </span><span class="n">id_comicvine</span><span class="p">,</span><span class="w"> </span><span class="n">anio_inicio</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;Mi Webcomic Favorito&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">2024</span><span class="p">);</span>
+
+<span class="c1">-- Issues creados manualmente</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">comicbooks_info</span><span class="w"> </span><span class="p">(</span><span class="n">id_volume</span><span class="p">,</span><span class="w"> </span><span class="n">numero</span><span class="p">,</span><span class="w"> </span><span class="n">titulo</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Primer Episodio&#39;</span><span class="p">);</span>
+</code></pre></div></p>
+<h4 id="ventajas-de-la-arquitectura">🎯 Ventajas de la Arquitectura</h4>
+<p><strong>Para Desarrolladores:</strong>
+- ✅ Relaciones simples y predecibles
+- ✅ Queries eficientes (JOIN por id_volume)
+- ✅ Extensibilidad sin romper compatibilidad</p>
+<p><strong>Para Usuarios:</strong>
+- ✅ Comics oficiales con metadata automática
+- ✅ Comics personales con control total
+- ✅ Coexistencia sin conflictos
+- ✅ Migración gradual posible</p>
+<h4 id="operaciones-de-sincronizacion">🔄 Operaciones de Sincronización</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sync_volume_from_comicvine</span><span class="p">(</span><span class="n">volume</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sincronizar volumen que tiene id_comicvine&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="c1"># Solo sincronizar volúmenes de ComicVine</span>
+
+    <span class="c1"># 1. Obtener datos actualizados del volumen</span>
+    <span class="n">volume_data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_details</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">)</span>
+
+    <span class="c1"># 2. Obtener lista de issues desde ComicVine</span>
+    <span class="n">cv_issues</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_issues</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">)</span>
+
+    <span class="c1"># 3. Crear issues faltantes (match por número)</span>
+    <span class="k">for</span> <span class="n">cv_issue</span> <span class="ow">in</span> <span class="n">cv_issues</span><span class="p">:</span>
+        <span class="n">issue_number</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cv_issue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;issue_number&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+        <span class="n">existing</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span>
+            <span class="n">id_volume</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">id_volume</span><span class="p">,</span>
+            <span class="n">numero</span><span class="o">=</span><span class="n">issue_number</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">existing</span><span class="p">:</span>
+            <span class="n">create_issue_from_comicvine</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">cv_issue</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_issue_cover</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">issue</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encontrar portada de issue usando ComicVine&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Volumen local, sin sincronización</span>
+
+    <span class="c1"># Obtener issues de ComicVine y hacer match por número</span>
+    <span class="n">cv_issues</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_volume_issues</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">cv_issue</span> <span class="ow">in</span> <span class="n">cv_issues</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">cv_issue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;issue_number&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="n">issue</span><span class="o">.</span><span class="n">numero</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cv_issue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;original_url&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+<h2 id="flujos-de-datos">🔄 Flujos de Datos</h2>
+<h3 id="flujo-de-visualizacion">Flujo de Visualización</h3>
+<div class="highlight"><pre><span></span><code>sequenceDiagram
+    participant UI as UI Components
+    participant App as ComicManagerApp
+    participant Repo as Repository
+    participant DB as Database
+
+    UI-&gt;&gt;App: User requests data
+    App-&gt;&gt;Repo: get_filtered_comics()
+    Repo-&gt;&gt;DB: SELECT with filters
+    DB--&gt;&gt;Repo: Raw data
+    Repo--&gt;&gt;App: Entity objects
+    App-&gt;&gt;UI: Update views
+    UI-&gt;&gt;UI: Render cards
+</code></pre></div>
+<h3 id="flujo-de-comicvine">Flujo de ComicVine</h3>
+<div class="highlight"><pre><span></span><code>sequenceDiagram
+    participant UI as Volume Detail
+    participant App as ComicManagerApp
+    participant CV as ComicVine Client
+    participant TG as Thumbnail Generator
+    participant DB as Database
+
+    UI-&gt;&gt;App: Update from ComicVine
+    App-&gt;&gt;CV: get_volume_issues()
+    CV--&gt;&gt;App: Issue metadata
+    App-&gt;&gt;DB: Create new issues
+    App-&gt;&gt;TG: Download covers
+    TG-&gt;&gt;TG: Process images
+    TG--&gt;&gt;App: Thumbnails ready
+    App-&gt;&gt;UI: Refresh view
+</code></pre></div>
+<h3 id="flujo-de-threading">Flujo de Threading</h3>
+<div class="highlight"><pre><span></span><code>graph LR
+    A[UI Thread] --&gt; B[Request Operation]
+    B --&gt; C[Background Thread]
+    C --&gt; D[Heavy Processing]
+    D --&gt; E[GLib.idle_add]
+    E --&gt; F[UI Update]
+    F --&gt; A
+</code></pre></div>
+<h2 id="patrones-de-diseno">🎯 Patrones de Diseño</h2>
+<h3 id="1-repository-pattern">1. Repository Pattern</h3>
+<h4 id="abstraccion-de-datos">Abstracción de Datos</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BaseRepository</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Patrón Repository para abstracción de datos&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">obtener_pagina</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelo</span><span class="p">,</span> <span class="n">pagina</span><span class="p">,</span> <span class="n">tamanio</span><span class="p">,</span> <span class="n">orden</span><span class="p">,</span> <span class="n">direccion</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Paginación genérica&quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">modelo</span><span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_filters</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">modelo</span><span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_sorting</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">modelo</span><span class="p">,</span> <span class="n">orden</span><span class="p">,</span> <span class="n">direccion</span><span class="p">)</span>
+
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">pagina</span> <span class="o">*</span> <span class="n">tamanio</span>
+        <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">tamanio</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">filtrar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sistema de filtrado flexible&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filtros</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="ventajas">Ventajas</h4>
+<ul>
+<li>✅ Separación clara entre lógica y datos</li>
+<li>✅ Facilita testing con mocks</li>
+<li>✅ Reutilización de consultas comunes</li>
+<li>✅ Abstracción del ORM subyacente</li>
+</ul>
+<h3 id="2-model-view-controller-mvc">2. Model-View-Controller (MVC)</h3>
+<h4 id="separacion-de-responsabilidades">Separación de Responsabilidades</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Model (entidades/)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Comicbook</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modelo de datos puro&quot;&quot;&quot;</span>
+    <span class="c1"># Solo definición de estructura y relaciones</span>
+
+<span class="c1"># View (UI Components)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicCard</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vista pura, solo presentación&quot;&quot;&quot;</span>
+    <span class="c1"># Solo lógica de rendering y eventos básicos</span>
+
+<span class="c1"># Controller (ComicManagerApp)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicManagerApp</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Controlador, coordina Model y View&quot;&quot;&quot;</span>
+    <span class="c1"># Lógica de aplicación, coordina operaciones</span>
+</code></pre></div>
+<h3 id="3-observer-pattern">3. Observer Pattern</h3>
+<h4 id="actualizacion-reactiva">Actualización Reactiva</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ThumbnailGenerator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Observable para eventos de thumbnails&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">request_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_type</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Patrón callback para notificación asíncrona&quot;&quot;&quot;</span>
+        <span class="c1"># Procesar en background</span>
+        <span class="c1"># Notificar via callback cuando esté listo</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicCard</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Observer de eventos de thumbnails&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_thumbnail_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thumbnail_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Callback cuando thumbnail está listo&quot;&quot;&quot;</span>
+        <span class="n">GLib</span><span class="o">.</span><span class="n">idle_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_image</span><span class="p">,</span> <span class="n">thumbnail_path</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="4-factory-pattern">4. Factory Pattern</h3>
+<h4 id="creacion-de-cards">Creación de Cards</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CardFactory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory para crear cards según tipo de entidad&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_card</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">item_type</span><span class="p">,</span> <span class="n">thumbnail_generator</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item_type</span> <span class="o">==</span> <span class="s2">&quot;comics&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ComicCard</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">thumbnail_generator</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">item_type</span> <span class="o">==</span> <span class="s2">&quot;volumes&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">VolumeCard</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">thumbnail_generator</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">item_type</span> <span class="o">==</span> <span class="s2">&quot;publishers&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PublisherCard</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">thumbnail_generator</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown item type: </span><span class="si">{</span><span class="n">item_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="gestion-de-concurrencia">🧵 Gestión de Concurrencia</h2>
+<h3 id="threading-model">Threading Model</h3>
+<h4 id="hilos-de-la-aplicacion">Hilos de la Aplicación</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Main UI Thread (GTK)</span>
+<span class="c1"># - Manejo de eventos UI</span>
+<span class="c1"># - Renderizado de componentes</span>
+<span class="c1"># - Coordinación general</span>
+
+<span class="c1"># 2. Thumbnail Generation Thread</span>
+<span class="c1"># - Procesamiento de imágenes</span>
+<span class="c1"># - Extracción de páginas de comics</span>
+<span class="c1"># - Cache de thumbnails</span>
+
+<span class="c1"># 3. ComicVine API Threads (Pool)</span>
+<span class="c1"># - Requests HTTP concurrentes</span>
+<span class="c1"># - Descarga de metadata</span>
+<span class="c1"># - Descarga de imágenes</span>
+</code></pre></div>
+<h4 id="sincronizacion">Sincronización</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Comunicación Thread-Safe</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">queue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ThumbnailGenerator</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">request_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_generate_thumbnail</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">future</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">GLib</span><span class="o">.</span><span class="n">idle_add</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="gestion-de-estado">Gestión de Estado</h3>
+<h4 id="estado-de-la-aplicacion">Estado de la Aplicación</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ApplicationState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estado centralizado de la aplicación&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_view</span> <span class="o">=</span> <span class="s2">&quot;comics&quot;</span>          <span class="c1"># Vista activa</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_filters</span> <span class="o">=</span> <span class="p">{}</span>             <span class="c1"># Filtros aplicados</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>                 <span class="c1"># Texto de búsqueda</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items_data</span> <span class="o">=</span> <span class="p">[]</span>                  <span class="c1"># Datos cargados</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaded_items</span> <span class="o">=</span> <span class="mi">0</span>                 <span class="c1"># Paginación</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selection_mode</span> <span class="o">=</span> <span class="kc">False</span>           <span class="c1"># Modo selección</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Limpiar filtros manteniendo vista&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_filters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</code></pre></div>
+<h2 id="extensibilidad">🔌 Extensibilidad</h2>
+<h3 id="puntos-de-extension">Puntos de Extensión</h3>
+<h4 id="1-nuevos-tipos-de-cards">1. Nuevos Tipos de Cards</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NewEntityCard</span><span class="p">(</span><span class="n">SelectableCard</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Nueva card para tipo de entidad personalizada&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">thumbnail_generator</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_ui</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">request_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implementar lógica específica de thumbnails&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h4 id="2-nuevos-repositorios">2. Nuevos Repositorios</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CustomRepository</span><span class="p">(</span><span class="n">BaseRepository</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Repositorio para nueva entidad&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">custom_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Consultas específicas del dominio&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h4 id="3-nuevos-servicios-externos">3. Nuevos Servicios Externos</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AlternativeAPIClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cliente para API alternativa a ComicVine&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implementar búsqueda en API alternativa&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="configurabilidad">Configurabilidad</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># config.py - Configuración centralizada</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
+    <span class="n">DATABASE_URL</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///data/babelcomics.db&quot;</span>
+    <span class="n">THUMBNAIL_SIZE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+    <span class="n">COMICVINE_API_URL</span> <span class="o">=</span> <span class="s2">&quot;https://comicvine.gamespot.com/api&quot;</span>
+    <span class="n">CACHE_EXPIRY_DAYS</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">MAX_CONCURRENT_DOWNLOADS</span> <span class="o">=</span> <span class="mi">5</span>
+</code></pre></div>
+<h2 id="metricas-y-monitoreo">📊 Métricas y Monitoreo</h2>
+<h3 id="logging">Logging</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="c1"># Configuración de logging por módulo</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Loggers específicos</span>
+<span class="n">db_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;database&#39;</span><span class="p">)</span>
+<span class="n">api_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;comicvine&#39;</span><span class="p">)</span>
+<span class="n">ui_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ui&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="metricas-de-performance">Métricas de Performance</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">monitor_performance</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator para monitorear performance&quot;&quot;&quot;</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">execution_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> executed in </span><span class="si">{</span><span class="n">execution_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+</code></pre></div>
+<h2 id="manejo-de-errores">🛡️ Manejo de Errores</h2>
+<h3 id="estrategia-de-errores">Estrategia de Errores</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Jerarquía de excepciones</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BabelcomicsError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base exception para errores de la aplicación&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DatabaseError</span><span class="p">(</span><span class="n">BabelcomicsError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Errores relacionados con base de datos&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicVineError</span><span class="p">(</span><span class="n">BabelcomicsError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Errores de integración ComicVine&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ThumbnailError</span><span class="p">(</span><span class="n">BabelcomicsError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Errores de generación de thumbnails&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<h3 id="recuperacion-graceful">Recuperación Graceful</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">safe_operation</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_error</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper para operaciones que pueden fallar&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">log_error</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fallback</span>
+</code></pre></div>
+<hr />
+<p><strong>¿Quieres profundizar en los modelos de datos?</strong> 👉 <a href="modelos.md">Modelos de Datos</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
