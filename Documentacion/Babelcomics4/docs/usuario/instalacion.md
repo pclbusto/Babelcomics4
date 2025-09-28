@@ -37,6 +37,9 @@ sudo apt install gobject-introspection libgirepository1.0-dev
 
 # Soporte para archivos RAR (opcional)
 sudo apt install unrar-free
+
+# ImageMagick (para procesamiento de iconos)
+sudo apt install imagemagick
 ```
 
 ### 3. Clonar el Repositorio
@@ -73,6 +76,9 @@ sudo dnf install gobject-introspection-devel
 
 # Soporte RAR (opcional)
 sudo dnf install unrar
+
+# ImageMagick (para procesamiento de iconos)
+sudo dnf install ImageMagick
 ```
 
 ### 2. Seguir pasos 3-5 de Ubuntu
@@ -92,6 +98,9 @@ sudo pacman -S gobject-introspection
 
 # Soporte RAR (opcional)
 sudo pacman -S unrar
+
+# ImageMagick (para procesamiento de iconos)
+sudo pacman -S imagemagick
 ```
 
 ### 2. Seguir pasos 3-5 de Ubuntu
@@ -124,7 +133,29 @@ mkdocs-material>=9.4.0
 
 ## ⚙️ Configuración Inicial
 
-### 1. Verificar Instalación
+### Script de Setup Automático (Recomendado)
+
+Babelcomics4 incluye un script de configuración automática que configura todo lo necesario:
+
+```bash
+# Ejecutar script de setup
+python setup.py
+```
+
+**El script automáticamente:**
+- ✅ Verifica dependencias del sistema
+- ✅ Crea estructura de directorios necesarios
+- ✅ Instala dependencias Python
+- ✅ Configura la base de datos SQLite
+- ✅ Instala iconos en el sistema (múltiples resoluciones)
+- ✅ Crea entrada en el menú de aplicaciones
+- ✅ Genera script de inicio ejecutable
+
+### Configuración Manual (Alternativa)
+
+Si prefieres configurar manualmente:
+
+#### 1. Verificar Instalación
 ```bash
 # Activar entorno virtual
 source .venv/bin/activate
@@ -136,13 +167,35 @@ python -c "import gi; gi.require_version('Gtk', '4.0'); from gi.repository impor
 python -c "import sqlalchemy, requests, PIL; print('Dependencias OK')"
 ```
 
-### 2. Configurar Base de Datos
+#### 2. Crear Directorios Necesarios
+```bash
+# Crear estructura de directorios
+mkdir -p data/thumbnails/{comics,volumes,publishers,comicbookinfo_issues}
+mkdir -p logs config backup
+```
+
+#### 3. Configurar Base de Datos
 ```bash
 # La base de datos se crea automáticamente en el primer inicio
 # Ubicación: ./data/babelcomics.db
 ```
 
-### 3. Primer Inicio
+#### 4. Instalar Iconos del Sistema
+```bash
+# Crear directorios de iconos
+mkdir -p ~/.local/share/icons/hicolor/{48x48,64x64,128x128,256x256}/apps
+
+# Instalar iconos (requiere ImageMagick)
+magick images/icon.png -resize 48x48 ~/.local/share/icons/hicolor/48x48/apps/babelcomics4.png
+magick images/icon.png -resize 64x64 ~/.local/share/icons/hicolor/64x64/apps/babelcomics4.png
+cp images/icon.png ~/.local/share/icons/hicolor/128x128/apps/babelcomics4.png
+cp images/icon.png ~/.local/share/icons/hicolor/256x256/apps/babelcomics4.png
+
+# Actualizar cache de iconos
+gtk-update-icon-cache ~/.local/share/icons/hicolor/ || true
+```
+
+#### 5. Primer Inicio
 ```bash
 python Babelcomic4.py
 ```
@@ -160,8 +213,18 @@ Babelcomics4/
 ├── 📁 data/                       # Base de datos y cache
 │   ├── babelcomics.db            # Base de datos SQLite
 │   └── thumbnails/               # Cache de miniaturas
+│       ├── comics/               # Thumbnails de archivos
+│       ├── volumes/              # Portadas de volúmenes
+│       ├── publishers/           # Logos de editoriales
+│       └── comicbookinfo_issues/ # Portadas de issues
 ├── 📁 images/                     # Recursos de interfaz
+│   └── icon.png                  # Icono de la aplicación
+├── 📁 logs/                      # Archivos de registro
+├── 📁 config/                    # Configuración personalizada
+├── 📁 backup/                    # Respaldos automáticos
 ├── 📁 Documentacion/             # Documentación MkDocs
+├── 📄 setup.py                   # Script de configuración automática
+├── 📄 babelcomics4.sh            # Script de inicio (generado por setup)
 ├── 📄 requirements.txt           # Dependencias Python
 └── 📄 README.md                  # Información del proyecto
 ```

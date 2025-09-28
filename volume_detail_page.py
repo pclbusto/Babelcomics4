@@ -867,8 +867,8 @@ def update_existing_issue(existing_issue, issue_data, session):
         except (ValueError, TypeError):
             pass
 
-    if not existing_issue.id_comicvine and issue_data.get('id'):
-        existing_issue.id_comicvine = issue_data['id']
+    # Los issues se identifican por número dentro del volumen
+    # El ID de ComicVine se maneja a nivel de volumen
 
 
 def create_new_issue(volume, issue_data, session):
@@ -879,7 +879,7 @@ def create_new_issue(volume, issue_data, session):
         new_issue.numero = str(issue_data.get('issue_number', ''))
         new_issue.titulo = issue_data.get('name', '')
         new_issue.resumen = clean_html_text(issue_data.get('description', ''))
-        new_issue.id_comicvine = issue_data.get('id')
+        # Los issues se identifican por su número dentro del volumen
 
         # Fecha de portada
         if issue_data.get('cover_date'):
@@ -1029,17 +1029,28 @@ def check_and_download_missing_covers(volume, session, comicvine_client):
             print("No se encontraron portadas faltantes")
             return 0
 
-        # Para cada issue faltante, obtener su información de ComicVine y descargar la portada
+        # Si el volumen tiene ID de ComicVine, obtener todos los issues de CV para hacer match
+        comicvine_issues = {}
+        if volume.id_comicvine:
+            try:
+                cv_issues = comicvine_client.get_volume_issues(volume.id_comicvine)
+                if cv_issues:
+                    # Crear diccionario por número de issue para match rápido
+                    comicvine_issues = {str(issue.get('issue_number', '')): issue for issue in cv_issues}
+            except Exception as e:
+                print(f"Error obteniendo issues de ComicVine: {e}")
+
+        # Para cada issue faltante, buscar en ComicVine por número
         for issue in all_issues_missing:
             try:
-                if issue.id_comicvine:
-                    # Obtener detalles del issue desde ComicVine
-                    issue_details = comicvine_client.get_issue_details(issue.id_comicvine)
-                    if issue_details and download_issue_cover(issue_details, volume, session):
+                if volume.id_comicvine and issue.numero in comicvine_issues:
+                    # Obtener detalles del issue desde ComicVine usando el número
+                    cv_issue = comicvine_issues[issue.numero]
+                    if cv_issue and download_issue_cover(cv_issue, volume, session):
                         downloaded_count += 1
                         print(f"Portada descargada para issue #{issue.numero}")
                 else:
-                    print(f"Issue #{issue.numero} no tiene ID de ComicVine, saltando...")
+                    print(f"Issue #{issue.numero} no encontrado en ComicVine o volumen sin ID CV, saltando...")
 
             except Exception as e:
                 print(f"Error procesando portada para issue #{issue.numero}: {e}")
@@ -1166,13 +1177,24 @@ def collect_missing_covers(volume, session, comicvine_client, issues_to_download
         # Combinar y agregar a la lista de descarga
         all_missing = list(set(issues_without_covers + issues_missing_files))
 
+        # Si el volumen tiene ID de ComicVine, obtener todos los issues de CV para hacer match
+        comicvine_issues = {}
+        if volume.id_comicvine:
+            try:
+                cv_issues = comicvine_client.get_volume_issues(volume.id_comicvine)
+                if cv_issues:
+                    # Crear diccionario por número de issue para match rápido
+                    comicvine_issues = {str(issue.get('issue_number', '')): issue for issue in cv_issues}
+            except Exception as e:
+                print(f"Error obteniendo issues de ComicVine: {e}")
+
         for issue in all_missing:
-            if issue.id_comicvine:
+            if volume.id_comicvine and issue.numero in comicvine_issues:
                 try:
-                    # Obtener detalles del issue desde ComicVine
-                    issue_details = comicvine_client.get_issue_details(issue.id_comicvine)
-                    if issue_details and issue_details.get('image'):
-                        issues_to_download.append(('existing', issue_details, issue))
+                    # Obtener datos del issue desde ComicVine usando el número
+                    cv_issue = comicvine_issues[issue.numero]
+                    if cv_issue and cv_issue.get('image'):
+                        issues_to_download.append(('existing', cv_issue, issue))
                 except Exception as e:
                     print(f"Error obteniendo detalles para issue #{issue.numero}: {e}")
 

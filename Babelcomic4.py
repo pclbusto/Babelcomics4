@@ -1225,7 +1225,7 @@ class ComicManagerApp(Adw.Application):
     """Aplicación principal"""
     
     def __init__(self):
-        super().__init__(application_id="com.example.comicmanager")
+        super().__init__(application_id="babelcomics4")
         
     def do_activate(self):
         """Activar aplicación"""

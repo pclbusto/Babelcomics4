@@ -166,6 +166,147 @@ class ComicbookRepository(BaseRepository):
     - Joins con entidades relacionadas
 ```
 
+## 🗃️ Modelos de Datos
+
+### Arquitectura de Entidades
+
+El sistema utiliza SQLAlchemy ORM con un diseño híbrido que combina datos locales y externos:
+
+#### 📊 Entidades Principales
+
+```python
+# entidades/volume_model.py
+class Volume(Base):
+    """Volumen: Serie o colección de comics"""
+    __tablename__ = 'volumens'
+
+    id_volume = Column(Integer, primary_key=True)           # ID interno
+    nombre = Column(String, nullable=False)                 # Nombre de la serie
+    anio_inicio = Column(Integer)                          # Año de inicio
+    cantidad_numeros = Column(Integer, default=0)          # Números totales
+    id_comicvine = Column(Integer, nullable=True)          # ID externo ComicVine
+
+    # Relaciones
+    comicbookinfos = relationship("ComicbookInfo", back_populates="volume")
+    publisher = relationship("Publisher", back_populates="volumes")
+```
+
+```python
+# entidades/comicbook_info_model.py
+class ComicbookInfo(Base):
+    """Issue: Número individual de una serie"""
+    __tablename__ = 'comicbooks_info'
+
+    id_comicbook_info = Column(Integer, primary_key=True)   # ID interno
+    id_volume = Column(Integer, ForeignKey('volumens.id_volume'))  # Relación con volumen
+    numero = Column(String, nullable=False)                 # Número del issue
+    titulo = Column(String, default='')                    # Título del issue
+    fecha_tapa = Column(Integer)                           # Año de publicación
+    resumen = Column(Text, default='')                     # Descripción
+
+    # NOTA: NO tiene id_comicvine - se identifica por número dentro del volumen
+
+    # Relaciones
+    volume = relationship("Volume", back_populates="comicbookinfos")
+    portadas = relationship("ComicbookInfoCover", back_populates="comic_info")
+    owned_comics = relationship("Comicbook", back_populates="comicbook_info")
+```
+
+#### 🔗 Estrategia de Integración ComicVine
+
+**Filosofía del Sistema:**
+- ✅ **Volúmenes locales**: `id_comicvine = NULL` → Creados manualmente, control total del usuario
+- ✅ **Volúmenes de ComicVine**: `id_comicvine != NULL` → Sincronizables con API externa
+
+**Flujo de Relaciones:**
+```mermaid
+graph LR
+    A[ComicbookInfo] -->|id_volume| B[Volume]
+    B -->|id_comicvine| C[ComicVine API]
+    C -->|sync data| B
+
+    B1[Volume Local<br/>id_comicvine=NULL] --> D[Control Manual]
+    B2[Volume ComicVine<br/>id_comicvine=12345] --> E[Auto-sync]
+```
+
+#### 📋 Tipos de Volúmenes
+
+**1. Volúmenes de ComicVine**
+```sql
+-- Ejemplo: Serie oficial catalogada
+INSERT INTO volumens (nombre, id_comicvine, anio_inicio)
+VALUES ('Batman (2016)', 91988, 2016);
+
+-- Issues se sincronizan automáticamente por número
+INSERT INTO comicbooks_info (id_volume, numero, titulo)
+VALUES (1, '1', 'I Am Gotham, Part One');
+```
+
+**2. Volúmenes Locales**
+```sql
+-- Ejemplo: Comic indie no catalogado
+INSERT INTO volumens (nombre, id_comicvine, anio_inicio)
+VALUES ('Mi Webcomic Favorito', NULL, 2024);
+
+-- Issues creados manualmente
+INSERT INTO comicbooks_info (id_volume, numero, titulo)
+VALUES (2, '1', 'Primer Episodio');
+```
+
+#### 🎯 Ventajas de la Arquitectura
+
+**Para Desarrolladores:**
+- ✅ Relaciones simples y predecibles
+- ✅ Queries eficientes (JOIN por id_volume)
+- ✅ Extensibilidad sin romper compatibilidad
+
+**Para Usuarios:**
+- ✅ Comics oficiales con metadata automática
+- ✅ Comics personales con control total
+- ✅ Coexistencia sin conflictos
+- ✅ Migración gradual posible
+
+#### 🔄 Operaciones de Sincronización
+
+```python
+def sync_volume_from_comicvine(volume):
+    """Sincronizar volumen que tiene id_comicvine"""
+    if not volume.id_comicvine:
+        return  # Solo sincronizar volúmenes de ComicVine
+
+    # 1. Obtener datos actualizados del volumen
+    volume_data = client.get_volume_details(volume.id_comicvine)
+
+    # 2. Obtener lista de issues desde ComicVine
+    cv_issues = client.get_volume_issues(volume.id_comicvine)
+
+    # 3. Crear issues faltantes (match por número)
+    for cv_issue in cv_issues:
+        issue_number = str(cv_issue.get('issue_number', ''))
+
+        existing = session.query(ComicbookInfo).filter_by(
+            id_volume=volume.id_volume,
+            numero=issue_number
+        ).first()
+
+        if not existing:
+            create_issue_from_comicvine(volume, cv_issue)
+
+def find_issue_cover(volume, issue):
+    """Encontrar portada de issue usando ComicVine"""
+    if not volume.id_comicvine:
+        return None  # Volumen local, sin sincronización
+
+    # Obtener issues de ComicVine y hacer match por número
+    cv_issues = client.get_volume_issues(volume.id_comicvine)
+
+    for cv_issue in cv_issues:
+        if str(cv_issue.get('issue_number', '')) == issue.numero:
+            return cv_issue.get('image', {}).get('original_url')
+
+    return None
+```
+
 ## 🔄 Flujos de Datos
 
 ### Flujo de Visualización
