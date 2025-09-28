@@ -1,0 +1,21 @@
+# Dependencias para Babelcomics4
+# Comic management application with GTK4
+
+# Database ORM
+SQLAlchemy>=2.0.0
+
+# HTTP requests for ComicVine API
+requests>=2.31.0
+
+# Image processing
+Pillow>=10.0.0
+
+# GTK4 and libadwaita bindings (system packages)
+# Note: Install via system package manager:
+# Ubuntu/Debian: sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1
+# Fedora: sudo dnf install python3-gobject gtk4-devel libadwaita-devel
+# Arch: sudo pacman -S python-gobject gtk4 libadwaita
+
+# Optional: Development tools
+# flake8>=6.0.0
+# black>=23.0.0

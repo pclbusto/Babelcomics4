@@ -1,0 +1,72 @@
+site_name: Babelcomics4 - Gestor de Comics
+site_description: Documentación completa del gestor de colección de comics Babelcomics4
+site_author: Pedro
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Cambiar a modo oscuro
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Cambiar a modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+
+nav:
+  - Inicio: index.md
+  - Guía de Usuario:
+    - Instalación: usuario/instalacion.md
+    - Primeros Pasos: usuario/primeros-pasos.md
+    - Gestión de Comics: usuario/gestion-comics.md
+    - Gestión de Volúmenes: usuario/gestion-volumenes.md
+    - Filtros y Búsqueda: usuario/filtros-busqueda.md
+    - Integración ComicVine: usuario/comicvine.md
+  - Funcionalidades:
+    - Catalogación: funcionalidades/catalogacion.md
+    - Thumbnails: funcionalidades/thumbnails.md
+    - Base de Datos: funcionalidades/base-datos.md
+    - Interfaz GTK4: funcionalidades/interfaz.md
+  - Desarrollo:
+    - Arquitectura: desarrollo/arquitectura.md
+    - Modelos de Datos: desarrollo/modelos.md
+    - Repositorios: desarrollo/repositorios.md
+    - API ComicVine: desarrollo/api-comicvine.md
+  - Referencia:
+    - Configuración: referencia/configuracion.md
+    - Troubleshooting: referencia/troubleshooting.md
+    - FAQ: referencia/faq.md
+
+plugins:
+  - search:
+      lang: es
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+extra:
+  version:
+    provider: mike
