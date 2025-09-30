@@ -55,3 +55,45 @@ class VolumeRepository(BaseRepository):
 
         # 5. Devuelve el objeto recién creado
         return nuevo_volumen
+
+    def get_by_comicvine_id(self, comicvine_id):
+        """
+        Busca un volumen por su ID de ComicVine
+        """
+        return self.session.query(Volume).filter_by(id_comicvine=comicvine_id).first()
+
+    def create_volume(self, volume_data):
+        """
+        Crear un nuevo volumen desde datos de ComicVine
+        """
+        # Verificar si ya existe
+        comicvine_id = volume_data.get('id')
+        existing = self.get_by_comicvine_id(comicvine_id)
+        if existing:
+            print(f"INFO: El volumen con ComicVine ID {comicvine_id} ya existe.")
+            return existing
+
+        # Limpiar año
+        year_str = str(volume_data.get('start_year') or '0')
+        cleaned_year_str = "".join(filter(str.isdigit, year_str))
+        year = int(cleaned_year_str) if cleaned_year_str else 0
+
+        # Crear nuevo volumen
+        nuevo_volumen = Volume(
+            nombre=volume_data.get('name', 'N/A'),
+            deck=volume_data.get('deck', ''),
+            descripcion=volume_data.get('description', ''),
+            url=volume_data.get('site_detail_url', ''),
+            image_url=volume_data.get('image', {}).get('medium_url', ''),
+            id_publisher=volume_data.get('publisher', {}).get('id', 0),
+            anio_inicio=year,
+            cantidad_numeros=volume_data.get('count_of_issues', 0),
+            id_comicvine=comicvine_id
+        )
+
+        # Guardar en base de datos
+        self.session.add(nuevo_volumen)
+        self.session.commit()
+        print(f"INFO: Volumen '{nuevo_volumen.nombre}' creado con ComicVine ID {comicvine_id}")
+
+        return nuevo_volumen

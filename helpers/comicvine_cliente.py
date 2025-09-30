@@ -272,6 +272,42 @@ class ComicVineClient:
         print(f"--- Completada la consulta. Se encontraron {len(all_found_issues)} issues únicos. ---")
         return all_found_issues
 
+    def get_volume_issues(self, volume_id):
+        """
+        Obtener todos los issues de un volumen específico
+        """
+        print(f"\n--- Obteniendo issues del volumen {volume_id} ---")
+        all_issues = []
+        current_offset = 0
+
+        while True:
+            params = {
+                'limit': self.API_RESULTS_LIMIT,
+                'offset': current_offset,
+                'filter': f'volume:{volume_id}'
+            }
+
+            data = self._make_api_request('issues/', params)
+
+            if not data or 'results' not in data:
+                break
+
+            issues_batch = data['results']
+            if not issues_batch:
+                break
+
+            all_issues.extend(issues_batch)
+
+            # Verificar si hay más páginas
+            total_results = data.get('number_of_total_results', 0)
+            if len(all_issues) >= total_results:
+                break
+
+            current_offset += self.API_RESULTS_LIMIT
+
+        print(f"--- Issues obtenidos: {len(all_issues)} ---")
+        return all_issues
+
     def search(self, query, resource_type=None, limit=10, offset=0):
         params = {
             'query': query,
@@ -280,9 +316,9 @@ class ComicVineClient:
         }
         if resource_type:
             params['resources'] = resource_type
-            
+
         data = self._make_api_request('search/', params)
-        
+
         if data and 'results' in data:
             return data['results']
         return []
@@ -293,7 +329,7 @@ if __name__ == "__main__":
     # --- CONFIGURACIÓN (REEMPLAZA ESTO) ---
     # ¡IMPORTANTE! Reemplaza 'TU_API_KEY' con tu clave API real de Comic Vine
     # Puedes obtener una clave API registrándote en Comic Vine (o GameSpot).
-    MY_API_KEY = '7e4368b71c5a66d710a62e996a660024f6a868d4' 
+    MY_API_KEY = '7e4368b71c5a66d710a62e996a660024f6a868d4'
 
     if MY_API_KEY == 'TU_API_KEY':
         print("¡ADVERTENCIA! Por favor, reemplaza 'TU_API_KEY' en el script con tu clave API real de Comic Vine.")

@@ -10,6 +10,7 @@ class Publisher(Base):
     descripcion = Column(String, default='')
     url_logo = Column(String, default='')  # Renombrado de 'url' a 'url_logo'
     sitio_web = Column(String, default='')
+    id_comicvine = Column(Integer, default=None)  # ID de ComicVine para filtros
 
     def __repr__(self):
         return f"<Publisher(id_publisher='{self.id_publisher}', nombre='{self.nombre}', deck='{self.deck}', descripcion='{self.descripcion}')>"

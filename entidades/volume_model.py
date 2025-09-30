@@ -23,13 +23,23 @@ class Volume(Base):
     
     def obtener_cover(self):
         import os
+        # Primero intentar con la ruta local basada en ID (formato esperado)
+        ruta_local = os.path.join("data", "thumbnails", "volumes", f"{self.id_volume}.jpg")
+        print(f"INFO: Obteniendo carátula para el volumen: {self.nombre} ({self.id_volume})")
+        print(f"INFO: Ruta local esperada: {ruta_local}")
+        if os.path.exists(ruta_local):
+            print(f"INFO: Encontrada imagen local: {ruta_local}")
+            return ruta_local
+
+        # Si no existe la local, intentar con image_url (formato antiguo)
         if self.image_url:
             nombre_archivo = self.image_url.rsplit("/", 1)[-1]
-            print(f"INFO: Obteniendo carátula para el volumen: {self.nombre} ({self.id_volume})")
-            print(f"INFO: Nombre del archivo de la imagen: {nombre_archivo}")
-            ruta = os.path.join("data", "thumbnails", "volumenes", nombre_archivo)
-            print(f"INFO: Ruta de la imagen: {ruta}")
-            if os.path.exists(ruta):
-                return ruta
+            ruta_antigua = os.path.join("data", "thumbnails", "volumenes", nombre_archivo)
+            print(f"INFO: Ruta antigua: {ruta_antigua}")
+            if os.path.exists(ruta_antigua):
+                print(f"INFO: Encontrada imagen antigua: {ruta_antigua}")
+                return ruta_antigua
+
+        print(f"INFO: No se encontró imagen para volumen {self.id_volume}, usando placeholder")
         return "images/Volumen_sin_caratula.png"
 

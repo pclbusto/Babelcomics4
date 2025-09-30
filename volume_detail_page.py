@@ -821,11 +821,28 @@ def perform_comicvine_update(volume, session, main_window, tab_view):
             except Exception as e:
                 print(f"Error procesando issue {issue_data.get('issue_number', 'N/A')}: {e}")
 
+        # Actualizar cover del volumen si está disponible
+        volume_cover_updated = False
+        if volume_details.get('image') and volume_details['image'].get('medium_url'):
+            try:
+                show_update_progress(main_window, "Descargando cover del volumen...")
+                cover_url = volume_details['image']['medium_url']
+                cover_path = download_image(cover_url, "data/thumbnails/volumes", f"{volume.id_volume}.jpg")
+                if cover_path:
+                    # Actualizar image_url para mantener consistencia con el modelo
+                    volume.image_url = cover_url
+                    volume_cover_updated = True
+                    print(f"DEBUG: Cover del volumen descargado: {cover_path}")
+                    print(f"DEBUG: image_url actualizada: {cover_url}")
+            except Exception as e:
+                print(f"Error descargando cover del volumen: {e}")
+
         # Confirmar cambios de metadata primero
         session.commit()
 
         # Mostrar resultado de metadata
-        message = f"Metadata actualizada: {new_issues_count} nuevos, {updated_issues_count} actualizados"
+        cover_msg = " + cover actualizado" if volume_cover_updated else ""
+        message = f"Metadata actualizada: {new_issues_count} nuevos, {updated_issues_count} actualizados{cover_msg}"
         show_update_success(main_window, message)
 
         # Refrescar la pestaña de issues
@@ -957,30 +974,30 @@ def download_issue_cover(issue_data, volume, session):
         elif downloaded_new:
             print(f"ERROR: Archivo no se creó después de descarga: {ruta_archivo}")
             return False
-
-            # Buscar el ComicbookInfo correspondiente
-            comic_info = session.query(ComicbookInfo).filter(
-                ComicbookInfo.id_volume == volume.id_volume,
-                ComicbookInfo.numero == str(issue_data.get('issue_number', ''))
-            ).first()
-
-            if comic_info:
-                # Verificar si ya existe el registro de portada
-                from entidades.comicbook_info_cover_model import ComicbookInfoCover
-                existing_cover = session.query(ComicbookInfoCover).filter(
-                    ComicbookInfoCover.id_comicbook_info == comic_info.id_comicbook_info,
-                    ComicbookInfoCover.url_imagen == image_url
-                ).first()
-
-                if not existing_cover:
-                    # Crear registro de portada
-                    new_cover = ComicbookInfoCover()
-                    new_cover.id_comicbook_info = comic_info.id_comicbook_info
-                    new_cover.url_imagen = image_url
-                    session.add(new_cover)
-                    print(f"Agregado registro de portada para issue {comic_info.numero}")
         else:
             print(f"Portada ya existe: {nombre_archivo}")
+
+        # Buscar el ComicbookInfo correspondiente (siempre ejecutar esto)
+        comic_info = session.query(ComicbookInfo).filter(
+            ComicbookInfo.id_volume == volume.id_volume,
+            ComicbookInfo.numero == str(issue_data.get('issue_number', ''))
+        ).first()
+
+        if comic_info:
+            # Verificar si ya existe el registro de portada
+            from entidades.comicbook_info_cover_model import ComicbookInfoCover
+            existing_cover = session.query(ComicbookInfoCover).filter(
+                ComicbookInfoCover.id_comicbook_info == comic_info.id_comicbook_info,
+                ComicbookInfoCover.url_imagen == image_url
+            ).first()
+
+            if not existing_cover:
+                # Crear registro de portada
+                new_cover = ComicbookInfoCover()
+                new_cover.id_comicbook_info = comic_info.id_comicbook_info
+                new_cover.url_imagen = image_url
+                session.add(new_cover)
+                print(f"Agregado registro de portada para issue {comic_info.numero}")
 
         return downloaded_new
 
@@ -1223,7 +1240,7 @@ def refresh_issues_tab_delayed(volume, main_window):
     if hasattr(main_window, 'navigation_view'):
         try:
             # Forzar regeneración de thumbnails
-            main_window.thumbnail_generator.clear_cache()
+            main_window.thumbnail_generator.clear_all_cache()
             # Re-navegar al detalle del volumen para refrescar
             main_window.navigate_to_volume_detail(volume)
         except Exception as e:

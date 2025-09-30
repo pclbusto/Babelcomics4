@@ -97,11 +97,15 @@ class BaseCard(Gtk.Box):
     def load_thumbnail(self, thumbnail_path):
         """Cargar thumbnail en la imagen"""
         try:
-            if os.path.exists(thumbnail_path):
+            if thumbnail_path and os.path.exists(thumbnail_path):
                 self.image.set_filename(thumbnail_path)
                 print(f"✓ Thumbnail cargado: {thumbnail_path}")
             else:
-                print(f"Thumbnail no encontrado: {thumbnail_path}")
+                if not thumbnail_path:
+                    print("Thumbnail path is None, usando placeholder")
+                else:
+                    print(f"Thumbnail no encontrado: {thumbnail_path}")
+                # Mantener el placeholder actual
         except Exception as e:
             print(f"Error cargando thumbnail: {e}")
 

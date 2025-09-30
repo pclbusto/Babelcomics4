@@ -47,6 +47,7 @@ try:
     from selectable_card import SelectableCard, SelectionManager
     from thumbnail_generator import ThumbnailGenerator
     from about_dialog import show_about_dialog
+    from comicvine_download_window import ComicVineDownloadWindow
     print("Módulos locales importados correctamente")
 except ImportError as e:
     print(f"Error importando módulos locales: {e}")
@@ -159,6 +160,16 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         about_action = Gio.SimpleAction.new("show_about", None)
         about_action.connect("activate", self.on_show_about_action)
         self.add_action(about_action)
+
+        # Acción para mostrar Configuración
+        config_action = Gio.SimpleAction.new("show_config", None)
+        config_action.connect("activate", self.on_show_config_action)
+        self.add_action(config_action)
+
+        # Acción para descargar volúmenes
+        download_volumes_action = Gio.SimpleAction.new("download_volumes", None)
+        download_volumes_action.connect("activate", self.on_download_volumes_action)
+        self.add_action(download_volumes_action)
         
     def setup_keyboard_shortcuts(self):
         """Configurar atajos de teclado"""
@@ -265,6 +276,13 @@ class ComicManagerWindow(Adw.ApplicationWindow):
 
         header.pack_end(self.action_box)
 
+        # Botón descargar volúmenes
+        download_volumes_button = Gtk.Button()
+        download_volumes_button.set_icon_name("folder-download-symbolic")
+        download_volumes_button.set_tooltip_text("Descargar volúmenes de ComicVine")
+        download_volumes_button.connect("clicked", self.on_download_volumes_clicked)
+        header.pack_end(download_volumes_button)
+
         # Botón filtros avanzados
         filter_button = Gtk.Button()
         filter_button.set_icon_name("funnel-symbolic")
@@ -279,12 +297,19 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         refresh_button.connect("clicked", self.on_refresh_clicked)
         header.pack_end(refresh_button)
 
-        # Botón About
-        about_button = Gtk.Button()
-        about_button.set_icon_name("help-about-symbolic")
-        about_button.set_tooltip_text("Acerca de Babelcomics4")
-        about_button.connect("clicked", self.on_about_clicked)
-        header.pack_end(about_button)
+        # Botón de menú principal
+        menu_button = Gtk.MenuButton()
+        menu_button.set_icon_name("open-menu-symbolic")
+        menu_button.set_tooltip_text("Menú principal")
+
+        # Crear menú
+        menu_model = Gio.Menu()
+        menu_model.append("Descargar Volúmenes", "win.download_volumes")
+        menu_model.append("Configuración", "win.show_config")
+        menu_model.append("Acerca de", "win.show_about")
+
+        menu_button.set_menu_model(menu_model)
+        header.pack_end(menu_button)
 
         main_box.append(header)
 
@@ -755,9 +780,22 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Mostrar diálogo Acerca de (acción)"""
         show_about_dialog(self)
 
-    def on_about_clicked(self, button):
-        """Mostrar diálogo Acerca de (botón)"""
-        show_about_dialog(self)
+    def on_show_config_action(self, action, parameter):
+        """Mostrar ventana de configuración (acción)"""
+        self.show_config_window()
+
+    def on_download_volumes_action(self, action, parameter):
+        """Mostrar ventana de descarga de volúmenes (acción)"""
+        self.on_download_volumes_clicked(None)
+
+    def show_config_window(self):
+        """Mostrar ventana de configuración"""
+        try:
+            from config_window import show_config_window
+            show_config_window(self)
+        except ImportError as e:
+            print(f"Error importando ventana de configuración: {e}")
+            self.show_toast("Error cargando configuración", "error")
         
     def move_single_item_to_trash(self, item_id):
         """Mover un solo item a la papelera"""
@@ -802,10 +840,17 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         return False
         
     def open_cataloging_window(self, comic_ids):
-        from new_cataloging_window import create_cataloging_window
-        window = create_cataloging_window(self, comic_ids, self.session)
-        if window:
-            window.present()
+        try:
+            from cataloging_window_improved import create_improved_cataloging_window
+            window = create_improved_cataloging_window(self, comic_ids, self.session)
+            if window:
+                window.present()
+        except ImportError:
+            # Fallback a la ventana original
+            from new_cataloging_window import create_cataloging_window
+            window = create_cataloging_window(self, comic_ids, self.session)
+            if window:
+                window.present()
             
     def get_filtered_comics(self):
         """Obtener comics filtrados"""
@@ -971,6 +1016,16 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         except Exception as e:
             print(f"Error abriendo filtros: {e}")
             self.show_toast(f"Error abriendo filtros: {e}", "error")
+
+    def on_download_volumes_clicked(self, button):
+        """Abrir ventana de descarga de volúmenes"""
+        try:
+            download_window = ComicVineDownloadWindow(self, self.session)
+            download_window.present()
+            print("Abriendo ventana de descarga de volúmenes")
+        except Exception as e:
+            print(f"Error abriendo ventana de descarga: {e}")
+            self.show_toast(f"Error abriendo descarga de volúmenes: {e}", "error")
         
     def apply_advanced_filters(self, filters):
         """Aplicar filtros avanzados desde el diálogo"""

@@ -13,3 +13,7 @@ class PublisherRepository(BaseRepository):
     
     def pagina_siguiente(self, pagina_actual, tamanio):
         return super().pagina_siguiente(pagina_actual, tamanio, Publisher)
+
+    def obtener_todas(self):
+        """Obtener todas las editoriales ordenadas por nombre"""
+        return self.session.query(Publisher).order_by(Publisher.nombre).all()
