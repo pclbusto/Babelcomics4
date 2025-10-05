@@ -1,0 +1,2385 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../configuracion/">
+      
+      
+        <link rel="next" href="../faq/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Troubleshooting - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#troubleshooting" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Troubleshooting
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../usuario/instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../funcionalidades/catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../desarrollo/arquitectura/" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../configuracion/" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-comics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-volumenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/filtros-busqueda/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/thumbnails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/base-datos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/interfaz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/modelos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/repositorios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/api-comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuracion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#problemas-comunes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚨 Problemas Comunes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 Problemas Comunes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problemas-de-instalacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas de Instalación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problemas de Instalación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-no-se-pueden-instalar-las-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: No se pueden instalar las dependencias
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-gtk4-no-encontrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: GTK4 no encontrado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-base-de-datos-no-accesible" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: Base de datos no accesible
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-de-rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas de Rendimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problemas de Rendimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-aplicacion-se-ejecuta-lentamente" class="md-nav__link">
+    <span class="md-ellipsis">
+      La aplicación se ejecuta lentamente
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-con-thumbnails" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas con thumbnails
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-con-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas con ComicVine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problemas con ComicVine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-api-key-invalida" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: API Key inválida
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-rate-limit-excedido" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: Rate limit excedido
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problemas de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-base-de-datos-corrupta" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: Base de datos corrupta
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-de-migracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas de migración
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-de-diagnostico" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Herramientas de Diagnóstico
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Herramientas de Diagnóstico">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#script-de-diagnostico-automatico" class="md-nav__link">
+    <span class="md-ellipsis">
+      Script de Diagnóstico Automático
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Script de Diagnóstico Automático">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagnosticpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      diagnostic.py
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recoleccion-de-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recolección de Logs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recolección de Logs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      Log Collector
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obtener-ayuda" class="md-nav__link">
+    <span class="md-ellipsis">
+      📞 Obtener Ayuda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📞 Obtener Ayuda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recursos-de-soporte" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recursos de Soporte
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recursos de Soporte">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentacion-y-comunidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentación y Comunidad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#informacion-para-reportes-de-bugs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información para Reportes de Bugs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-para-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Template para Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#problemas-comunes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚨 Problemas Comunes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 Problemas Comunes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problemas-de-instalacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas de Instalación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problemas de Instalación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-no-se-pueden-instalar-las-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: No se pueden instalar las dependencias
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-gtk4-no-encontrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: GTK4 no encontrado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-base-de-datos-no-accesible" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: Base de datos no accesible
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-de-rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas de Rendimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problemas de Rendimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-aplicacion-se-ejecuta-lentamente" class="md-nav__link">
+    <span class="md-ellipsis">
+      La aplicación se ejecuta lentamente
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-con-thumbnails" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas con thumbnails
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-con-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas con ComicVine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problemas con ComicVine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-api-key-invalida" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: API Key inválida
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-rate-limit-excedido" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: Rate limit excedido
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problemas de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#error-base-de-datos-corrupta" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error: Base de datos corrupta
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problemas-de-migracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas de migración
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-de-diagnostico" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Herramientas de Diagnóstico
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Herramientas de Diagnóstico">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#script-de-diagnostico-automatico" class="md-nav__link">
+    <span class="md-ellipsis">
+      Script de Diagnóstico Automático
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Script de Diagnóstico Automático">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagnosticpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      diagnostic.py
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recoleccion-de-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recolección de Logs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recolección de Logs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      Log Collector
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obtener-ayuda" class="md-nav__link">
+    <span class="md-ellipsis">
+      📞 Obtener Ayuda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📞 Obtener Ayuda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recursos-de-soporte" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recursos de Soporte
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recursos de Soporte">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentacion-y-comunidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentación y Comunidad
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#informacion-para-reportes-de-bugs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información para Reportes de Bugs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-para-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Template para Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="troubleshooting">Troubleshooting</h1>
+<p>Esta guía te ayudará a resolver los problemas más comunes que puedes encontrar al usar Babelcomics4, desde errores de instalación hasta problemas de rendimiento y configuración.</p>
+<h2 id="problemas-comunes">🚨 Problemas Comunes</h2>
+<h3 id="problemas-de-instalacion">Problemas de Instalación</h3>
+<h4 id="error-no-se-pueden-instalar-las-dependencias">Error: No se pueden instalar las dependencias</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Error típico</span>
+ERROR:<span class="w"> </span>Could<span class="w"> </span>not<span class="w"> </span>install<span class="w"> </span>packages<span class="w"> </span>due<span class="w"> </span>to<span class="w"> </span>an<span class="w"> </span>EnvironmentError
+
+<span class="c1"># Soluciones</span>
+<span class="c1"># 1. Actualizar pip</span>
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+
+<span class="c1"># 2. Instalar con usuario actual</span>
+pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>babelcomics4
+
+<span class="c1"># 3. Usar entorno virtual</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>babelcomics_env
+<span class="nb">source</span><span class="w"> </span>babelcomics_env/bin/activate<span class="w">  </span><span class="c1"># Linux/macOS</span>
+babelcomics_env<span class="se">\S</span>cripts<span class="se">\a</span>ctivate<span class="w">     </span><span class="c1"># Windows</span>
+pip<span class="w"> </span>install<span class="w"> </span>babelcomics4
+
+<span class="c1"># 4. Instalar dependencias del sistema (Ubuntu/Debian)</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>python3-dev<span class="w"> </span>python3-pip<span class="w"> </span>python3-gi<span class="w"> </span>python3-gi-cairo<span class="w"> </span>gir1.2-gtk-4.0<span class="w"> </span>gir1.2-adwaita-1
+
+<span class="c1"># 5. Instalar dependencias del sistema (Fedora)</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>python3-devel<span class="w"> </span>python3-pip<span class="w"> </span>python3-gobject<span class="w"> </span>gtk4-devel<span class="w"> </span>libadwaita-devel
+
+<span class="c1"># 6. Instalar dependencias del sistema (Arch)</span>
+sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>python-pip<span class="w"> </span>python-gobject<span class="w"> </span>gtk4<span class="w"> </span>libadwaita
+</code></pre></div>
+<h4 id="error-gtk4-no-encontrado">Error: GTK4 no encontrado</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Error</span>
+ImportError:<span class="w"> </span>cannot<span class="w"> </span>import<span class="w"> </span>name<span class="w"> </span><span class="s1">&#39;Gtk&#39;</span><span class="w"> </span>from<span class="w"> </span><span class="s1">&#39;gi.repository&#39;</span>
+
+<span class="c1"># Verificar instalación de GTK4</span>
+pkg-config<span class="w"> </span>--modversion<span class="w"> </span>gtk4
+
+<span class="c1"># Si no está instalado (Ubuntu/Debian)</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libgtk-4-dev<span class="w"> </span>libadwaita-1-dev
+
+<span class="c1"># Si no está instalado (Fedora)</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>gtk4-devel<span class="w"> </span>libadwaita-devel
+
+<span class="c1"># Si no está instalado (macOS con Homebrew)</span>
+brew<span class="w"> </span>install<span class="w"> </span>gtk4<span class="w"> </span>libadwaita
+
+<span class="c1"># Verificar PyGObject</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from gi.repository import Gtk; print(Gtk._version)&quot;</span>
+</code></pre></div>
+<h4 id="error-base-de-datos-no-accesible">Error: Base de datos no accesible</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Error</span>
+sqlite3.OperationalError:<span class="w"> </span>unable<span class="w"> </span>to<span class="w"> </span>open<span class="w"> </span>database<span class="w"> </span>file
+
+<span class="c1"># Verificar permisos del directorio</span>
+ls<span class="w"> </span>-la<span class="w"> </span>~/.local/share/babelcomics4/
+
+<span class="c1"># Crear directorio si no existe</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>~/.local/share/babelcomics4/database/
+
+<span class="c1"># Verificar permisos de escritura</span>
+touch<span class="w"> </span>~/.local/share/babelcomics4/database/test.db
+rm<span class="w"> </span>~/.local/share/babelcomics4/database/test.db
+
+<span class="c1"># Si hay problemas de permisos</span>
+chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span>~/.local/share/babelcomics4/
+chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>~/.local/share/babelcomics4/database/
+</code></pre></div>
+<h3 id="problemas-de-rendimiento">Problemas de Rendimiento</h3>
+<h4 id="la-aplicacion-se-ejecuta-lentamente">La aplicación se ejecuta lentamente</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Diagnóstico de rendimiento</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">diagnose_performance</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Diagnosticar problemas de rendimiento&quot;&quot;&quot;</span>
+
+    <span class="n">issues</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># 1. Verificar tamaño de base de datos</span>
+    <span class="n">db_size</span> <span class="o">=</span> <span class="n">get_database_size</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">db_size</span> <span class="o">&gt;</span> <span class="mi">500_000_000</span><span class="p">:</span>  <span class="c1"># 500MB</span>
+        <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Base de datos muy grande (&gt;500MB)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 2. Verificar número de comics</span>
+    <span class="n">comic_count</span> <span class="o">=</span> <span class="n">get_comic_count</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">comic_count</span> <span class="o">&gt;</span> <span class="mi">50_000</span><span class="p">:</span>
+        <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Colección muy grande (</span><span class="si">{</span><span class="n">comic_count</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> comics)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 3. Verificar cache de thumbnails</span>
+    <span class="n">cache_size</span> <span class="o">=</span> <span class="n">get_thumbnail_cache_size</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">cache_size</span> <span class="o">&gt;</span> <span class="mi">2_000_000_000</span><span class="p">:</span>  <span class="c1"># 2GB</span>
+        <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Cache de thumbnails muy grande (&gt;2GB)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 4. Verificar memoria disponible</span>
+    <span class="n">available_memory</span> <span class="o">=</span> <span class="n">get_available_memory</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">available_memory</span> <span class="o">&lt;</span> <span class="mi">1_000_000_000</span><span class="p">:</span>  <span class="c1"># 1GB</span>
+        <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Poca memoria disponible (&lt;1GB)&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">issues</span>
+
+<span class="c1"># Soluciones de rendimiento</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">optimize_performance</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimizar rendimiento de la aplicación&quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. Limpiar cache de thumbnails</span>
+    <span class="n">clean_thumbnail_cache</span><span class="p">()</span>
+
+    <span class="c1"># 2. Vacuum de base de datos</span>
+    <span class="n">vacuum_database</span><span class="p">()</span>
+
+    <span class="c1"># 3. Reindexar base de datos</span>
+    <span class="n">reindex_database</span><span class="p">()</span>
+
+    <span class="c1"># 4. Limpiar logs antiguos</span>
+    <span class="n">clean_old_logs</span><span class="p">()</span>
+
+    <span class="c1"># 5. Optimizar configuración</span>
+    <span class="n">optimize_configuration</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="problemas-con-thumbnails">Problemas con thumbnails</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Regenerar thumbnails corruptos</span>
+babelcomics4<span class="w"> </span>--regenerate-thumbnails
+
+<span class="c1"># Limpiar cache de thumbnails</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>~/.local/share/babelcomics4/thumbnails/*
+
+<span class="c1"># Verificar espacio en disco</span>
+df<span class="w"> </span>-h<span class="w"> </span>~/.local/share/babelcomics4/
+
+<span class="c1"># Optimizar configuración de thumbnails</span>
+<span class="c1"># En config.json:</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;thumbnails&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;quality&quot;</span>:<span class="w"> </span><span class="s2">&quot;economy&quot;</span>,<span class="w">  </span><span class="c1"># Reducir calidad</span>
+<span class="w">    </span><span class="s2">&quot;cache_size_limit&quot;</span>:<span class="w"> </span><span class="s2">&quot;500MB&quot;</span>,<span class="w">  </span><span class="c1"># Limitar cache</span>
+<span class="w">    </span><span class="s2">&quot;lazy_loading&quot;</span>:<span class="w"> </span><span class="nb">true</span><span class="w">  </span><span class="c1"># Carga bajo demanda</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<h3 id="problemas-con-comicvine">Problemas con ComicVine</h3>
+<h4 id="error-api-key-invalida">Error: API Key inválida</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verificar configuración de API</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_comicvine_config</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verificar configuración de ComicVine&quot;&quot;&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigurationManager</span><span class="p">()</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comicvine.api_key&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ API Key no configurada&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solución: Configurar API Key en Preferencias&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Probar conexión</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">ComicVineClient</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">test_result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">search_volumes</span><span class="p">(</span><span class="s2">&quot;Batman&quot;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">test_result</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ API Key válida y funcionando&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ API Key inválida o problema de conexión&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Error de conexión: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<span class="c1"># Soluciones para problemas de ComicVine</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_comicvine_issues</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Solucionar problemas comunes de ComicVine&quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. Verificar límites de rate</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Verificando límites de rate...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 2. Limpiar cache de API</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Limpiando cache de API...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 3. Reintentar peticiones fallidas</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reintentando peticiones fallidas...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 4. Verificar conectividad de red</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Verificando conectividad...&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="error-rate-limit-excedido">Error: Rate limit excedido</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Error típico</span>
+ComicVine<span class="w"> </span>API<span class="w"> </span>error:<span class="w"> </span>Rate<span class="w"> </span>limit<span class="w"> </span>exceeded
+
+<span class="c1"># Soluciones en config.json:</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;comicvine&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;request_delay&quot;</span>:<span class="w"> </span><span class="m">2</span>.0,<span class="w">        </span><span class="c1"># Aumentar delay</span>
+<span class="w">    </span><span class="s2">&quot;requests_per_hour&quot;</span>:<span class="w"> </span><span class="m">150</span>,<span class="w">    </span><span class="c1"># Reducir límite</span>
+<span class="w">    </span><span class="s2">&quot;batch_size&quot;</span>:<span class="w"> </span><span class="m">25</span><span class="w">             </span><span class="c1"># Reducir tamaño de lote</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1"># Monitorear uso de API</span>
+tail<span class="w"> </span>-f<span class="w"> </span>~/.local/share/babelcomics4/logs/comicvine.log
+</code></pre></div>
+<h3 id="problemas-de-base-de-datos">Problemas de Base de Datos</h3>
+<h4 id="error-base-de-datos-corrupta">Error: Base de datos corrupta</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Verificar integridad</span>
+<span class="n">PRAGMA</span><span class="w"> </span><span class="n">integrity_check</span><span class="p">;</span>
+
+<span class="c1">-- Si hay corrupción, intentar reparar</span>
+<span class="n">PRAGMA</span><span class="w"> </span><span class="n">quick_check</span><span class="p">;</span>
+
+<span class="c1">-- Backup antes de reparar</span>
+<span class="n">cp</span><span class="w"> </span><span class="o">~/</span><span class="p">.</span><span class="k">local</span><span class="o">/</span><span class="k">share</span><span class="o">/</span><span class="n">babelcomics4</span><span class="o">/</span><span class="k">database</span><span class="o">/</span><span class="n">babelcomics</span><span class="p">.</span><span class="n">db</span><span class="w"> </span><span class="err">\</span>
+<span class="w">   </span><span class="o">~/</span><span class="p">.</span><span class="k">local</span><span class="o">/</span><span class="k">share</span><span class="o">/</span><span class="n">babelcomics4</span><span class="o">/</span><span class="k">database</span><span class="o">/</span><span class="n">babelcomics_backup</span><span class="p">.</span><span class="n">db</span>
+
+<span class="c1">-- Vacuum para optimizar</span>
+<span class="k">VACUUM</span><span class="p">;</span>
+
+<span class="c1">-- Reindexar</span>
+<span class="k">REINDEX</span><span class="p">;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Script de reparación de base de datos</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">repair_database</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reparar base de datos corrupta&quot;&quot;&quot;</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+    <span class="n">db_path</span> <span class="o">=</span> <span class="s2">&quot;~/.local/share/babelcomics4/database/babelcomics.db&quot;</span>
+    <span class="n">backup_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;~/.local/share/babelcomics4/database/backup_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H%M%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.db&quot;</span>
+
+    <span class="c1"># 1. Crear backup</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">backup_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Backup creado: </span><span class="si">{</span><span class="n">backup_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 2. Intentar reparación</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+        <span class="c1"># Verificar integridad</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA integrity_check&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;ok&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Base de datos corrupta: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Intentar exportar/importar datos</span>
+            <span class="n">export_and_reimport_database</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Base de datos íntegra&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Optimizar</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;VACUUM&quot;</span><span class="p">)</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;REINDEX&quot;</span><span class="p">)</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Error reparando base de datos: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Restaurando backup desde: </span><span class="si">{</span><span class="n">backup_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">backup_path</span><span class="p">,</span> <span class="n">db_path</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="problemas-de-migracion">Problemas de migración</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verificar versión de esquema</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_schema_version</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verificar versión del esquema de base de datos&quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+        <span class="c1"># Verificar tabla de versiones</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            SELECT name FROM sqlite_master</span>
+<span class="s2">            WHERE type=&#39;table&#39; AND name=&#39;alembic_version&#39;</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT version_num FROM alembic_version&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Versión de esquema: </span><span class="si">{</span><span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;Unknown&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ Tabla de versiones no encontrada&quot;</span><span class="p">)</span>
+
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Error verificando esquema: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Aplicar migraciones manualmente</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">manual_migration</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aplicar migraciones manualmente&quot;&quot;&quot;</span>
+
+    <span class="c1"># Backup automático</span>
+    <span class="n">create_database_backup</span><span class="p">()</span>
+
+    <span class="c1"># Aplicar migraciones</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">alembic</span><span class="w"> </span><span class="kn">import</span> <span class="n">command</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">alembic.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+
+    <span class="n">alembic_cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;alembic.ini&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">upgrade</span><span class="p">(</span><span class="n">alembic_cfg</span><span class="p">,</span> <span class="s2">&quot;head&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Migraciones aplicadas exitosamente&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Error en migración: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">restore_database_backup</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="herramientas-de-diagnostico">🔧 Herramientas de Diagnóstico</h2>
+<h3 id="script-de-diagnostico-automatico">Script de Diagnóstico Automático</h3>
+<h4 id="diagnosticpy">diagnostic.py</h4>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Script de diagnóstico automático para Babelcomics4</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Babelcomics4Diagnostic</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Herramienta de diagnóstico para Babelcomics4&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_config_dir</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data_dir</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">issues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_full_diagnostic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ejecutar diagnóstico completo&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🔍 Ejecutando diagnóstico de Babelcomics4...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_system_requirements</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_python_environment</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_configuration</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_database</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_file_permissions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_disk_space</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_network_connectivity</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_summary</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">🔧 Ejecutar reparaciones automáticas? (y/n): &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">input</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">auto_repair</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_system_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar requisitos del sistema&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">📋 Verificando requisitos del sistema...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Versión de Python</span>
+        <span class="n">python_version</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span>
+        <span class="k">if</span> <span class="n">python_version</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Python </span><span class="si">{</span><span class="n">python_version</span><span class="o">.</span><span class="n">major</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">python_version</span><span class="o">.</span><span class="n">minor</span><span class="si">}</span><span class="s2"> es muy antiguo (mínimo: 3.9)&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Python </span><span class="si">{</span><span class="n">python_version</span><span class="o">.</span><span class="n">major</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">python_version</span><span class="o">.</span><span class="n">minor</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">python_version</span><span class="o">.</span><span class="n">micro</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Sistema operativo</span>
+        <span class="n">os_info</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;💻 Sistema: </span><span class="si">{</span><span class="n">os_info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Arquitectura</span>
+        <span class="n">arch</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🏗️ Arquitectura: </span><span class="si">{</span><span class="n">arch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verificar GTK4</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">gi.repository</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gtk</span>
+            <span class="n">gtk_version</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Gtk</span><span class="o">.</span><span class="n">get_major_version</span><span class="p">()</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">Gtk</span><span class="o">.</span><span class="n">get_minor_version</span><span class="p">()</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">Gtk</span><span class="o">.</span><span class="n">get_micro_version</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ GTK </span><span class="si">{</span><span class="n">gtk_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;GTK4 no está instalado o no es accesible&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verificar libadwaita</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">gi.repository</span><span class="w"> </span><span class="kn">import</span> <span class="n">Adw</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;✅ libadwaita disponible&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;libadwaita no disponible (interfaz limitada)&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_python_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar entorno de Python&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🐍 Verificando entorno de Python...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verificar dependencias críticas</span>
+        <span class="n">critical_deps</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;sqlalchemy&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;requests&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pillow&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;gi&#39;</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">critical_deps</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">__import__</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ </span><span class="si">{</span><span class="n">dep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dependencia faltante: </span><span class="si">{</span><span class="n">dep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verificar versiones de dependencias</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span>
+            <span class="k">if</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">__version__</span> <span class="o">&lt;</span> <span class="s2">&quot;2.0&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SQLAlchemy </span><span class="si">{</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2"> es antigua (recomendado: 2.0+)&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar configuración&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⚙️ Verificando configuración...&quot;</span><span class="p">)</span>
+
+        <span class="n">config_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;config.json&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">config_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Archivo de configuración no existe (se creará automáticamente)&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="c1"># Verificar estructura básica</span>
+            <span class="n">required_sections</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;application&#39;</span><span class="p">,</span> <span class="s1">&#39;directories&#39;</span><span class="p">,</span> <span class="s1">&#39;comicvine&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">required_sections</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">section</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sección de configuración faltante: </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Verificar directorios de comics</span>
+            <span class="n">comics_paths</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;directories&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comics_paths&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">comics_paths</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;No hay directorios de comics configurados&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">comics_paths</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">)):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directorio de comics no existe: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Verificar API de ComicVine</span>
+            <span class="n">api_key</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comicvine&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;api_key&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;API Key de ComicVine no configurada&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;✅ Configuración cargada correctamente&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Archivo de configuración corrupto&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error leyendo configuración: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar base de datos&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🗄️ Verificando base de datos...&quot;</span><span class="p">)</span>
+
+        <span class="n">db_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;database&quot;</span> <span class="o">/</span> <span class="s2">&quot;babelcomics.db&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">db_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Base de datos no existe (se creará automáticamente)&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+            <span class="c1"># Verificar integridad</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA integrity_check&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;ok&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Base de datos corrupta: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;✅ Integridad de base de datos OK&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Verificar tamaño</span>
+            <span class="n">db_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📊 Tamaño de base de datos: </span><span class="si">{</span><span class="n">db_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Contar registros</span>
+            <span class="n">comic_count</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM comicbooks&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📚 Comics en base de datos: </span><span class="si">{</span><span class="n">comic_count</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error de base de datos: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_file_permissions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar permisos de archivos&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🔐 Verificando permisos...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verificar permisos de directorios</span>
+        <span class="n">dirs_to_check</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config_dir</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;database&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;thumbnails&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;logs&quot;</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">dirs_to_check</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">directory</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">W_OK</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sin permisos de escritura: </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Permisos OK: </span><span class="si">{</span><span class="n">directory</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Directorio creado: </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No se puede crear directorio: </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_disk_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar espacio en disco&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;💾 Verificando espacio en disco...&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+                <span class="n">total</span><span class="p">,</span> <span class="n">used</span><span class="p">,</span> <span class="n">free</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">disk_usage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">statvfs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">statvfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">)</span>
+                <span class="n">free</span> <span class="o">=</span> <span class="n">statvfs</span><span class="o">.</span><span class="n">f_frsize</span> <span class="o">*</span> <span class="n">statvfs</span><span class="o">.</span><span class="n">f_bavail</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="n">statvfs</span><span class="o">.</span><span class="n">f_frsize</span> <span class="o">*</span> <span class="n">statvfs</span><span class="o">.</span><span class="n">f_blocks</span>
+
+            <span class="n">free_gb</span> <span class="o">=</span> <span class="n">free</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">total_gb</span> <span class="o">=</span> <span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;💽 Espacio libre: </span><span class="si">{</span><span class="n">free_gb</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> GB de </span><span class="si">{</span><span class="n">total_gb</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">free_gb</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Espacio en disco muy bajo (&lt;1GB)&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">free_gb</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Espacio en disco bajo (&lt;5GB)&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No se pudo verificar espacio en disco: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_network_connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar conectividad de red&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🌐 Verificando conectividad...&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+            <span class="c1"># Probar conexión a ComicVine</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://comicvine.gamespot.com&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;✅ Conectividad a ComicVine OK&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ComicVine responde con código: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problema de conectividad: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Módulo requests no disponible&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Imprimir resumen del diagnóstico&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;📊 RESUMEN DEL DIAGNÓSTICO&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">❌ PROBLEMAS CRÍTICOS (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="p">)</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   • </span><span class="si">{</span><span class="n">issue</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⚠️ ADVERTENCIAS (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">warning</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   • </span><span class="si">{</span><span class="n">warning</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">✅ INFORMACIÓN (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">)</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">info_item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   • </span><span class="si">{</span><span class="n">info_item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Estado general</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">🎉 ¡Todo funciona perfectamente!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">👍 Sistema funcional con algunas advertencias&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">🔧 Se encontraron </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="p">)</span><span class="si">}</span><span class="s2"> problemas que requieren atención&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">auto_repair</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reparaciones automáticas&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">🔧 Ejecutando reparaciones automáticas...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Crear directorios faltantes</span>
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">directory</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Directorio creado: </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Error creando </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Reparar configuración</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;config.json&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">config_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_default_config</span><span class="p">()</span>
+
+        <span class="c1"># Limpiar cache si hay problemas de espacio</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot;espacio&quot;</span> <span class="ow">in</span> <span class="n">issue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">issues</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clean_cache</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🎯 Reparaciones completadas&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_config_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener directorio de configuración&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="s2">&quot;%APPDATA%&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;Babelcomics4&quot;</span>
+        <span class="k">elif</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;Library&quot;</span> <span class="o">/</span> <span class="s2">&quot;Preferences&quot;</span> <span class="o">/</span> <span class="s2">&quot;com.babelcomics4&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.config&quot;</span> <span class="o">/</span> <span class="s2">&quot;babelcomics4&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_data_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener directorio de datos&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="s2">&quot;%LOCALAPPDATA%&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;Babelcomics4&quot;</span>
+        <span class="k">elif</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;Library&quot;</span> <span class="o">/</span> <span class="s2">&quot;Application Support&quot;</span> <span class="o">/</span> <span class="s2">&quot;Babelcomics4&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.local&quot;</span> <span class="o">/</span> <span class="s2">&quot;share&quot;</span> <span class="o">/</span> <span class="s2">&quot;babelcomics4&quot;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">diagnostic</span> <span class="o">=</span> <span class="n">Babelcomics4Diagnostic</span><span class="p">()</span>
+    <span class="n">diagnostic</span><span class="o">.</span><span class="n">run_full_diagnostic</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="recoleccion-de-logs">Recolección de Logs</h3>
+<h4 id="log-collector">Log Collector</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">collect_diagnostic_logs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recolectar logs para diagnóstico&quot;&quot;&quot;</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+    <span class="n">log_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.local&quot;</span> <span class="o">/</span> <span class="s2">&quot;share&quot;</span> <span class="o">/</span> <span class="s2">&quot;babelcomics4&quot;</span> <span class="o">/</span> <span class="s2">&quot;logs&quot;</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;babelcomics4_logs_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H%M%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.zip&quot;</span>
+
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_file</span><span class="p">:</span>
+        <span class="c1"># Logs de aplicación</span>
+        <span class="k">for</span> <span class="n">log_file</span> <span class="ow">in</span> <span class="n">log_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.log&quot;</span><span class="p">):</span>
+            <span class="n">zip_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;logs/</span><span class="si">{</span><span class="n">log_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Configuración (sin datos sensibles)</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.config&quot;</span> <span class="o">/</span> <span class="s2">&quot;babelcomics4&quot;</span> <span class="o">/</span> <span class="s2">&quot;config.json&quot;</span>
+        <span class="k">if</span> <span class="n">config_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="c1"># Censurar API keys antes de incluir</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">&#39;comicvine&#39;</span> <span class="ow">in</span> <span class="n">config</span> <span class="ow">and</span> <span class="s1">&#39;api_key&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;comicvine&#39;</span><span class="p">]:</span>
+                <span class="n">config</span><span class="p">[</span><span class="s1">&#39;comicvine&#39;</span><span class="p">][</span><span class="s1">&#39;api_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;***CENSORED***&#39;</span>
+
+            <span class="n">zip_file</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="s2">&quot;config.json&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="c1"># Información del sistema</span>
+        <span class="n">system_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;platform&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">(),</span>
+            <span class="s1">&#39;python_version&#39;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+            <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">zip_file</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="s2">&quot;system_info.json&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">system_info</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📦 Logs recolectados en: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_file</span>
+</code></pre></div>
+<h2 id="obtener-ayuda">📞 Obtener Ayuda</h2>
+<h3 id="recursos-de-soporte">Recursos de Soporte</h3>
+<h4 id="documentacion-y-comunidad">Documentación y Comunidad</h4>
+<ul>
+<li><strong>📚 Documentación</strong>: <a href="https://docs.babelcomics.com">docs.babelcomics.com</a></li>
+<li><strong>🐛 Reportar bugs</strong>: <a href="https://github.com/babelcomics4/issues">github.com/babelcomics4/issues</a></li>
+<li><strong>💬 Foro de usuarios</strong>: <a href="https://forum.babelcomics.com">forum.babelcomics.com</a></li>
+<li><strong>💡 Solicitar features</strong>: <a href="https://github.com/babelcomics4/discussions">github.com/babelcomics4/discussions</a></li>
+</ul>
+<h4 id="informacion-para-reportes-de-bugs">Información para Reportes de Bugs</h4>
+<p>Cuando reportes un problema, incluye:</p>
+<ol>
+<li><strong>Versión de Babelcomics4</strong>: <code>babelcomics4 --version</code></li>
+<li><strong>Sistema operativo</strong>: <code>uname -a</code> (Linux/macOS) o <code>systeminfo</code> (Windows)</li>
+<li><strong>Versión de Python</strong>: <code>python --version</code></li>
+<li><strong>Logs relevantes</strong>: Usar el script de recolección de logs</li>
+<li><strong>Pasos para reproducir</strong>: Descripción detallada</li>
+<li><strong>Comportamiento esperado vs actual</strong></li>
+</ol>
+<h4 id="template-para-issues">Template para Issues</h4>
+<div class="highlight"><pre><span></span><code><span class="gu">## Descripción del Problema</span>
+[Descripción clara y concisa del problema]
+
+<span class="gu">## Pasos para Reproducir</span>
+<span class="k">1.</span> Ir a &#39;...&#39;
+<span class="k">2.</span> Hacer click en &#39;....&#39;
+<span class="k">3.</span> Ejecutar &#39;....&#39;
+<span class="k">4.</span> Ver error
+
+<span class="gu">## Comportamiento Esperado</span>
+[Qué esperabas que pasara]
+
+<span class="gu">## Comportamiento Actual</span>
+[Qué pasó realmente]
+
+<span class="gu">## Información del Sistema</span>
+<span class="k">-</span><span class="w"> </span>Babelcomics4 versión: [ej. 4.0.1]
+<span class="k">-</span><span class="w"> </span>OS: [ej. Ubuntu 22.04, Windows 11, macOS 13]
+<span class="k">-</span><span class="w"> </span>Python: [ej. 3.11.2]
+
+<span class="gu">## Logs Adicionales</span>
+[Adjuntar archivo de logs o pegar logs relevantes]
+
+<span class="gu">## Capturas de Pantalla</span>
+[Si aplica, añadir capturas de pantalla]
+</code></pre></div>
+<hr />
+<p><strong>¿Tienes más preguntas?</strong> 👉 <a href="../faq/">FAQ</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

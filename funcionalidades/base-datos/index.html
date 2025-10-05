@@ -1,0 +1,2642 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../thumbnails/">
+      
+      
+        <link rel="next" href="../interfaz/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Base de Datos - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#base-de-datos" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Base de Datos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../usuario/instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../desarrollo/arquitectura/" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../referencia/configuracion/" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-comics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-volumenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/filtros-busqueda/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../thumbnails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-de-la-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ Arquitectura de la Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗄️ Arquitectura de la Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelo-entidad-relacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo Entidad-Relación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tecnologia-y-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tecnología y Stack
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tecnología y Stack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#componentes-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Componentes Principales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modelos-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Modelos de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Modelos de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelo-principal-comicbooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo Principal: Comicbooks
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modelo Principal: Comicbooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definicion-de-la-entidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definición de la Entidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelo-de-informacion-comicbookinfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo de Información: ComicbookInfo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modelo de Información: ComicbookInfo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metadatos-de-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadatos de ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelo-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modelo de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#series-y-colecciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Series y Colecciones
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelo-de-editoriales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo de Editoriales
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modelo de Editoriales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#publishers-y-estudios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishers y Estudios
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operaciones-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Operaciones de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Operaciones de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestor-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestor de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestor de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clase-principal-databasemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clase Principal DatabaseManager
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repositorios-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Repositorios de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Repositorios de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comicrepository" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicRepository
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimizacion-y-rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 Optimización y Rendimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Optimización y Rendimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indices-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Índices de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Índices de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indices-estrategicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Índices Estratégicos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-pooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connection Pooling
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Connection Pooling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-conexiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Conexiones
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migraciones-y-mantenimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Migraciones y Mantenimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Migraciones y Mantenimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sistema-de-migraciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sistema de Migraciones
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sistema de Migraciones">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-esquema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Esquema
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mantenimiento-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mantenimiento de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mantenimiento de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tareas-de-limpieza" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tareas de Limpieza
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interfaz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/modelos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/repositorios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/api-comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/configuracion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-de-la-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ Arquitectura de la Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗄️ Arquitectura de la Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelo-entidad-relacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo Entidad-Relación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tecnologia-y-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tecnología y Stack
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tecnología y Stack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#componentes-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Componentes Principales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modelos-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Modelos de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Modelos de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelo-principal-comicbooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo Principal: Comicbooks
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modelo Principal: Comicbooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definicion-de-la-entidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definición de la Entidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelo-de-informacion-comicbookinfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo de Información: ComicbookInfo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modelo de Información: ComicbookInfo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metadatos-de-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadatos de ComicVine
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelo-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modelo de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#series-y-colecciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Series y Colecciones
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelo-de-editoriales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelo de Editoriales
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modelo de Editoriales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#publishers-y-estudios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishers y Estudios
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operaciones-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Operaciones de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Operaciones de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestor-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestor de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestor de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clase-principal-databasemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clase Principal DatabaseManager
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repositorios-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Repositorios de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Repositorios de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comicrepository" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicRepository
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimizacion-y-rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 Optimización y Rendimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Optimización y Rendimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indices-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Índices de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Índices de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indices-estrategicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Índices Estratégicos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-pooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connection Pooling
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Connection Pooling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-conexiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Conexiones
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migraciones-y-mantenimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Migraciones y Mantenimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Migraciones y Mantenimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sistema-de-migraciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sistema de Migraciones
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sistema de Migraciones">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-esquema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Esquema
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mantenimiento-de-base-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mantenimiento de Base de Datos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mantenimiento de Base de Datos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tareas-de-limpieza" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tareas de Limpieza
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="base-de-datos">Base de Datos</h1>
+<p>Babelcomics4 utiliza un sistema de base de datos robusto basado en SQLAlchemy ORM y SQLite, diseñado para gestionar eficientemente grandes colecciones de comics con integridad referencial y rendimiento optimizado.</p>
+<h2 id="arquitectura-de-la-base-de-datos">🗄️ Arquitectura de la Base de Datos</h2>
+<h3 id="modelo-entidad-relacion">Modelo Entidad-Relación</h3>
+<div class="highlight"><pre><span></span><code>erDiagram
+    COMICBOOKS ||--o| COMICBOOKS_INFO : &quot;puede tener&quot;
+    COMICBOOKS_INFO ||--|| VOLUMENS : &quot;pertenece a&quot;
+    VOLUMENS ||--|| PUBLISHERS : &quot;publicado por&quot;
+    COMICBOOKS_INFO ||--o{ COMICBOOKS_INFO_COVERS : &quot;tiene portadas&quot;
+    COMICBOOKS_INFO ||--o{ PEOPLE_COMICBOOKS_INFO : &quot;tiene equipo creativo&quot;
+    PEOPLE ||--o{ PEOPLE_COMICBOOKS_INFO : &quot;trabaja en&quot;
+    COMICBOOKS_INFO ||--o{ CHARACTERS_COMICBOOKS_INFO : &quot;presenta personajes&quot;
+    CHARACTERS ||--o{ CHARACTERS_COMICBOOKS_INFO : &quot;aparece en&quot;
+
+    COMICBOOKS {
+        string id_comicbook PK
+        string path
+        string filename
+        integer tamaño
+        string id_comicbook_info FK
+        boolean en_papelera
+        integer calidad
+        datetime fecha_agregado
+    }
+
+    COMICBOOKS_INFO {
+        string id_comicbook_info PK
+        string titulo
+        string numero
+        date fecha_tapa
+        text resumen
+        string url_api_detalle
+        string url_sitio_web
+        float calificacion
+        integer id_comicvine
+        string id_volume FK
+    }
+
+    VOLUMENS {
+        string id_volume PK
+        string nombre
+        integer anio_inicio
+        integer anio_fin
+        string resumen
+        integer cantidad_numeros
+        string id_publisher FK
+        integer id_comicvine
+    }
+
+    PUBLISHERS {
+        string id_publisher PK
+        string nombre
+        string resumen
+        integer id_comicvine
+    }
+
+    PEOPLE {
+        string id_person PK
+        string nombre
+        string resumen
+        integer id_comicvine
+    }
+
+    CHARACTERS {
+        string id_character PK
+        string nombre
+        string resumen
+        integer id_comicvine
+    }
+</code></pre></div>
+<h3 id="tecnologia-y-stack">Tecnología y Stack</h3>
+<h4 id="componentes-principales">Componentes Principales</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Stack de base de datos</span>
+<span class="n">DATABASE_STACK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;ORM&#39;</span><span class="p">:</span> <span class="s1">&#39;SQLAlchemy 2.0+&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Engine&#39;</span><span class="p">:</span> <span class="s1">&#39;SQLite 3.x&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Connection_Pool&#39;</span><span class="p">:</span> <span class="s1">&#39;SQLAlchemy Pool&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Migration&#39;</span><span class="p">:</span> <span class="s1">&#39;Alembic&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Schema_Validation&#39;</span><span class="p">:</span> <span class="s1">&#39;Pydantic&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Query_Builder&#39;</span><span class="p">:</span> <span class="s1">&#39;SQLAlchemy Core/ORM&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Configuración de conexión</span>
+<span class="n">DATABASE_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;sqlite:///data/babelcomics.db&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;echo&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># SQL logging</span>
+    <span class="s1">&#39;pool_size&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s1">&#39;max_overflow&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="s1">&#39;pool_timeout&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="s1">&#39;pool_recycle&#39;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+    <span class="s1">&#39;isolation_level&#39;</span><span class="p">:</span> <span class="s1">&#39;READ_UNCOMMITTED&#39;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="modelos-de-datos">📊 Modelos de Datos</h2>
+<h3 id="modelo-principal-comicbooks">Modelo Principal: Comicbooks</h3>
+<h4 id="definicion-de-la-entidad">Definición de la Entidad</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">,</span> <span class="n">ForeignKey</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">relationship</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.declarative</span><span class="w"> </span><span class="kn">import</span> <span class="n">declarative_base</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Comicbook</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modelo principal para archivos de comics&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;comicbooks&#39;</span>
+
+    <span class="c1"># Clave primaria</span>
+    <span class="n">id_comicbook</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
+
+    <span class="c1"># Información del archivo</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">tamaño</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Tamaño en bytes</span>
+
+    <span class="c1"># Estado y metadatos</span>
+    <span class="n">en_papelera</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Boolean</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">calidad</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 0-5 estrellas</span>
+    <span class="n">fecha_agregado</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">)</span>
+
+    <span class="c1"># Relación con información de comic (opcional)</span>
+    <span class="n">id_comicbook_info</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;comicbooks_info.id_comicbook_info&#39;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Relaciones</span>
+    <span class="n">comic_info</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;ComicbookInfo&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;owned_comics&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_cataloged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar si el comic está catalogado&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar si el archivo físico existe&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_size_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tamaño del archivo en MB&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tamaño</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tamaño</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Comicbook(filename=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39;, cataloged=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">is_cataloged</span><span class="si">}</span><span class="s2">)&gt;&quot;</span>
+</code></pre></div>
+<h3 id="modelo-de-informacion-comicbookinfo">Modelo de Información: ComicbookInfo</h3>
+<h4 id="metadatos-de-comicvine">Metadatos de ComicVine</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ComicbookInfo</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Información detallada del comic desde ComicVine&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;comicbooks_info&#39;</span>
+
+    <span class="c1"># Clave primaria</span>
+    <span class="n">id_comicbook_info</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
+
+    <span class="c1"># Información básica</span>
+    <span class="n">titulo</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">numero</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Puede ser &quot;1&quot;, &quot;1.1&quot;, &quot;Annual 1&quot;, etc.</span>
+    <span class="n">fecha_tapa</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Date</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">resumen</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># URLs y referencias</span>
+    <span class="n">url_api_detalle</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">url_sitio_web</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Calificación y métricas</span>
+    <span class="n">calificacion</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># Calificación de ComicVine</span>
+
+    <span class="c1"># Referencias externas</span>
+    <span class="n">id_comicvine</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">id_volume</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;volumens.id_volume&#39;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Relaciones</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Volume&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;issues&quot;</span><span class="p">)</span>
+    <span class="n">owned_comics</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Comicbook&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;comic_info&quot;</span><span class="p">)</span>
+    <span class="n">portadas</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;ComicbookInfoCover&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;comic_info&quot;</span><span class="p">,</span> <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all, delete-orphan&quot;</span><span class="p">)</span>
+    <span class="n">equipo_creativo</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;PersonComicbookInfo&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;comic_info&quot;</span><span class="p">)</span>
+    <span class="n">personajes</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;CharacterComicbookInfo&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;comic_info&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Título para mostrar en UI&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numero</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s2"> #</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">numero</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">titulo</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">year</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Año de la fecha de tapa&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fecha_tapa</span><span class="o">.</span><span class="n">year</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fecha_tapa</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_cover_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar si tiene imagen de portada&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">portadas</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;ComicbookInfo(title=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">titulo</span><span class="si">}</span><span class="s2">&#39;, number=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">numero</span><span class="si">}</span><span class="s2">&#39;)&gt;&quot;</span>
+</code></pre></div>
+<h3 id="modelo-de-volumenes">Modelo de Volúmenes</h3>
+<h4 id="series-y-colecciones">Series y Colecciones</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Volume</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Volúmenes de comics (series)&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;volumens&#39;</span>
+
+    <span class="c1"># Clave primaria</span>
+    <span class="n">id_volume</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
+
+    <span class="c1"># Información básica</span>
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">anio_inicio</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">anio_fin</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">resumen</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cantidad_numeros</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Referencias externas</span>
+    <span class="n">id_comicvine</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">id_publisher</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;publishers.id_publisher&#39;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Metadatos adicionales</span>
+    <span class="n">estado</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;unknown&#39;</span><span class="p">)</span>  <span class="c1"># ongoing, completed, cancelled</span>
+    <span class="n">tipo</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;regular&#39;</span><span class="p">)</span>    <span class="c1"># regular, mini-series, one-shot</span>
+
+    <span class="c1"># Relaciones</span>
+    <span class="n">publisher</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Publisher&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;volumes&quot;</span><span class="p">)</span>
+    <span class="n">issues</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;ComicbookInfo&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;volume&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Nombre para mostrar con años&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">anio_inicio</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">anio_fin</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">anio_fin</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anio_inicio</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">anio_inicio</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">anio_fin</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">anio_inicio</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nombre</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">issues_in_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Número de issues en la colección&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">([</span><span class="n">issue</span> <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">issues</span> <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">owned_comics</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">completion_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Porcentaje de completitud de la colección&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cantidad_numeros</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">issues_in_collection</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cantidad_numeros</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar si la colección está completa&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">completion_percentage</span> <span class="o">&gt;=</span> <span class="mi">100</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Volume(name=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2">&#39;, year=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">anio_inicio</span><span class="si">}</span><span class="s2">)&gt;&quot;</span>
+</code></pre></div>
+<h3 id="modelo-de-editoriales">Modelo de Editoriales</h3>
+<h4 id="publishers-y-estudios">Publishers y Estudios</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Publisher</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Editoriales de comics&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;publishers&#39;</span>
+
+    <span class="c1"># Clave primaria</span>
+    <span class="n">id_publisher</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
+
+    <span class="c1"># Información básica</span>
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">resumen</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Referencias externas</span>
+    <span class="n">id_comicvine</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Metadatos adicionales</span>
+    <span class="n">sitio_web</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pais</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">anio_fundacion</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Relaciones</span>
+    <span class="n">volumes</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Volume&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;publisher&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">volume_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Número de volúmenes de esta editorial&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">comic_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Número total de comics de esta editorial&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">issues_in_collection</span> <span class="k">for</span> <span class="n">volume</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Publisher(name=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2">&#39;)&gt;&quot;</span>
+</code></pre></div>
+<h2 id="operaciones-de-base-de-datos">🔧 Operaciones de Base de Datos</h2>
+<h3 id="gestor-de-base-de-datos">Gestor de Base de Datos</h3>
+<h4 id="clase-principal-databasemanager">Clase Principal DatabaseManager</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">sessionmaker</span><span class="p">,</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticPool</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DatabaseManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gestor centralizado de la base de datos&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database_url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_url</span> <span class="o">=</span> <span class="n">database_url</span> <span class="ow">or</span> <span class="s2">&quot;sqlite:///data/babelcomics.db&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SessionLocal</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_database</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inicializar conexión y configuración de la base de datos&quot;&quot;&quot;</span>
+
+        <span class="c1"># Crear directorio de datos si no existe</span>
+        <span class="n">db_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;sqlite:///&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">db_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Configurar engine con optimizaciones para SQLite</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="p">,</span>
+            <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">poolclass</span><span class="o">=</span><span class="n">StaticPool</span><span class="p">,</span>
+            <span class="n">pool_pre_ping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">connect_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;check_same_thread&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                <span class="s2">&quot;isolation_level&quot;</span><span class="p">:</span> <span class="kc">None</span>  <span class="c1"># Para transacciones manuales</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Configurar factory de sesiones</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SessionLocal</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span>
+            <span class="n">autocommit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">autoflush</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Crear tablas si no existen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_tables</span><span class="p">()</span>
+
+        <span class="c1"># Aplicar optimizaciones de SQLite</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimize_sqlite</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear todas las tablas del modelo&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tablas de base de datos creadas/verificadas exitosamente&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error creando tablas: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_optimize_sqlite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Aplicar optimizaciones específicas de SQLite&quot;&quot;&quot;</span>
+
+        <span class="n">optimizations</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;PRAGMA journal_mode=WAL&quot;</span><span class="p">,</span>           <span class="c1"># Write-Ahead Logging</span>
+            <span class="s2">&quot;PRAGMA synchronous=NORMAL&quot;</span><span class="p">,</span>         <span class="c1"># Balance seguridad/rendimiento</span>
+            <span class="s2">&quot;PRAGMA cache_size=10000&quot;</span><span class="p">,</span>           <span class="c1"># Cache de 10MB</span>
+            <span class="s2">&quot;PRAGMA temp_store=MEMORY&quot;</span><span class="p">,</span>          <span class="c1"># Temporales en memoria</span>
+            <span class="s2">&quot;PRAGMA mmap_size=268435456&quot;</span><span class="p">,</span>        <span class="c1"># Memory mapping 256MB</span>
+            <span class="s2">&quot;PRAGMA optimize&quot;</span>                    <span class="c1"># Optimización automática</span>
+        <span class="p">]</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">pragma</span> <span class="ow">in</span> <span class="n">optimizations</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="n">pragma</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: No se pudo aplicar </span><span class="si">{</span><span class="n">pragma</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Session</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener nueva sesión de base de datos&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SessionLocal</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cerrar conexiones de base de datos&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="repositorios-de-datos">Repositorios de Datos</h3>
+<h4 id="comicrepository">ComicRepository</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">func</span><span class="p">,</span> <span class="n">and_</span><span class="p">,</span> <span class="n">or_</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicRepository</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Repositorio para operaciones con comics&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_comics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_trash</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Comicbook</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener todos los comics&quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_trash</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">en_papelera</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_comic_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Comicbook</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener comic por ID&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook</span> <span class="o">==</span> <span class="n">comic_id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_comic_by_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Comicbook</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener comic por ruta de archivo&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Comicbook</span><span class="o">.</span><span class="n">path</span> <span class="o">==</span> <span class="n">path</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_comics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_term</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Comicbook</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Buscar comics con filtros&quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span>
+
+        <span class="c1"># Búsqueda por texto</span>
+        <span class="k">if</span> <span class="n">search_term</span><span class="p">:</span>
+            <span class="n">search_filter</span> <span class="o">=</span> <span class="n">or_</span><span class="p">(</span>
+                <span class="n">Comicbook</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">ilike</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;%</span><span class="si">{</span><span class="n">search_term</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">),</span>
+                <span class="n">Comicbook</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">ilike</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;%</span><span class="si">{</span><span class="n">search_term</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Si el comic tiene información catalogada, buscar también ahí</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span>
+            <span class="n">search_filter</span> <span class="o">=</span> <span class="n">or_</span><span class="p">(</span>
+                <span class="n">search_filter</span><span class="p">,</span>
+                <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">titulo</span><span class="o">.</span><span class="n">ilike</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;%</span><span class="si">{</span><span class="n">search_term</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">search_filter</span><span class="p">)</span>
+
+        <span class="c1"># Aplicar filtros</span>
+        <span class="k">if</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="c1"># Filtro de clasificación</span>
+            <span class="k">if</span> <span class="s1">&#39;classification&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;classification&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;cataloged&#39;</span><span class="p">:</span>
+                    <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook_info</span><span class="o">.</span><span class="n">isnot</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;classification&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;uncataloged&#39;</span><span class="p">:</span>
+                    <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                        <span class="n">or_</span><span class="p">(</span>
+                            <span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook_info</span><span class="o">.</span><span class="n">is_</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+                            <span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># Filtro de calidad</span>
+            <span class="k">if</span> <span class="s1">&#39;quality_range&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+                <span class="n">min_quality</span><span class="p">,</span> <span class="n">max_quality</span> <span class="o">=</span> <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;quality_range&#39;</span><span class="p">]</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">and_</span><span class="p">(</span>
+                        <span class="n">Comicbook</span><span class="o">.</span><span class="n">calidad</span> <span class="o">&gt;=</span> <span class="n">min_quality</span><span class="p">,</span>
+                        <span class="n">Comicbook</span><span class="o">.</span><span class="n">calidad</span> <span class="o">&lt;=</span> <span class="n">max_quality</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Filtro de papelera</span>
+            <span class="k">if</span> <span class="s1">&#39;include_trash&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;include_trash&#39;</span><span class="p">]:</span>
+                    <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">en_papelera</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">en_papelera</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1"># Filtro de tamaño de archivo</span>
+            <span class="k">if</span> <span class="s1">&#39;size_range&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+                <span class="n">min_size</span><span class="p">,</span> <span class="n">max_size</span> <span class="o">=</span> <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;size_range&#39;</span><span class="p">]</span>
+                <span class="n">min_bytes</span> <span class="o">=</span> <span class="n">min_size</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1"># Convertir MB a bytes</span>
+                <span class="n">max_bytes</span> <span class="o">=</span> <span class="n">max_size</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">and_</span><span class="p">(</span>
+                        <span class="n">Comicbook</span><span class="o">.</span><span class="n">tamaño</span> <span class="o">&gt;=</span> <span class="n">min_bytes</span><span class="p">,</span>
+                        <span class="n">Comicbook</span><span class="o">.</span><span class="n">tamaño</span> <span class="o">&lt;=</span> <span class="n">max_bytes</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_comics_by_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Comicbook</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener comics de un volumen específico&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">id_volume</span> <span class="o">==</span> <span class="n">volume_id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_uncataloged_comics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Comicbook</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener comics sin catalogar&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">or_</span><span class="p">(</span>
+                <span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook_info</span><span class="o">.</span><span class="n">is_</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span>
+            <span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">en_papelera</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_collection_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener estadísticas de la colección&quot;&quot;&quot;</span>
+
+        <span class="c1"># Conteos básicos</span>
+        <span class="n">total_comics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook</span><span class="p">))</span><span class="o">.</span><span class="n">scalar</span><span class="p">()</span>
+
+        <span class="n">cataloged_comics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook</span><span class="p">))</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook_info</span><span class="o">.</span><span class="n">isnot</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+            <span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">scalar</span><span class="p">()</span>
+
+        <span class="n">trash_comics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook</span><span class="p">))</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Comicbook</span><span class="o">.</span><span class="n">en_papelera</span> <span class="o">==</span> <span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">scalar</span><span class="p">()</span>
+
+        <span class="c1"># Distribución por calidad</span>
+        <span class="n">quality_distribution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="n">Comicbook</span><span class="o">.</span><span class="n">calidad</span><span class="p">,</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">calidad</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+        <span class="c1"># Tamaño total de la colección</span>
+        <span class="n">total_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">tamaño</span><span class="p">))</span><span class="o">.</span><span class="n">scalar</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;total_comics&#39;</span><span class="p">:</span> <span class="n">total_comics</span><span class="p">,</span>
+            <span class="s1">&#39;cataloged_comics&#39;</span><span class="p">:</span> <span class="n">cataloged_comics</span><span class="p">,</span>
+            <span class="s1">&#39;uncataloged_comics&#39;</span><span class="p">:</span> <span class="n">total_comics</span> <span class="o">-</span> <span class="n">cataloged_comics</span><span class="p">,</span>
+            <span class="s1">&#39;trash_comics&#39;</span><span class="p">:</span> <span class="n">trash_comics</span><span class="p">,</span>
+            <span class="s1">&#39;quality_distribution&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">quality_distribution</span><span class="p">),</span>
+            <span class="s1">&#39;total_size_bytes&#39;</span><span class="p">:</span> <span class="n">total_size</span><span class="p">,</span>
+            <span class="s1">&#39;total_size_gb&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">total_size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="s1">&#39;catalog_percentage&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">((</span><span class="n">cataloged_comics</span> <span class="o">/</span> <span class="n">total_comics</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">total_comics</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_comic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Comicbook</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear nuevo comic&quot;&quot;&quot;</span>
+        <span class="n">comic</span> <span class="o">=</span> <span class="n">Comicbook</span><span class="p">(</span><span class="o">**</span><span class="n">comic_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>  <span class="c1"># Para obtener el ID generado</span>
+        <span class="k">return</span> <span class="n">comic</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_comic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Comicbook</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualizar comic existente&quot;&quot;&quot;</span>
+        <span class="n">comic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_comic_by_id</span><span class="p">(</span><span class="n">comic_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">comic</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">updates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">comic</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">comic</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">comic</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_comic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Eliminar comic (físicamente de la BD)&quot;&quot;&quot;</span>
+        <span class="n">comic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_comic_by_id</span><span class="p">(</span><span class="n">comic_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">comic</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">move_to_trash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mover comic a papelera&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_comic</span><span class="p">(</span><span class="n">comic_id</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;en_papelera&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">restore_from_trash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restaurar comic de papelera&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_comic</span><span class="p">(</span><span class="n">comic_id</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;en_papelera&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</code></pre></div>
+<h2 id="optimizacion-y-rendimiento">🚀 Optimización y Rendimiento</h2>
+<h3 id="indices-de-base-de-datos">Índices de Base de Datos</h3>
+<h4 id="indices-estrategicos">Índices Estratégicos</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_performance_indexes</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Crear índices para optimizar consultas frecuentes&quot;&quot;&quot;</span>
+
+    <span class="n">indexes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># Índices para búsquedas</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicbooks_filename ON comicbooks(filename)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicbooks_path ON comicbooks(path)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicbooks_quality ON comicbooks(calidad)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># Índices para filtros</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicbooks_trash ON comicbooks(en_papelera)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicbooks_cataloged ON comicbooks(id_comicbook_info)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicbooks_size ON comicbooks(tamaño)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicbooks_date ON comicbooks(fecha_agregado)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># Índices para información de comics</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicinfo_title ON comicbooks_info(titulo)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicinfo_volume ON comicbooks_info(id_volume)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicinfo_comicvine ON comicbooks_info(id_comicvine)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comicinfo_coverdate ON comicbooks_info(fecha_tapa)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># Índices para volúmenes</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_volumes_name ON volumens(nombre)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_volumes_publisher ON volumens(id_publisher)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_volumes_year ON volumens(anio_inicio)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_volumes_comicvine ON volumens(id_comicvine)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># Índices compuestos para consultas complejas</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comics_status ON comicbooks(en_papelera, calidad)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX IF NOT EXISTS idx_comics_catalog_quality ON comicbooks(id_comicbook_info, calidad)&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">indexes</span>
+</code></pre></div>
+<h3 id="connection-pooling">Connection Pooling</h3>
+<h4 id="gestion-de-conexiones">Gestión de Conexiones</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OptimizedDatabaseManager</span><span class="p">(</span><span class="n">DatabaseManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Versión optimizada del gestor de base de datos&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pool_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool_config</span> <span class="o">=</span> <span class="n">pool_config</span> <span class="ow">or</span> <span class="p">{</span>
+            <span class="s1">&#39;pool_size&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s1">&#39;max_overflow&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+            <span class="s1">&#39;pool_timeout&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+            <span class="s1">&#39;pool_recycle&#39;</span><span class="p">:</span> <span class="mi">3600</span>
+        <span class="p">}</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">database_url</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inicialización optimizada con pooling&quot;&quot;&quot;</span>
+
+        <span class="n">db_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;sqlite:///&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">db_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Engine optimizado para concurrencia</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">database_url</span><span class="p">,</span>
+            <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">poolclass</span><span class="o">=</span><span class="n">StaticPool</span><span class="p">,</span>
+            <span class="n">pool_pre_ping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pool_config</span><span class="p">,</span>
+            <span class="n">connect_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;check_same_thread&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">20</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Configuración de sesiones con autocommit optimizado</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SessionLocal</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span>
+            <span class="n">autocommit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">autoflush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Flush automático para mejor rendimiento</span>
+            <span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span>
+            <span class="n">expire_on_commit</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Evitar consultas innecesarias</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_tables</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimize_sqlite</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_indexes</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear índices de rendimiento&quot;&quot;&quot;</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">create_performance_indexes</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">index_sql</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="n">index_sql</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning creando índice: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bulk_insert_comics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comics_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserción masiva optimizada&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">comics</span> <span class="o">=</span> <span class="p">[</span><span class="n">Comicbook</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">comics_data</span><span class="p">]</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">add_all</span><span class="p">(</span><span class="n">comics</span><span class="p">)</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">comic</span><span class="o">.</span><span class="n">id_comicbook</span> <span class="k">for</span> <span class="n">comic</span> <span class="ow">in</span> <span class="n">comics</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bulk_update_comics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualización masiva optimizada&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="n">text</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                        UPDATE comicbooks</span>
+<span class="s2">                        SET calidad = :quality,</span>
+<span class="s2">                            id_comicbook_info = :comic_info_id</span>
+<span class="s2">                        WHERE id_comicbook = :comic_id</span>
+<span class="s2">                    &quot;&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">updates</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">rowcount</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span>
+</code></pre></div>
+<h2 id="migraciones-y-mantenimiento">🔄 Migraciones y Mantenimiento</h2>
+<h3 id="sistema-de-migraciones">Sistema de Migraciones</h3>
+<h4 id="gestion-de-esquema">Gestión de Esquema</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">alembic</span><span class="w"> </span><span class="kn">import</span> <span class="n">command</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alembic.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alembic.script</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScriptDirectory</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MigrationManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gestor de migraciones de base de datos&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database_manager</span><span class="p">:</span> <span class="n">DatabaseManager</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span> <span class="o">=</span> <span class="n">database_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alembic_cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;alembic.ini&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alembic_cfg</span><span class="o">.</span><span class="n">set_main_option</span><span class="p">(</span><span class="s2">&quot;sqlalchemy.url&quot;</span><span class="p">,</span> <span class="n">database_manager</span><span class="o">.</span><span class="n">database_url</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_migration_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar estado de migraciones&quot;&quot;&quot;</span>
+        <span class="n">script</span> <span class="o">=</span> <span class="n">ScriptDirectory</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alembic_cfg</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="n">script</span><span class="o">.</span><span class="n">get_current_head</span><span class="p">()</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="n">text</span><span class="p">(</span><span class="s2">&quot;SELECT version_num FROM alembic_version&quot;</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">scalar</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;current_version&#39;</span><span class="p">:</span> <span class="n">current</span><span class="p">,</span>
+                <span class="s1">&#39;latest_version&#39;</span><span class="p">:</span> <span class="n">context</span><span class="p">,</span>
+                <span class="s1">&#39;needs_upgrade&#39;</span><span class="p">:</span> <span class="n">current</span> <span class="o">!=</span> <span class="n">context</span>
+            <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">upgrade_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revision</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ejecutar migraciones pendientes&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">command</span><span class="o">.</span><span class="n">upgrade</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alembic_cfg</span><span class="p">,</span> <span class="n">revision</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error en migración: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_migration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear nueva migración&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">command</span><span class="o">.</span><span class="n">revision</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alembic_cfg</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">autogenerate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error creando migración: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<h3 id="mantenimiento-de-base-de-datos">Mantenimiento de Base de Datos</h3>
+<h4 id="tareas-de-limpieza">Tareas de Limpieza</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DatabaseMaintenance</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Herramientas de mantenimiento de base de datos&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database_manager</span><span class="p">:</span> <span class="n">DatabaseManager</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span> <span class="o">=</span> <span class="n">database_manager</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">vacuum_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimizar y compactar base de datos&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;VACUUM&quot;</span><span class="p">))</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;ANALYZE&quot;</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_integrity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verificar integridad de la base de datos&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+            <span class="c1"># Verificar integridad SQLite</span>
+            <span class="n">integrity_result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;PRAGMA integrity_check&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+            <span class="c1"># Verificar foreign keys</span>
+            <span class="n">fk_result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_key_check&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;integrity_ok&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">integrity_result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">integrity_result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ok&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;integrity_errors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">integrity_result</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;ok&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;foreign_key_ok&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">fk_result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;foreign_key_errors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fk_result</span><span class="p">]</span>
+            <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup_orphaned_records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Limpiar registros huérfanos&quot;&quot;&quot;</span>
+
+        <span class="n">cleanup_counts</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Limpiar ComicbookInfo sin comics</span>
+                <span class="n">orphaned_infos</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="o">~</span><span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">owned_comics</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">orphaned_infos</span><span class="p">:</span>
+                    <span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                <span class="n">cleanup_counts</span><span class="p">[</span><span class="s1">&#39;orphaned_comic_infos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">orphaned_infos</span><span class="p">)</span>
+
+                <span class="c1"># Limpiar portadas huérfanas</span>
+                <span class="n">orphaned_covers</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ComicbookInfoCover</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="o">~</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                        <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="o">==</span> <span class="n">ComicbookInfoCover</span><span class="o">.</span><span class="n">id_comicbook_info</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">cover</span> <span class="ow">in</span> <span class="n">orphaned_covers</span><span class="p">:</span>
+                    <span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">cover</span><span class="p">)</span>
+
+                <span class="n">cleanup_counts</span><span class="p">[</span><span class="s1">&#39;orphaned_covers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">orphaned_covers</span><span class="p">)</span>
+
+                <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="k">return</span> <span class="n">cleanup_counts</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_volume_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualizar estadísticas de volúmenes&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">volumes</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Volume</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">volume</span> <span class="ow">in</span> <span class="n">volumes</span><span class="p">:</span>
+                    <span class="c1"># Contar issues en colección</span>
+                    <span class="n">issue_count</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                        <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">id_volume</span> <span class="o">==</span> <span class="n">volume</span><span class="o">.</span><span class="n">id_volume</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+                    <span class="n">volume</span><span class="o">.</span><span class="n">cantidad_numeros</span> <span class="o">=</span> <span class="n">issue_count</span>
+
+                <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">e</span>
+</code></pre></div>
+<hr />
+<p><strong>¿Quieres conocer más sobre la interfaz GTK4?</strong> 👉 <a href="../interfaz/">Interfaz GTK4</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

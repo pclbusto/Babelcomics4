@@ -1,0 +1,2136 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../repositorios/">
+      
+      
+        <link rel="next" href="../../referencia/configuracion/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>API ComicVine - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-comicvine" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API ComicVine
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../usuario/instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../funcionalidades/catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../arquitectura/" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../referencia/configuracion/" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-comics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-volumenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/filtros-busqueda/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/thumbnails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/base-datos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/interfaz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repositorios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#integracion-con-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 Integración con ComicVine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌐 Integración con ComicVine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cliente-api-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cliente API Principal
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cliente API Principal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comicvineclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicVineClient
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#servicios-de-catalogacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Servicios de Catalogación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Servicios de Catalogación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comicvinecatalogservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicVineCatalogService
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/configuracion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#integracion-con-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌐 Integración con ComicVine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌐 Integración con ComicVine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cliente-api-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cliente API Principal
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cliente API Principal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comicvineclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicVineClient
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#servicios-de-catalogacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Servicios de Catalogación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Servicios de Catalogación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comicvinecatalogservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicVineCatalogService
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="api-comicvine">API ComicVine</h1>
+<p>Babelcomics4 integra con la API oficial de ComicVine para obtener metadatos completos de comics, volúmenes, editoriales y personajes, proporcionando catalogación automática y enriquecimiento de información.</p>
+<h2 id="integracion-con-comicvine">🌐 Integración con ComicVine</h2>
+<h3 id="cliente-api-principal">Cliente API Principal</h3>
+<h4 id="comicvineclient">ComicVineClient</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urljoin</span><span class="p">,</span> <span class="n">urlencode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicVineConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuración del cliente ComicVine&quot;&quot;&quot;</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;https://comicvine.gamespot.com/api/&quot;</span>
+    <span class="n">user_agent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Babelcomics4/1.0&quot;</span>
+    <span class="n">requests_per_hour</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">request_delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">cache_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">cache_ttl</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3600</span>  <span class="c1"># 1 hora</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicVineClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cliente para la API de ComicVine&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ComicVineConfig</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">user_agent</span><span class="p">,</span>
+            <span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Control de rate limiting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_timestamps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_request_time</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Cache simple en memoria</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wait_for_rate_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Esperar para respetar rate limiting&quot;&quot;&quot;</span>
+        <span class="n">current_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="c1"># Limpiar timestamps antiguos (más de 1 hora)</span>
+        <span class="n">hour_ago</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">-</span> <span class="mi">3600</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_timestamps</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">ts</span> <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_timestamps</span> <span class="k">if</span> <span class="n">ts</span> <span class="o">&gt;</span> <span class="n">hour_ago</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Verificar si hemos excedido el límite</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request_timestamps</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">requests_per_hour</span><span class="p">:</span>
+            <span class="n">sleep_time</span> <span class="o">=</span> <span class="mi">3600</span> <span class="o">-</span> <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_timestamps</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">sleep_time</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rate limit reached, sleeping for </span><span class="si">{</span><span class="n">sleep_time</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep_time</span><span class="p">)</span>
+
+        <span class="c1"># Esperar delay mínimo entre requests</span>
+        <span class="n">time_since_last</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_request_time</span>
+        <span class="k">if</span> <span class="n">time_since_last</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">request_delay</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">request_delay</span> <span class="o">-</span> <span class="n">time_since_last</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_request</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Realizar petición a la API con rate limiting y cache&quot;&quot;&quot;</span>
+
+        <span class="c1"># Preparar parámetros</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">params</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;api_key&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
+            <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Generar clave de cache</span>
+        <span class="n">cache_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">endpoint</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">urlencode</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Verificar cache</span>
+        <span class="k">if</span> <span class="n">use_cache</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">cache_enabled</span> <span class="ow">and</span> <span class="n">cache_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="n">cached_data</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">timestamp</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">cache_ttl</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cached_data</span>
+
+        <span class="c1"># Rate limiting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_rate_limit</span><span class="p">()</span>
+
+        <span class="c1"># Construir URL</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+
+        <span class="c1"># Realizar petición con reintentos</span>
+        <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">retries</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">current_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">request_timestamps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_request_time</span> <span class="o">=</span> <span class="n">current_time</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">url</span><span class="p">,</span>
+                    <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">timeout</span>
+                <span class="p">)</span>
+
+                <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+                <span class="c1"># Verificar respuesta de ComicVine</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status_code&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">error_msg</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown ComicVine API error&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ComicVine API error: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+
+                <span class="c1"># Guardar en cache</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">cache_enabled</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">current_time</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">data</span>
+
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request attempt </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span><span class="p">)</span>  <span class="c1"># Backoff exponencial</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">retries</span><span class="si">}</span><span class="s2"> attempts failed for </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_volumes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Buscar volúmenes por nombre&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span>
+            <span class="s1">&#39;resources&#39;</span><span class="p">:</span> <span class="s1">&#39;volume&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="n">limit</span><span class="p">,</span>
+            <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="n">offset</span><span class="p">,</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,start_year,publisher,count_of_issues,image,description&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="s1">&#39;search/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_volume_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener detalles completos de un volumen&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,start_year,description,count_of_issues,publisher,image,site_detail_url&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;volume/4000-</span><span class="si">{</span><span class="n">volume_id</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_volume_issues</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">volume_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener issues de un volumen&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;filter&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;volume:</span><span class="si">{</span><span class="n">volume_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="n">limit</span><span class="p">,</span>
+            <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="n">offset</span><span class="p">,</span>
+            <span class="s1">&#39;sort&#39;</span><span class="p">:</span> <span class="s1">&#39;issue_number:asc&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,issue_number,cover_date,store_date,description,image,site_detail_url&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="s1">&#39;issues/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_issue_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">issue_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener detalles completos de un issue&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,issue_number,cover_date,store_date,description,volume,character_credits,person_credits,image,site_detail_url&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;issue/4000-</span><span class="si">{</span><span class="n">issue_id</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_issues</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">volume_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Buscar issues específicos&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span>
+            <span class="s1">&#39;resources&#39;</span><span class="p">:</span> <span class="s1">&#39;issue&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="n">limit</span><span class="p">,</span>
+            <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="n">offset</span><span class="p">,</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,issue_number,cover_date,volume,image,description&#39;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">volume_id</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;volume:</span><span class="si">{</span><span class="n">volume_id</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="s1">&#39;search/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_publisher_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">publisher_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener detalles de una editorial&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,description,location_address,location_city,location_state&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;publisher/4010-</span><span class="si">{</span><span class="n">publisher_id</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_publishers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Buscar editoriales&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span>
+            <span class="s1">&#39;resources&#39;</span><span class="p">:</span> <span class="s1">&#39;publisher&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="n">limit</span><span class="p">,</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,description&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="s1">&#39;search/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_character_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">character_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener detalles de un personaje&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,description,real_name,aliases,birth,gender,origin,powers,image&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;character/4005-</span><span class="si">{</span><span class="n">character_id</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_person_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener detalles de una persona (creador)&quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;field_list&#39;</span><span class="p">:</span> <span class="s1">&#39;id,name,description,birth,death,hometown,image&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;person/4040-</span><span class="si">{</span><span class="n">person_id</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Limpiar cache&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cache_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener estadísticas del cache&quot;&quot;&quot;</span>
+        <span class="n">current_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">valid_entries</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">expired_entries</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">cache_key</span><span class="p">,</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">current_time</span> <span class="o">-</span> <span class="n">timestamp</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">cache_ttl</span><span class="p">:</span>
+                <span class="n">valid_entries</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">expired_entries</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;total_entries&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">),</span>
+            <span class="s1">&#39;valid_entries&#39;</span><span class="p">:</span> <span class="n">valid_entries</span><span class="p">,</span>
+            <span class="s1">&#39;expired_entries&#39;</span><span class="p">:</span> <span class="n">expired_entries</span><span class="p">,</span>
+            <span class="s1">&#39;hit_ratio&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_cache_hits&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_cache_requests&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+</code></pre></div>
+<h3 id="servicios-de-catalogacion">Servicios de Catalogación</h3>
+<h4 id="comicvinecatalogservice">ComicVineCatalogService</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Comicbook</span><span class="p">,</span> <span class="n">ComicbookInfo</span><span class="p">,</span> <span class="n">Volume</span><span class="p">,</span> <span class="n">Publisher</span><span class="p">,</span> <span class="n">Person</span><span class="p">,</span> <span class="n">Character</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">repositories</span><span class="w"> </span><span class="kn">import</span> <span class="n">ComicRepository</span><span class="p">,</span> <span class="n">VolumeRepository</span><span class="p">,</span> <span class="n">PublisherRepository</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicVineCatalogService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicio de catalogación usando ComicVine&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span>
+        <span class="n">comicvine_client</span><span class="p">:</span> <span class="n">ComicVineClient</span><span class="p">,</span>
+        <span class="n">comic_repo</span><span class="p">:</span> <span class="n">ComicRepository</span><span class="p">,</span>
+        <span class="n">volume_repo</span><span class="p">:</span> <span class="n">VolumeRepository</span><span class="p">,</span>
+        <span class="n">publisher_repo</span><span class="p">:</span> <span class="n">PublisherRepository</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cv_client</span> <span class="o">=</span> <span class="n">comicvine_client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comic_repo</span> <span class="o">=</span> <span class="n">comic_repo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume_repo</span> <span class="o">=</span> <span class="n">volume_repo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher_repo</span> <span class="o">=</span> <span class="n">publisher_repo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">catalog_comic_from_filename</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">comic</span><span class="p">:</span> <span class="n">Comicbook</span><span class="p">,</span>
+        <span class="n">confidence_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ComicbookInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Catalogar comic basándose en el nombre del archivo&quot;&quot;&quot;</span>
+
+        <span class="c1"># Extraer metadatos del filename</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_metadata_from_filename</span><span class="p">(</span><span class="n">comic</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;series&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;issue_number&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Buscar volúmenes candidatos</span>
+        <span class="n">volume_candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_volume_candidates</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">volume_candidates</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Buscar issue específico en cada volumen candidato</span>
+        <span class="n">best_match</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">best_confidence</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">volume</span> <span class="ow">in</span> <span class="n">volume_candidates</span><span class="p">:</span>
+            <span class="n">match_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_issue_in_volume</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match_result</span> <span class="ow">and</span> <span class="n">match_result</span><span class="p">[</span><span class="s1">&#39;confidence&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">best_confidence</span><span class="p">:</span>
+                <span class="n">best_match</span> <span class="o">=</span> <span class="n">match_result</span>
+                <span class="n">best_confidence</span> <span class="o">=</span> <span class="n">match_result</span><span class="p">[</span><span class="s1">&#39;confidence&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Verificar confianza mínima</span>
+        <span class="k">if</span> <span class="n">best_confidence</span> <span class="o">&lt;</span> <span class="n">confidence_threshold</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No se encontró coincidencia suficiente para </span><span class="si">{</span><span class="n">comic</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(mejor confianza: </span><span class="si">{</span><span class="n">best_confidence</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Crear ComicbookInfo</span>
+        <span class="n">comic_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_comicbook_info_from_match</span><span class="p">(</span><span class="n">best_match</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">comic_info</span><span class="p">:</span>
+            <span class="c1"># Asociar con el comic físico</span>
+            <span class="n">comic</span><span class="o">.</span><span class="n">id_comicbook_info</span> <span class="o">=</span> <span class="n">comic_info</span><span class="o">.</span><span class="n">id_comicbook_info</span>
+            <span class="n">comic_info</span><span class="o">.</span><span class="n">owned_comics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">comic_info</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">comic_info</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_metadata_from_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extraer metadatos del nombre de archivo usando regex&quot;&quot;&quot;</span>
+
+        <span class="c1"># Patrones de regex para diferentes formatos de nombre</span>
+        <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="c1"># Pattern: &quot;Series Name #123 (2018).cbz&quot;</span>
+            <span class="sa">r</span><span class="s1">&#39;^(?P&lt;series&gt;.+?)\s*#(?P&lt;issue_number&gt;\d+(?:\.\d+)?)\s*\((?P&lt;year&gt;\d</span><span class="si">{4}</span><span class="s1">)\)&#39;</span><span class="p">,</span>
+
+            <span class="c1"># Pattern: &quot;Series Name - Issue 123 - Title.cbz&quot;</span>
+            <span class="sa">r</span><span class="s1">&#39;^(?P&lt;series&gt;.+?)\s*-\s*Issue\s*(?P&lt;issue_number&gt;\d+(?:\.\d+)?)\s*-\s*(?P&lt;title&gt;.+)&#39;</span><span class="p">,</span>
+
+            <span class="c1"># Pattern: &quot;Series_Name_123_Title.cbz&quot;</span>
+            <span class="sa">r</span><span class="s1">&#39;^(?P&lt;series&gt;.+?)_(?P&lt;issue_number&gt;\d+(?:\.\d+)?)_(?P&lt;title&gt;.+)&#39;</span><span class="p">,</span>
+
+            <span class="c1"># Pattern: &quot;SeriesName123.cbz&quot;</span>
+            <span class="sa">r</span><span class="s1">&#39;^(?P&lt;series&gt;[A-Za-z\s]+?)(?P&lt;issue_number&gt;\d+(?:\.\d+)?)$&#39;</span><span class="p">,</span>
+
+            <span class="c1"># Pattern: &quot;Series Name v2 #123.cbz&quot;</span>
+            <span class="sa">r</span><span class="s1">&#39;^(?P&lt;series&gt;.+?)\s*v(?P&lt;volume&gt;\d+)\s*#(?P&lt;issue_number&gt;\d+(?:\.\d+)?)&#39;</span><span class="p">,</span>
+
+            <span class="c1"># Pattern: &quot;Series Name 123 (Publisher, Year).cbz&quot;</span>
+            <span class="sa">r</span><span class="s1">&#39;^(?P&lt;series&gt;.+?)\s*(?P&lt;issue_number&gt;\d+(?:\.\d+)?)\s*\((?P&lt;publisher&gt;.+?),\s*(?P&lt;year&gt;\d</span><span class="si">{4}</span><span class="s1">)\)&#39;</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Remover extensión</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\.[^.]+$&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;series&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;issue_number&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;volume&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;publisher&#39;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Intentar cada patrón</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">groups</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
+
+                <span class="c1"># Limpiar y procesar los grupos capturados</span>
+                <span class="k">if</span> <span class="s1">&#39;series&#39;</span> <span class="ow">in</span> <span class="n">groups</span> <span class="ow">and</span> <span class="n">groups</span><span class="p">[</span><span class="s1">&#39;series&#39;</span><span class="p">]:</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;series&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_series_name</span><span class="p">(</span><span class="n">groups</span><span class="p">[</span><span class="s1">&#39;series&#39;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="s1">&#39;issue_number&#39;</span> <span class="ow">in</span> <span class="n">groups</span> <span class="ow">and</span> <span class="n">groups</span><span class="p">[</span><span class="s1">&#39;issue_number&#39;</span><span class="p">]:</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;issue_number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="s1">&#39;issue_number&#39;</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="s1">&#39;year&#39;</span> <span class="ow">in</span> <span class="n">groups</span> <span class="ow">and</span> <span class="n">groups</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]:</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">groups</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="s1">&#39;title&#39;</span> <span class="ow">in</span> <span class="n">groups</span> <span class="ow">and</span> <span class="n">groups</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]:</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_title</span><span class="p">(</span><span class="n">groups</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="s1">&#39;volume&#39;</span> <span class="ow">in</span> <span class="n">groups</span> <span class="ow">and</span> <span class="n">groups</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]:</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">groups</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="s1">&#39;publisher&#39;</span> <span class="ow">in</span> <span class="n">groups</span> <span class="ow">and</span> <span class="n">groups</span><span class="p">[</span><span class="s1">&#39;publisher&#39;</span><span class="p">]:</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;publisher&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="s1">&#39;publisher&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">metadata</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clean_series_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Limpiar nombre de serie&quot;&quot;&quot;</span>
+        <span class="c1"># Reemplazar guiones bajos y puntos con espacios</span>
+        <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[_.]&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">series</span><span class="p">)</span>
+
+        <span class="c1"># Remover caracteres especiales extras</span>
+        <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\w\s\-&amp;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">cleaned</span><span class="p">)</span>
+
+        <span class="c1"># Normalizar espacios</span>
+        <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">cleaned</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># Capitalizar apropiadamente</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">cleaned</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">capitalized_words</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+            <span class="c1"># No capitalizar artículos y preposiciones comunes (excepto si es la primera palabra)</span>
+            <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;an&#39;</span><span class="p">,</span> <span class="s1">&#39;and&#39;</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="s1">&#39;of&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span><span class="p">,</span> <span class="s1">&#39;at&#39;</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="s1">&#39;for&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">capitalized_words</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">capitalized_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">capitalized_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">capitalized_words</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clean_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Limpiar título del issue&quot;&quot;&quot;</span>
+        <span class="c1"># Similar al series name pero más permisivo</span>
+        <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[_.]&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+        <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">cleaned</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">cleaned</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_volume_candidates</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">max_candidates</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encontrar volúmenes candidatos en ComicVine&quot;&quot;&quot;</span>
+
+        <span class="n">series_name</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;series&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">series_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="c1"># Buscar en ComicVine</span>
+        <span class="n">search_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv_client</span><span class="o">.</span><span class="n">search_volumes</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">=</span><span class="n">series_name</span><span class="p">,</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">max_candidates</span> <span class="o">*</span> <span class="mi">2</span>  <span class="c1"># Buscar más para filtrar después</span>
+        <span class="p">)</span>
+
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">search_results</span><span class="p">:</span>
+            <span class="c1"># Calcular similitud de nombre</span>
+            <span class="n">name_similarity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_string_similarity</span><span class="p">(</span>
+                <span class="n">series_name</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Filtrar por similitud mínima</span>
+            <span class="k">if</span> <span class="n">name_similarity</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Calcular score del candidato</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">name_similarity</span>
+
+            <span class="c1"># Bonus por año coincidente</span>
+            <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;start_year&#39;</span><span class="p">):</span>
+                <span class="n">year_diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;start_year&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">year_diff</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Tolerancia de 2 años</span>
+                    <span class="n">score</span> <span class="o">+=</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">year_diff</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="c1"># Bonus por editorial conocida</span>
+            <span class="n">publisher</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;publisher&#39;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">if</span> <span class="n">publisher</span> <span class="ow">and</span> <span class="n">publisher</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                <span class="n">publisher_name</span> <span class="o">=</span> <span class="n">publisher</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">major</span> <span class="ow">in</span> <span class="n">publisher_name</span> <span class="k">for</span> <span class="n">major</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dc&#39;</span><span class="p">,</span> <span class="s1">&#39;marvel&#39;</span><span class="p">,</span> <span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;dark horse&#39;</span><span class="p">]):</span>
+                    <span class="n">score</span> <span class="o">+=</span> <span class="mf">0.1</span>
+
+            <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;volume_data&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">,</span>
+                <span class="s1">&#39;name_similarity&#39;</span><span class="p">:</span> <span class="n">name_similarity</span><span class="p">,</span>
+                <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">score</span>
+            <span class="p">})</span>
+
+        <span class="c1"># Ordenar por score y devolver top candidatos</span>
+        <span class="n">candidates</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">candidates</span><span class="p">[:</span><span class="n">max_candidates</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_issue_in_volume</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">volume_candidate</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Buscar issue específico en un volumen&quot;&quot;&quot;</span>
+
+        <span class="n">volume_data</span> <span class="o">=</span> <span class="n">volume_candidate</span><span class="p">[</span><span class="s1">&#39;volume_data&#39;</span><span class="p">]</span>
+        <span class="n">volume_id</span> <span class="o">=</span> <span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">volume_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Obtener issues del volumen</span>
+        <span class="n">issues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv_client</span><span class="o">.</span><span class="n">get_volume_issues</span><span class="p">(</span><span class="n">volume_id</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+        <span class="n">target_issue_number</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;issue_number&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">target_issue_number</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Buscar issue coincidente</span>
+        <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">issues</span><span class="p">:</span>
+            <span class="n">issue_number</span> <span class="o">=</span> <span class="n">issue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;issue_number&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">issue_number</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Comparar números de issue</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_issue_numbers</span><span class="p">(</span><span class="n">target_issue_number</span><span class="p">,</span> <span class="n">issue_number</span><span class="p">):</span>
+                <span class="c1"># Calcular confianza total</span>
+                <span class="n">confidence</span> <span class="o">=</span> <span class="n">volume_candidate</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span>
+
+                <span class="c1"># Bonus por coincidencia exacta de número</span>
+                <span class="k">if</span> <span class="n">target_issue_number</span> <span class="o">==</span> <span class="n">issue_number</span><span class="p">:</span>
+                    <span class="n">confidence</span> <span class="o">+=</span> <span class="mf">0.2</span>
+
+                <span class="c1"># Bonus por fecha cercana si disponible</span>
+                <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">issue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cover_date&#39;</span><span class="p">):</span>
+                    <span class="n">issue_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_year_from_date</span><span class="p">(</span><span class="n">issue</span><span class="p">[</span><span class="s1">&#39;cover_date&#39;</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">issue_year</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">issue_year</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">confidence</span> <span class="o">+=</span> <span class="mf">0.1</span>
+
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s1">&#39;volume_data&#39;</span><span class="p">:</span> <span class="n">volume_data</span><span class="p">,</span>
+                    <span class="s1">&#39;issue_data&#39;</span><span class="p">:</span> <span class="n">issue</span><span class="p">,</span>
+                    <span class="s1">&#39;confidence&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">confidence</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+                    <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="n">metadata</span>
+                <span class="p">}</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compare_issue_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">candidate</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Comparar números de issue con tolerancia&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">target_num</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+            <span class="n">candidate_num</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">target_num</span> <span class="o">-</span> <span class="n">candidate_num</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+            <span class="c1"># Fallback a comparación de string</span>
+            <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_year_from_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extraer año de string de fecha&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">date_str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Formato típico: &quot;2018-06-15&quot;</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">date_str</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_string_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">str2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calcular similitud entre strings usando Levenshtein&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">difflib</span>
+        <span class="k">return</span> <span class="n">difflib</span><span class="o">.</span><span class="n">SequenceMatcher</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">)</span><span class="o">.</span><span class="n">ratio</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_comicbook_info_from_match</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">match_result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ComicbookInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear ComicbookInfo desde resultado de coincidencia&quot;&quot;&quot;</span>
+
+        <span class="n">volume_data</span> <span class="o">=</span> <span class="n">match_result</span><span class="p">[</span><span class="s1">&#39;volume_data&#39;</span><span class="p">]</span>
+        <span class="n">issue_data</span> <span class="o">=</span> <span class="n">match_result</span><span class="p">[</span><span class="s1">&#39;issue_data&#39;</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Crear o obtener el volumen</span>
+            <span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_or_update_volume</span><span class="p">(</span><span class="n">volume_data</span><span class="p">)</span>
+
+            <span class="c1"># Crear ComicbookInfo</span>
+            <span class="n">comic_info</span> <span class="o">=</span> <span class="n">ComicbookInfo</span><span class="p">(</span>
+                <span class="n">titulo</span><span class="o">=</span><span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">numero</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;issue_number&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+                <span class="n">fecha_tapa</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_cover_date</span><span class="p">(</span><span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cover_date&#39;</span><span class="p">)),</span>
+                <span class="n">resumen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_clean_description</span><span class="p">(</span><span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+                <span class="n">url_api_detalle</span><span class="o">=</span><span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;api_detail_url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">url_sitio_web</span><span class="o">=</span><span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;site_detail_url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">id_comicvine</span><span class="o">=</span><span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span>
+                <span class="n">id_volume</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">id_volume</span><span class="p">,</span>
+                <span class="n">ultima_sync_comicvine</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Añadir imagen de portada si está disponible</span>
+            <span class="k">if</span> <span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;original_url&#39;</span><span class="p">):</span>
+                <span class="n">comic_info</span><span class="o">.</span><span class="n">add_cover_image</span><span class="p">(</span>
+                    <span class="n">url</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">][</span><span class="s1">&#39;original_url&#39;</span><span class="p">],</span>
+                    <span class="n">is_primary</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">comic_info</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error creando ComicbookInfo: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_or_update_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Volume</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear o actualizar volumen desde datos de ComicVine&quot;&quot;&quot;</span>
+
+        <span class="n">comicvine_id</span> <span class="o">=</span> <span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Buscar volumen existente</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">comicvine_id</span><span class="p">:</span>
+            <span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_repo</span><span class="o">.</span><span class="n">get_by_comicvine_id</span><span class="p">(</span><span class="n">comicvine_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">volume</span><span class="p">:</span>
+            <span class="c1"># Crear nuevo volumen</span>
+            <span class="n">publisher</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_or_update_publisher</span><span class="p">(</span>
+                <span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;publisher&#39;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="p">)</span>
+
+            <span class="n">volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="p">(</span>
+                <span class="n">nombre</span><span class="o">=</span><span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">anio_inicio</span><span class="o">=</span><span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;start_year&#39;</span><span class="p">),</span>
+                <span class="n">resumen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_clean_description</span><span class="p">(</span><span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+                <span class="n">cantidad_numeros</span><span class="o">=</span><span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;count_of_issues&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="n">url_api_detalle</span><span class="o">=</span><span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;api_detail_url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">url_sitio_web</span><span class="o">=</span><span class="n">volume_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;site_detail_url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">id_comicvine</span><span class="o">=</span><span class="n">comicvine_id</span><span class="p">,</span>
+                <span class="n">id_publisher</span><span class="o">=</span><span class="n">publisher</span><span class="o">.</span><span class="n">id_publisher</span> <span class="k">if</span> <span class="n">publisher</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">ultima_sync_comicvine</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Actualizar volumen existente si es necesario</span>
+            <span class="n">volume</span><span class="o">.</span><span class="n">update_from_comicvine</span><span class="p">(</span><span class="n">volume_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">volume</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_or_update_publisher</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">publisher_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Publisher</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear o actualizar editorial desde datos de ComicVine&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">publisher_data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">publisher_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">publisher_name</span> <span class="o">=</span> <span class="n">publisher_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">comicvine_id</span> <span class="o">=</span> <span class="n">publisher_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Usar repositorio para obtener o crear</span>
+        <span class="n">publisher</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">publisher_repo</span><span class="o">.</span><span class="n">get_or_create_publisher</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">publisher_name</span><span class="p">,</span>
+            <span class="n">comicvine_id</span><span class="o">=</span><span class="n">comicvine_id</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">publisher</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_cover_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parsear fecha de portada&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">date_str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Formato típico: &quot;2018-06-15&quot;</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Formato alternativo: &quot;2018-06&quot;</span>
+                <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="s1">&#39;%Y-%m&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clean_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Limpiar descripción removiendo HTML y normalizando&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">description</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># Remover tags HTML básicos</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+        <span class="n">clean_desc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&lt;[^&gt;]+&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+
+        <span class="c1"># Decodificar entidades HTML comunes</span>
+        <span class="n">html_entities</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;&amp;amp;&#39;</span><span class="p">:</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;&amp;lt;&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;&amp;gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;&amp;quot;&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;&amp;#39;&#39;</span><span class="p">:</span> <span class="s2">&quot;&#39;&quot;</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">entity</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">html_entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">clean_desc</span> <span class="o">=</span> <span class="n">clean_desc</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">char</span><span class="p">)</span>
+
+        <span class="c1"># Normalizar espacios</span>
+        <span class="n">clean_desc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">clean_desc</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">clean_desc</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_volume_from_comicvine</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">volume</span><span class="p">:</span> <span class="n">Volume</span><span class="p">,</span>
+        <span class="n">update_issues</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualizar volumen completo desde ComicVine&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Obtener datos actualizados del volumen</span>
+            <span class="n">volume_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv_client</span><span class="o">.</span><span class="n">get_volume_details</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">volume_data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Actualizar volumen</span>
+            <span class="n">volume</span><span class="o">.</span><span class="n">update_from_comicvine</span><span class="p">(</span><span class="n">volume_data</span><span class="p">)</span>
+
+            <span class="c1"># Actualizar issues si se solicita</span>
+            <span class="k">if</span> <span class="n">update_issues</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sync_volume_issues</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error actualizando volumen </span><span class="si">{</span><span class="n">volume</span><span class="o">.</span><span class="n">id_volume</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sync_volume_issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume</span><span class="p">:</span> <span class="n">Volume</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sincronizar issues del volumen con ComicVine&quot;&quot;&quot;</span>
+
+        <span class="c1"># Obtener todos los issues del volumen desde ComicVine</span>
+        <span class="n">all_issues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="mi">100</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">issues_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv_client</span><span class="o">.</span><span class="n">get_volume_issues</span><span class="p">(</span>
+                <span class="n">volume</span><span class="o">.</span><span class="n">id_comicvine</span><span class="p">,</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+                <span class="n">offset</span><span class="o">=</span><span class="n">offset</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">issues_batch</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">all_issues</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">issues_batch</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">issues_batch</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">offset</span> <span class="o">+=</span> <span class="n">limit</span>
+
+        <span class="c1"># Actualizar cantidad de issues en el volumen</span>
+        <span class="n">volume</span><span class="o">.</span><span class="n">cantidad_numeros</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_issues</span><span class="p">)</span>
+
+        <span class="c1"># Para cada issue, verificar si existe ComicbookInfo</span>
+        <span class="k">for</span> <span class="n">issue_data</span> <span class="ow">in</span> <span class="n">all_issues</span><span class="p">:</span>
+            <span class="n">issue_comicvine_id</span> <span class="o">=</span> <span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">issue_comicvine_id</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Buscar ComicbookInfo existente</span>
+            <span class="n">existing_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">id_comicvine</span> <span class="o">==</span> <span class="n">issue_comicvine_id</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">existing_info</span><span class="p">:</span>
+                <span class="c1"># Actualizar información existente</span>
+                <span class="n">existing_info</span><span class="o">.</span><span class="n">update_from_comicvine</span><span class="p">(</span><span class="n">issue_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Crear nueva entrada solo si hay comics físicos correspondientes</span>
+                <span class="c1"># (esto evita crear entradas huérfanas)</span>
+                <span class="c1"># La creación se hará cuando se catalogue un comic físico</span>
+                <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_catalog_uncataloged_comics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="n">confidence_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">progress_callback</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Catalogar lote de comics sin catalogar&quot;&quot;&quot;</span>
+
+        <span class="n">uncataloged_comics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comic_repo</span><span class="o">.</span><span class="n">get_uncataloged_comics</span><span class="p">()</span>
+        <span class="n">total_comics</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">uncataloged_comics</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;processed&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;cataloged&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;failed&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">comic</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">uncataloged_comics</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">progress_callback</span><span class="p">:</span>
+                    <span class="n">progress_callback</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">total_comics</span><span class="p">,</span> <span class="n">comic</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+
+                <span class="c1"># Intentar catalogar</span>
+                <span class="n">comic_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog_comic_from_filename</span><span class="p">(</span>
+                    <span class="n">comic</span><span class="p">,</span>
+                    <span class="n">confidence_threshold</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">comic_info</span><span class="p">:</span>
+                    <span class="n">results</span><span class="p">[</span><span class="s1">&#39;cataloged&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">results</span><span class="p">[</span><span class="s1">&#39;skipped&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">results</span><span class="p">[</span><span class="s1">&#39;processed&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Commit cada lote</span>
+                <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;processed&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+                <span class="c1"># Rate limiting</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error catalogando </span><span class="si">{</span><span class="n">comic</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">results</span><span class="p">[</span><span class="s1">&#39;failed&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+
+        <span class="c1"># Commit final</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error en commit final: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+</code></pre></div>
+<hr />
+<p><strong>¿Quieres conocer más sobre la configuración?</strong> 👉 <a href="../../referencia/configuracion/">Configuración</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

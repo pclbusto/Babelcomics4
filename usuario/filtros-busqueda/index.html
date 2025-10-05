@@ -1,0 +1,3155 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../gestion-volumenes/">
+      
+      
+        <link rel="next" href="../comicvine/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Filtros y Búsqueda - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#filtros-y-busqueda" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Filtros y Búsqueda
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../funcionalidades/catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../desarrollo/arquitectura/" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../referencia/configuracion/" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestion-comics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestion-volumenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-basica" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda Básica
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda Básica">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#barra-de-busqueda-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Barra de Búsqueda Principal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campos-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Campos de Búsqueda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campos de Búsqueda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#informacion-del-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información del Archivo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-catalogada" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata Catalogada
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejemplos-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ejemplos de Búsqueda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplos de Búsqueda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#busquedas-simples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsquedas Simples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#busquedas-por-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsquedas por Archivo
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtros-avanzados" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎛️ Filtros Avanzados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎛️ Filtros Avanzados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#panel-de-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Panel de Filtros
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-clasificacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Clasificación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Clasificación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#todos-los-comics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Todos los Comics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solo-clasificados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solo Clasificados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solo-sin-clasificar" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solo Sin Clasificar
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Calidad
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Calidad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sistema-de-calidad-por-estrellas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sistema de Calidad por Estrellas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-rangos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración de Rangos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-por-editorial" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros por Editorial
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros por Editorial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#editoriales-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editoriales Principales
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seleccion-multiple" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selección Múltiple
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-temporales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Temporales
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros Temporales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-ano-de-publicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Por Año de Publicación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-fecha-especiales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Fecha Especiales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-estado-de-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Estado de Archivo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Estado de Archivo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estados-disponibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estados Disponibles
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#casos-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Casos de Uso
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtros-especializados" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Filtros Especializados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Filtros Especializados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Volumen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Volumen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completitud-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Completitud de Colección
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-tamano-de-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Tamaño de Archivo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Tamaño de Archivo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rangos-de-tamano" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rangos de Tamaño
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analisis-de-tamano" class="md-nav__link">
+    <span class="md-ellipsis">
+      Análisis de Tamaño
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-avanzada" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda Avanzada
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda Avanzada">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operadores-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operadores de Búsqueda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operadores de Búsqueda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operadores-basicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operadores Básicos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operadores-de-campo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operadores de Campo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operadores-de-rango" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operadores de Rango
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comodines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comodines
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#busquedas-predefinidas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsquedas Predefinidas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Búsquedas Predefinidas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consultas-rapidas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Consultas Rápidas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#busqueda-inteligente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsqueda Inteligente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Búsqueda Inteligente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sugerencias-automaticas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sugerencias Automáticas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#correccion-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Corrección Automática
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resultados-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Resultados de Búsqueda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Resultados de Búsqueda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#presentacion-de-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Presentación de Resultados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Presentación de Resultados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vista-de-grilla" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista de Grilla
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vista-de-lista" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista de Lista
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ordenamiento-de-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ordenamiento de Resultados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ordenamiento de Resultados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opciones-de-ordenamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opciones de Ordenamiento
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#algoritmo-de-relevancia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Algoritmo de Relevancia
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-de-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      💾 Gestión de Filtros
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💾 Gestión de Filtros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtros-guardados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Guardados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros Guardados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crear-filtro-personalizado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Crear Filtro Personalizado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#biblioteca-de-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Biblioteca de Filtros
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-inteligentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Inteligentes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros Inteligentes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-filtros-por-comportamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Auto-Filtros por Comportamiento
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-contextuales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Contextuales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analisis-de-busquedas" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Análisis de Búsquedas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Análisis de Búsquedas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estadisticas-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estadísticas de Uso
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimizacion-de-rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimización de Rendimiento
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/thumbnails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/base-datos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/interfaz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/modelos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/repositorios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/api-comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/configuracion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-basica" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda Básica
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda Básica">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#barra-de-busqueda-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Barra de Búsqueda Principal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campos-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Campos de Búsqueda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campos de Búsqueda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#informacion-del-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información del Archivo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-catalogada" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata Catalogada
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejemplos-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ejemplos de Búsqueda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplos de Búsqueda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#busquedas-simples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsquedas Simples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#busquedas-por-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsquedas por Archivo
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtros-avanzados" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎛️ Filtros Avanzados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎛️ Filtros Avanzados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#panel-de-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Panel de Filtros
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-clasificacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Clasificación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Clasificación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#todos-los-comics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Todos los Comics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solo-clasificados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solo Clasificados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solo-sin-clasificar" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solo Sin Clasificar
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Calidad
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Calidad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sistema-de-calidad-por-estrellas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sistema de Calidad por Estrellas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-rangos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración de Rangos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-por-editorial" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros por Editorial
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros por Editorial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#editoriales-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Editoriales Principales
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seleccion-multiple" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selección Múltiple
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-temporales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Temporales
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros Temporales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-ano-de-publicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Por Año de Publicación
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-fecha-especiales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Fecha Especiales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-estado-de-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Estado de Archivo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Estado de Archivo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estados-disponibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estados Disponibles
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#casos-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Casos de Uso
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtros-especializados" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Filtros Especializados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Filtros Especializados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Volumen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Volumen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completitud-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Completitud de Colección
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-de-tamano-de-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros de Tamaño de Archivo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros de Tamaño de Archivo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rangos-de-tamano" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rangos de Tamaño
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analisis-de-tamano" class="md-nav__link">
+    <span class="md-ellipsis">
+      Análisis de Tamaño
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-avanzada" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda Avanzada
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda Avanzada">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operadores-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operadores de Búsqueda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operadores de Búsqueda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operadores-basicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operadores Básicos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operadores-de-campo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operadores de Campo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operadores-de-rango" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operadores de Rango
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comodines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comodines
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#busquedas-predefinidas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsquedas Predefinidas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Búsquedas Predefinidas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consultas-rapidas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Consultas Rápidas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#busqueda-inteligente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Búsqueda Inteligente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Búsqueda Inteligente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sugerencias-automaticas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sugerencias Automáticas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#correccion-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Corrección Automática
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resultados-de-busqueda" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Resultados de Búsqueda
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Resultados de Búsqueda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#presentacion-de-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Presentación de Resultados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Presentación de Resultados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vista-de-grilla" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista de Grilla
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vista-de-lista" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista de Lista
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ordenamiento-de-resultados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ordenamiento de Resultados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ordenamiento de Resultados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opciones-de-ordenamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opciones de Ordenamiento
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#algoritmo-de-relevancia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Algoritmo de Relevancia
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-de-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      💾 Gestión de Filtros
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💾 Gestión de Filtros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtros-guardados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Guardados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros Guardados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crear-filtro-personalizado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Crear Filtro Personalizado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#biblioteca-de-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Biblioteca de Filtros
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-inteligentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Inteligentes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtros Inteligentes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-filtros-por-comportamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Auto-Filtros por Comportamiento
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-contextuales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Contextuales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analisis-de-busquedas" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Análisis de Búsquedas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Análisis de Búsquedas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estadisticas-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estadísticas de Uso
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimizacion-de-rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimización de Rendimiento
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="filtros-y-busqueda">Filtros y Búsqueda</h1>
+<p>El sistema de filtros y búsqueda de Babelcomics4 proporciona herramientas potentes para encontrar comics específicos en tu colección, utilizando múltiples criterios y combinaciones avanzadas.</p>
+<h2 id="busqueda-basica">🔍 Búsqueda Básica</h2>
+<h3 id="barra-de-busqueda-principal">Barra de Búsqueda Principal</h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────┐
+│ 🔍 [Buscar en tu colección...]            [🔎] │
+└─────────────────────────────────────────────────┘
+</code></pre></div>
+<p>La búsqueda básica es <strong>instantánea</strong> y busca en tiempo real mientras escribes.</p>
+<h3 id="campos-de-busqueda">Campos de Búsqueda</h3>
+<h4 id="informacion-del-archivo">Información del Archivo</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Nombre del archivo</span>
+superman.cbz
+batman_001
+walking_dead
+
+<span class="c1"># Ruta completa del archivo</span>
+/Comics/DC/Batman/
+/home/user/Comics/Marvel/
+
+<span class="c1"># Extensión de archivo</span>
+.cbz
+.cbr
+.pdf
+</code></pre></div>
+<h4 id="metadata-catalogada">Metadata Catalogada</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Título del comic</span>
+<span class="s2">&quot;The Amazing Spider-Man&quot;</span>
+<span class="s2">&quot;Batman Rebirth&quot;</span>
+<span class="s2">&quot;Watchmen&quot;</span>
+
+<span class="c1"># Editorial</span>
+<span class="s2">&quot;DC Comics&quot;</span>
+<span class="s2">&quot;Marvel Comics&quot;</span>
+<span class="s2">&quot;Image Comics&quot;</span>
+
+<span class="c1"># Nombre del volumen</span>
+<span class="s2">&quot;Batman (2016)&quot;</span>
+<span class="s2">&quot;Spider-Man (2018)&quot;</span>
+<span class="s2">&quot;The Walking Dead (2003)&quot;</span>
+
+<span class="c1"># Descripción/Resumen</span>
+<span class="s2">&quot;dark knight&quot;</span>
+<span class="s2">&quot;web slinger&quot;</span>
+<span class="s2">&quot;zombie apocalypse&quot;</span>
+</code></pre></div>
+<h3 id="ejemplos-de-busqueda">Ejemplos de Búsqueda</h3>
+<h4 id="busquedas-simples">Búsquedas Simples</h4>
+<div class="highlight"><pre><span></span><code>Batman          → Todos los comics con &quot;Batman&quot;
+Spider-Man #1   → Issue #1 de cualquier Spider-Man
+2018           → Comics del año 2018
+DC Comics      → Todos los comics de DC
+rebirth        → Comics relacionados con &quot;Rebirth&quot;
+</code></pre></div>
+<h4 id="busquedas-por-archivo">Búsquedas por Archivo</h4>
+<div class="highlight"><pre><span></span><code>.cbz           → Solo archivos CBZ
+batman_001     → Archivo específico
+/DC/           → Comics en directorio DC
+45.2 MB        → Por tamaño de archivo
+</code></pre></div>
+<h2 id="filtros-avanzados">🎛️ Filtros Avanzados</h2>
+<h3 id="panel-de-filtros">Panel de Filtros</h3>
+<div class="highlight"><pre><span></span><code>┌─── Filtros Avanzados ─────────────────────────┐
+│                                               │
+│ 📊 Clasificación:                            │
+│ ○ Todos los comics                           │
+│ ○ Solo clasificados                          │
+│ ○ Solo sin clasificar                        │
+│                                               │
+│ ⭐ Calidad:                                  │
+│ Mínima: [⭐] ────○──── [⭐⭐⭐⭐⭐]         │
+│ Máxima: [⭐] ──────────○ [⭐⭐⭐⭐⭐]       │
+│                                               │
+│ 🏢 Editorial:                                │
+│ ☑️ DC Comics         ☑️ Marvel Comics        │
+│ ☐ Image Comics      ☐ Dark Horse            │
+│ ☐ IDW Publishing    ☐ Otras                  │
+│                                               │
+│ 📅 Rango de Años:                           │
+│ Desde: [2010] Hasta: [2024]                  │
+│                                               │
+│ 📁 Estado de Archivo:                        │
+│ ☑️ Archivos existentes                       │
+│ ☐ Incluir elementos en papelera             │
+│ ☐ Solo archivos corruptos                   │
+│                                               │
+│ 💾 Tamaño de Archivo:                        │
+│ Mín: [10] MB  Máx: [200] MB                  │
+│                                               │
+│ [🔄 Aplicar] [❌ Limpiar] [💾 Guardar]      │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="filtros-de-clasificacion">Filtros de Clasificación</h3>
+<h4 id="todos-los-comics">Todos los Comics</h4>
+<ul>
+<li>Muestra <strong>toda la colección</strong></li>
+<li>Incluye clasificados y sin clasificar</li>
+<li>Vista completa de la biblioteca</li>
+</ul>
+<h4 id="solo-clasificados">Solo Clasificados</h4>
+<div class="highlight"><pre><span></span><code>Criterios:
+✅ Tienen metadata de ComicVine
+✅ Título, editorial y volumen definidos
+✅ Thumbnail en color
+✅ Información completa disponible
+
+Visualización:
+🖼️ [Thumbnail Color]
+📖 Superman #1 - The Man of Steel
+📁 DC Comics | Superman (2018)
+⭐⭐⭐⭐⭐ | 📅 2018-07-04
+</code></pre></div>
+<h4 id="solo-sin-clasificar">Solo Sin Clasificar</h4>
+<div class="highlight"><pre><span></span><code>Criterios:
+❌ Sin metadata de ComicVine
+❌ Solo información del archivo
+❌ Thumbnail en escala de grises
+❌ Pendiente de catalogación
+
+Visualización:
+🖼️ [Thumbnail Gris]
+📁 superman_001_unknown.cbz
+💾 45.2 MB | 📅 2024-03-15
+⭐ Sin calificar | 🏷️ Sin catalogar
+</code></pre></div>
+<h3 id="filtros-de-calidad">Filtros de Calidad</h3>
+<h4 id="sistema-de-calidad-por-estrellas">Sistema de Calidad por Estrellas</h4>
+<div class="highlight"><pre><span></span><code>⭐     = 1 estrella  - Calidad muy baja
+⭐⭐   = 2 estrellas - Calidad baja
+⭐⭐⭐ = 3 estrellas - Calidad media
+⭐⭐⭐⭐ = 4 estrellas - Calidad buena
+⭐⭐⭐⭐⭐ = 5 estrellas - Calidad excelente
+</code></pre></div>
+<h4 id="configuracion-de-rangos">Configuración de Rangos</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ejemplo: Solo comics de alta calidad</span>
+<span class="n">quality_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;min_quality&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># ⭐⭐⭐⭐</span>
+    <span class="s1">&#39;max_quality&#39;</span><span class="p">:</span> <span class="mi">5</span>   <span class="c1"># ⭐⭐⭐⭐⭐</span>
+<span class="p">}</span>
+
+<span class="c1"># Ejemplo: Identificar comics de baja calidad para mejora</span>
+<span class="n">quality_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;min_quality&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># ⭐</span>
+    <span class="s1">&#39;max_quality&#39;</span><span class="p">:</span> <span class="mi">2</span>   <span class="c1"># ⭐⭐</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="filtros-por-editorial">Filtros por Editorial</h3>
+<h4 id="editoriales-principales">Editoriales Principales</h4>
+<div class="highlight"><pre><span></span><code>🦇 DC Comics
+├── Batman, Superman, Wonder Woman
+├── Justice League, Teen Titans
+└── Watchmen, Sandman, Vertigo
+
+🕷️ Marvel Comics
+├── Spider-Man, X-Men, Avengers
+├── Fantastic Four, Daredevil
+└── Ultimate, Marvel MAX
+
+🌟 Image Comics
+├── The Walking Dead, Saga
+├── Invincible, Spawn
+└── Titles independientes
+
+🐴 Dark Horse Comics
+├── Hellboy, Sin City
+├── Star Wars (legado)
+└── Comics licenciados
+
+📚 Otras Editoriales
+├── IDW Publishing
+├── Boom! Studios
+├── Dynamite Entertainment
+└── Editoriales independientes
+</code></pre></div>
+<h4 id="seleccion-multiple">Selección Múltiple</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Filtrar múltiples editoriales</span>
+<span class="n">editorial_filter</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;DC Comics&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Marvel Comics&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Image Comics&#39;</span>
+<span class="p">]</span>
+
+<span class="c1"># Excluir editoriales específicas</span>
+<span class="n">exclude_publishers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Publisher Unknown&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Sin Editorial&#39;</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="filtros-temporales">Filtros Temporales</h3>
+<h4 id="por-ano-de-publicacion">Por Año de Publicación</h4>
+<div class="highlight"><pre><span></span><code>┌─── Filtro por Año ────────────────────────────┐
+│                                               │
+│ 📅 Año de Tapa:                              │
+│ Desde: [2010] ─────────────── Hasta: [2024]  │
+│                                               │
+│ 🎯 Presets Rápidos:                          │
+│ [2020s] [2010s] [2000s] [1990s] [Clásicos]   │
+│                                               │
+│ 📊 Distribución por Década:                  │
+│ 2020-2024: ████████ 234 comics (22.3%)      │
+│ 2010-2019: ██████████ 445 comics (42.4%)    │
+│ 2000-2009: ████ 189 comics (18.0%)          │
+│ 1990-1999: ██ 98 comics (9.3%)              │
+│ Anteriores: ██ 84 comics (8.0%)              │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h4 id="filtros-de-fecha-especiales">Filtros de Fecha Especiales</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Comics de la Era Moderna (1985+)</span>
+year_range:<span class="w"> </span><span class="o">[</span><span class="m">1985</span>,<span class="w"> </span><span class="m">2024</span><span class="o">]</span>
+
+<span class="c1"># Comics de la Era de Plata (1956-1970)</span>
+year_range:<span class="w"> </span><span class="o">[</span><span class="m">1956</span>,<span class="w"> </span><span class="m">1970</span><span class="o">]</span>
+
+<span class="c1"># Comics de la Era de Oro (1938-1956)</span>
+year_range:<span class="w"> </span><span class="o">[</span><span class="m">1938</span>,<span class="w"> </span><span class="m">1956</span><span class="o">]</span>
+
+<span class="c1"># Solo comics actuales (últimos 2 años)</span>
+year_range:<span class="w"> </span><span class="o">[</span><span class="m">2022</span>,<span class="w"> </span><span class="m">2024</span><span class="o">]</span>
+
+<span class="c1"># Comics clásicos (antes de 2000)</span>
+year_range:<span class="w"> </span><span class="o">[</span><span class="m">1938</span>,<span class="w"> </span><span class="m">1999</span><span class="o">]</span>
+</code></pre></div>
+<h3 id="filtros-de-estado-de-archivo">Filtros de Estado de Archivo</h3>
+<h4 id="estados-disponibles">Estados Disponibles</h4>
+<div class="highlight"><pre><span></span><code>✅ Archivos Existentes
+├── Archivo presente en disco
+├── Accesible y legible
+└── Thumbnail generado
+
+🗑️ En Papelera
+├── Marcado como eliminado
+├── Oculto en vista normal
+└── Recuperable
+
+💔 Archivos Corruptos
+├── No se puede abrir
+├── Formato inválido
+└── Requiere atención
+
+🔗 Enlaces Rotos
+├── Archivo movido/eliminado
+├── Ruta incorrecta
+└── Requiere reubicación
+</code></pre></div>
+<h4 id="casos-de-uso">Casos de Uso</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Solo mostrar archivos válidos (vista normal)</span>
+<span class="n">file_status_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;include_existing&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;include_trash&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;include_corrupted&#39;</span><span class="p">:</span> <span class="kc">False</span>
+<span class="p">}</span>
+
+<span class="c1"># Gestión de papelera</span>
+<span class="n">trash_management_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;include_existing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;include_trash&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;include_corrupted&#39;</span><span class="p">:</span> <span class="kc">False</span>
+<span class="p">}</span>
+
+<span class="c1"># Mantenimiento de colección</span>
+<span class="n">maintenance_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;include_existing&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;include_trash&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;include_corrupted&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="filtros-especializados">🔧 Filtros Especializados</h2>
+<h3 id="filtros-de-volumen">Filtros de Volumen</h3>
+<h4 id="completitud-de-coleccion">Completitud de Colección</h4>
+<div class="highlight"><pre><span></span><code>┌─── Filtros de Volumen ────────────────────────┐
+│                                               │
+│ 📊 Completitud de Volumen:                   │
+│ ○ Volúmenes completos (100%)                 │
+│ ○ Casi completos (80-99%)                    │
+│ ○ En progreso (20-79%)                       │
+│ ○ Iniciados (1-19%)                          │
+│ ○ Sin issues (0%)                            │
+│                                               │
+│ 📚 Tipo de Volumen:                          │
+│ ☑️ Series regulares                          │
+│ ☑️ Mini-series                               │
+│ ☐ One-shots                                  │
+│ ☐ Graphic novels                             │
+│ ☐ Trade paperbacks                           │
+│                                               │
+│ 📅 Estado del Volumen:                       │
+│ ☑️ En publicación                            │
+│ ☑️ Finalizados                               │
+│ ☐ Cancelados                                 │
+│ ☐ En pausa                                   │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="filtros-de-tamano-de-archivo">Filtros de Tamaño de Archivo</h3>
+<h4 id="rangos-de-tamano">Rangos de Tamaño</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Archivos pequeños (comics web/digital)</span>
+<span class="n">size_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;min_size_mb&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;max_size_mb&#39;</span><span class="p">:</span> <span class="mi">30</span>
+<span class="p">}</span>
+
+<span class="c1"># Archivos medianos (calidad estándar)</span>
+<span class="n">size_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;min_size_mb&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="s1">&#39;max_size_mb&#39;</span><span class="p">:</span> <span class="mi">80</span>
+<span class="p">}</span>
+
+<span class="c1"># Archivos grandes (alta calidad/resolución)</span>
+<span class="n">size_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;min_size_mb&#39;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+    <span class="s1">&#39;max_size_mb&#39;</span><span class="p">:</span> <span class="mi">200</span>
+<span class="p">}</span>
+
+<span class="c1"># Archivos muy grandes (ultra-alta calidad)</span>
+<span class="n">size_filter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;min_size_mb&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="s1">&#39;max_size_mb&#39;</span><span class="p">:</span> <span class="mi">1000</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="analisis-de-tamano">Análisis de Tamaño</h4>
+<div class="highlight"><pre><span></span><code>┌─── Distribución por Tamaño ───────────────────┐
+│                                               │
+│ 📊 Análisis de Tamaños de Archivo:           │
+│                                               │
+│ 0-30 MB:   ████ 234 archivos (22.3%)         │
+│ 30-50 MB:  ████████ 445 archivos (42.4%)     │
+│ 50-80 MB:  ████ 189 archivos (18.0%)         │
+│ 80-150 MB: ██ 98 archivos (9.3%)             │
+│ 150+ MB:   ██ 84 archivos (8.0%)             │
+│                                               │
+│ 📈 Tamaño Promedio: 52.4 MB                  │
+│ 📊 Tamaño Total: 54.8 GB                     │
+│ 🎯 Calidad vs Tamaño: Correlación 0.78       │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="busqueda-avanzada">🔍 Búsqueda Avanzada</h2>
+<h3 id="operadores-de-busqueda">Operadores de Búsqueda</h3>
+<h4 id="operadores-basicos">Operadores Básicos</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Búsqueda exacta</span>
+<span class="s2">&quot;Batman Rebirth&quot;</span><span class="w">     </span>→<span class="w"> </span>Frase<span class="w"> </span>exacta
+batman<span class="w"> </span>AND<span class="w"> </span>rebirth<span class="w">   </span>→<span class="w"> </span>Ambos<span class="w"> </span>términos<span class="w"> </span>presentes
+batman<span class="w"> </span>OR<span class="w"> </span>superman<span class="w">   </span>→<span class="w"> </span>Cualquiera<span class="w"> </span>de<span class="w"> </span>los<span class="w"> </span>términos
+batman<span class="w"> </span>NOT<span class="w"> </span>year:2016<span class="w"> </span>→<span class="w"> </span>Batman<span class="w"> </span>excluyendo<span class="w"> </span><span class="m">2016</span>
+</code></pre></div>
+<h4 id="operadores-de-campo">Operadores de Campo</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Búsqueda por campo específico</span>
+title:<span class="s2">&quot;The Amazing Spider-Man&quot;</span>
+publisher:<span class="s2">&quot;DC Comics&quot;</span>
+year:2018
+quality:5
+volume:<span class="s2">&quot;Batman (2016)&quot;</span>
+issue:1
+file:batman_001.cbz
+</code></pre></div>
+<h4 id="operadores-de-rango">Operadores de Rango</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Rangos numéricos</span>
+year:2010..2020<span class="w">      </span>→<span class="w"> </span>Años<span class="w"> </span>entre<span class="w"> </span><span class="m">2010</span><span class="w"> </span>y<span class="w"> </span><span class="m">2020</span>
+quality:4..5<span class="w">         </span>→<span class="w"> </span>Calidad<span class="w"> </span><span class="m">4</span><span class="w"> </span>o<span class="w"> </span><span class="m">5</span><span class="w"> </span>estrellas
+size:50..100<span class="w">         </span>→<span class="w"> </span>Tamaño<span class="w"> </span>entre<span class="w"> </span><span class="m">50</span>-100<span class="w"> </span>MB
+issue:1..12<span class="w">          </span>→<span class="w"> </span>Issues<span class="w"> </span>del<span class="w"> </span><span class="m">1</span><span class="w"> </span>al<span class="w"> </span><span class="m">12</span>
+</code></pre></div>
+<h4 id="comodines">Comodines</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Wildcards</span>
+batman*<span class="w">              </span>→<span class="w"> </span>Comienza<span class="w"> </span>con<span class="w"> </span><span class="s2">&quot;batman&quot;</span>
+*man<span class="w">                 </span>→<span class="w"> </span>Termina<span class="w"> </span>con<span class="w"> </span><span class="s2">&quot;man&quot;</span>
+*spider*<span class="w">             </span>→<span class="w"> </span>Contiene<span class="w"> </span><span class="s2">&quot;spider&quot;</span>
+bat?man<span class="w">              </span>→<span class="w"> </span>?<span class="w"> </span>representa<span class="w"> </span>un<span class="w"> </span>carácter
+</code></pre></div>
+<h3 id="busquedas-predefinidas">Búsquedas Predefinidas</h3>
+<h4 id="consultas-rapidas">Consultas Rápidas</h4>
+<div class="highlight"><pre><span></span><code>┌─── Búsquedas Predefinidas ────────────────────┐
+│                                               │
+│ 🔍 Consultas Populares:                      │
+│ [🆕 Agregados Recientemente]                  │
+│ [⭐ Alta Calidad (4-5 ⭐)]                   │
+│ [❌ Sin Catalogar]                           │
+│ [🔍 Issues Faltantes]                        │
+│ [🗑️ En Papelera]                            │
+│                                               │
+│ 📚 Por Editorial:                            │
+│ [🦇 DC Comics]     [🕷️ Marvel Comics]        │
+│ [🌟 Image Comics]  [🐴 Dark Horse]           │
+│                                               │
+│ 📅 Por Época:                                │
+│ [📱 Modernos (2010+)] [🏛️ Clásicos (Pre-2000)] │
+│ [🔥 Era Actual (2020+)] [💎 Era de Oro]      │
+│                                               │
+│ 🎯 Mantenimiento:                            │
+│ [💔 Archivos Corruptos] [🔗 Enlaces Rotos]   │
+│ [📊 Duplicados] [📏 Archivos Grandes]        │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="busqueda-inteligente">Búsqueda Inteligente</h3>
+<h4 id="sugerencias-automaticas">Sugerencias Automáticas</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SearchSuggestionEngine</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Motor de sugerencias de búsqueda&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_suggestions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener sugerencias basadas en consulta parcial&quot;&quot;&quot;</span>
+
+        <span class="n">suggestions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># 1. Sugerencias de títulos</span>
+        <span class="n">title_matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_titles</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">suggestions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">title_matches</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>
+
+        <span class="c1"># 2. Sugerencias de editoriales</span>
+        <span class="n">publisher_matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_publishers</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">suggestions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">publisher_matches</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="c1"># 3. Sugerencias de volúmenes</span>
+        <span class="n">volume_matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_volumes</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">suggestions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">volume_matches</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>
+
+        <span class="c1"># 4. Sugerencias de archivos</span>
+        <span class="n">file_matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_filenames</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">suggestions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">file_matches</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">suggestions</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>  <span class="c1"># Top 10 sugerencias</span>
+</code></pre></div>
+<h4 id="correccion-automatica">Corrección Automática</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">correct_search_query</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Corregir errores tipográficos en búsquedas&quot;&quot;&quot;</span>
+
+    <span class="n">corrections</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;batman&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;batmam&#39;</span><span class="p">,</span> <span class="s1">&#39;barman&#39;</span><span class="p">,</span> <span class="s1">&#39;batsman&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;spider-man&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;spiderman&#39;</span><span class="p">,</span> <span class="s1">&#39;spider man&#39;</span><span class="p">,</span> <span class="s1">&#39;spidre-man&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;superman&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;supermam&#39;</span><span class="p">,</span> <span class="s1">&#39;super man&#39;</span><span class="p">,</span> <span class="s1">&#39;supreman&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;dc comics&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dc comic&#39;</span><span class="p">,</span> <span class="s1">&#39;dc&#39;</span><span class="p">,</span> <span class="s1">&#39;detective comics&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;marvel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;marel&#39;</span><span class="p">,</span> <span class="s1">&#39;marevl&#39;</span><span class="p">,</span> <span class="s1">&#39;marvel comics&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Usar algoritmo de distancia Levenshtein</span>
+    <span class="k">for</span> <span class="n">correct</span><span class="p">,</span> <span class="n">variants</span> <span class="ow">in</span> <span class="n">corrections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">variant</span> <span class="ow">in</span> <span class="n">variants</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">calculate_similarity</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">variant</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.8</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">correct</span>
+
+    <span class="k">return</span> <span class="n">query</span>
+</code></pre></div>
+<h2 id="resultados-de-busqueda">📊 Resultados de Búsqueda</h2>
+<h3 id="presentacion-de-resultados">Presentación de Resultados</h3>
+<h4 id="vista-de-grilla">Vista de Grilla</h4>
+<div class="highlight"><pre><span></span><code>┌─── Resultados: &quot;batman 2016&quot; (45 encontrados) ──┐
+│                                                  │
+│ 🖼️[Img] 🖼️[Img] 🖼️[Img] 🖼️[Img] 🖼️[Img]        │
+│ Batman#1  Batman#2  Batman#3  Batman#4  Batman#5  │
+│ ⭐⭐⭐⭐⭐ ⭐⭐⭐⭐   ⭐⭐⭐    ⭐⭐⭐⭐   ⭐⭐⭐⭐⭐│
+│ 45.2MB    42.8MB    Sin Cat.  41.5MB    43.1MB   │
+│                                                  │
+│ 🖼️[Img] 🖼️[Img] 🖼️[Img] 🖼️[Img] 🖼️[Img]        │
+│ Batman#6  Batman#7  Batman#8  Batman#9  Batman#10 │
+│ ⭐⭐⭐⭐   ⭐⭐⭐⭐⭐  ⭐⭐⭐⭐   ⭐⭐⭐⭐   ⭐⭐⭐⭐⭐│
+│ 44.7MB    46.3MB    43.9MB    42.1MB    45.8MB   │
+│                                                  │
+│ ◀️ Anterior  [1] 2 3 4 5  Siguiente ▶️          │
+└──────────────────────────────────────────────────┘
+</code></pre></div>
+<h4 id="vista-de-lista">Vista de Lista</h4>
+<div class="highlight"><pre><span></span><code>┌─── Resultados: &quot;batman 2016&quot; (45 encontrados) ──┐
+│                                                  │
+│ ✅ Batman #1 - I Am Gotham                      │
+│    📁 batman_001_2016.cbz | ⭐⭐⭐⭐⭐ | 45.2MB    │
+│    📅 2016-06-15 | 🏷️ DC Comics                 │
+│                                                  │
+│ ✅ Batman #2 - I Am Gotham                      │
+│    📁 batman_002_2016.cbz | ⭐⭐⭐⭐ | 42.8MB      │
+│    📅 2016-07-06 | 🏷️ DC Comics                 │
+│                                                  │
+│ ❌ Batman #3 - I Am Gotham                      │
+│    📁 batman_003_2016.cbz | Sin catalogar        │
+│    📅 2016-07-20 | 🏷️ Sin editorial             │
+│                                                  │
+│ ✅ Batman #4 - I Am Gotham                      │
+│    📁 batman_004_2016.cbz | ⭐⭐⭐⭐ | 41.5MB      │
+│    📅 2016-08-03 | 🏷️ DC Comics                 │
+│                                                  │
+└──────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="ordenamiento-de-resultados">Ordenamiento de Resultados</h3>
+<h4 id="opciones-de-ordenamiento">Opciones de Ordenamiento</h4>
+<div class="highlight"><pre><span></span><code>Ordenar por:
+○ Relevancia (defecto)    ○ Fecha de agregado
+○ Título A-Z              ○ Título Z-A
+○ Calidad (mayor)         ○ Calidad (menor)
+○ Tamaño (mayor)          ○ Tamaño (menor)
+○ Fecha de tapa (nuevo)   ○ Fecha de tapa (antiguo)
+○ Editorial               ○ Número de issue
+</code></pre></div>
+<h4 id="algoritmo-de-relevancia">Algoritmo de Relevancia</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calculate_search_relevance</span><span class="p">(</span><span class="n">comic</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calcular relevancia de resultado de búsqueda&quot;&quot;&quot;</span>
+
+    <span class="n">relevance_score</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># 1. Coincidencia exacta en título (peso: 40%)</span>
+    <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">comic</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">relevance_score</span> <span class="o">+=</span> <span class="mf">0.4</span>
+
+    <span class="c1"># 2. Coincidencia en nombre de archivo (peso: 20%)</span>
+    <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">comic</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">relevance_score</span> <span class="o">+=</span> <span class="mf">0.2</span>
+
+    <span class="c1"># 3. Coincidencia en editorial (peso: 15%)</span>
+    <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">comic</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">relevance_score</span> <span class="o">+=</span> <span class="mf">0.15</span>
+
+    <span class="c1"># 4. Coincidencia en volumen (peso: 15%)</span>
+    <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">comic</span><span class="o">.</span><span class="n">volume_name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">relevance_score</span> <span class="o">+=</span> <span class="mf">0.15</span>
+
+    <span class="c1"># 5. Coincidencia en descripción (peso: 10%)</span>
+    <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">comic</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">relevance_score</span> <span class="o">+=</span> <span class="mf">0.1</span>
+
+    <span class="c1"># Bonus por calidad alta</span>
+    <span class="k">if</span> <span class="n">comic</span><span class="o">.</span><span class="n">quality</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">relevance_score</span> <span class="o">*=</span> <span class="mf">1.1</span>
+
+    <span class="c1"># Penalty por comics sin catalogar</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">comic</span><span class="o">.</span><span class="n">is_cataloged</span><span class="p">:</span>
+        <span class="n">relevance_score</span> <span class="o">*=</span> <span class="mf">0.8</span>
+
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">relevance_score</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="gestion-de-filtros">💾 Gestión de Filtros</h2>
+<h3 id="filtros-guardados">Filtros Guardados</h3>
+<h4 id="crear-filtro-personalizado">Crear Filtro Personalizado</h4>
+<div class="highlight"><pre><span></span><code>┌─── Crear Filtro Personalizado ───────────────────┐
+│                                                  │
+│ 📝 Nombre: [Comics Alta Calidad DC         ]    │
+│                                                  │
+│ 🔧 Configuración:                               │
+│ ├── Editorial: DC Comics                        │
+│ ├── Calidad: 4-5 ⭐                             │
+│ ├── Año: 2010-2024                              │
+│ ├── Estado: Solo clasificados                   │
+│ └── Tamaño: 40-150 MB                           │
+│                                                  │
+│ 🎯 Vista Previa: 234 comics encontrados         │
+│                                                  │
+│ [💾 Guardar Filtro] [❌ Cancelar]               │
+└──────────────────────────────────────────────────┘
+</code></pre></div>
+<h4 id="biblioteca-de-filtros">Biblioteca de Filtros</h4>
+<div class="highlight"><pre><span></span><code>┌─── Filtros Guardados ─────────────────────────────┐
+│                                                   │
+│ 📚 Mis Filtros:                                  │
+│                                                   │
+│ ⭐ Comics Alta Calidad DC                        │
+│ ├── DC Comics, 4-5⭐, 2010-2024                  │
+│ ├── 234 resultados                               │
+│ └── [▶️ Aplicar] [✏️ Editar] [🗑️ Eliminar]        │
+│                                                   │
+│ 🕷️ Marvel Modernos Completos                     │
+│ ├── Marvel, 2015+, Solo completos               │
+│ ├── 89 resultados                                │
+│ └── [▶️ Aplicar] [✏️ Editar] [🗑️ Eliminar]        │
+│                                                   │
+│ 🔧 Comics Para Mantenimiento                     │
+│ ├── Sin catalogar, baja calidad                 │
+│ ├── 167 resultados                               │
+│ └── [▶️ Aplicar] [✏️ Editar] [🗑️ Eliminar]        │
+│                                                   │
+│ [➕ Crear Nuevo Filtro]                          │
+└───────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="filtros-inteligentes">Filtros Inteligentes</h3>
+<h4 id="auto-filtros-por-comportamiento">Auto-Filtros por Comportamiento</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SmartFilterEngine</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Motor de filtros inteligentes&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">suggest_filters_based_on_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_behavior</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sugerir filtros basados en uso&quot;&quot;&quot;</span>
+
+        <span class="n">suggestions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Analizar patrones de búsqueda</span>
+        <span class="k">if</span> <span class="n">user_behavior</span><span class="o">.</span><span class="n">searches_dc_frequently</span><span class="p">():</span>
+            <span class="n">suggestions</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Comics DC Frecuentes&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;filters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;publisher&#39;</span><span class="p">:</span> <span class="s1">&#39;DC Comics&#39;</span><span class="p">},</span>
+                <span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="s1">&#39;Buscas DC Comics frecuentemente&#39;</span>
+            <span class="p">})</span>
+
+        <span class="c1"># Analizar calidad preferida</span>
+        <span class="n">avg_quality</span> <span class="o">=</span> <span class="n">user_behavior</span><span class="o">.</span><span class="n">get_average_opened_quality</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">avg_quality</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">suggestions</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Solo Alta Calidad&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;filters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;quality_min&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span>
+                <span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="s1">&#39;Prefieres comics de alta calidad&#39;</span>
+            <span class="p">})</span>
+
+        <span class="c1"># Analizar período temporal preferido</span>
+        <span class="n">preferred_years</span> <span class="o">=</span> <span class="n">user_behavior</span><span class="o">.</span><span class="n">get_preferred_year_range</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">preferred_years</span><span class="p">:</span>
+            <span class="n">suggestions</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Comics </span><span class="si">{</span><span class="n">preferred_years</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">preferred_years</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;filters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;year_range&#39;</span><span class="p">:</span> <span class="n">preferred_years</span><span class="p">},</span>
+                <span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Lees principalmente comics de </span><span class="si">{</span><span class="n">preferred_years</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">preferred_years</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">suggestions</span>
+</code></pre></div>
+<h4 id="filtros-contextuales">Filtros Contextuales</h4>
+<div class="highlight"><pre><span></span><code>┌─── Filtros Sugeridos ─────────────────────────────┐
+│                                                   │
+│ 🤖 Basado en tu actividad reciente:              │
+│                                                   │
+│ 💡 &quot;Solo Comics Modernos&quot;                        │
+│ ├── Lees principalmente comics 2015+             │
+│ ├── 89% de tus lecturas son de esta era         │
+│ └── [✅ Crear Filtro] [❌ Ignorar]                │
+│                                                   │
+│ 💡 &quot;Marvel de Alta Calidad&quot;                      │
+│ ├── Prefieres Marvel con 4-5 ⭐                  │
+│ ├── 78% de tus favoritos son Marvel HQ          │
+│ └── [✅ Crear Filtro] [❌ Ignorar]                │
+│                                                   │
+│ 💡 &quot;Series Incompletas&quot;                          │
+│ ├── Tienes 12 volúmenes &lt;50% completos          │
+│ ├── Te ayudará a priorizar adquisiciones        │
+│ └── [✅ Crear Filtro] [❌ Ignorar]                │
+└───────────────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="analisis-de-busquedas">📊 Análisis de Búsquedas</h2>
+<h3 id="estadisticas-de-uso">Estadísticas de Uso</h3>
+<div class="highlight"><pre><span></span><code>┌─── Estadísticas de Búsqueda ──────────────────────┐
+│                                                   │
+│ 📊 Últimos 30 días:                              │
+│                                                   │
+│ 🔍 Total búsquedas: 234                          │
+│ 📈 Promedio diario: 7.8                          │
+│ ⏱️ Tiempo promedio: 2.3 seg                      │
+│ 🎯 Tasa de éxito: 87.2%                          │
+│                                                   │
+│ 🔝 Términos más buscados:                        │
+│ 1. batman (47 búsquedas)                         │
+│ 2. spider-man (32 búsquedas)                     │
+│ 3. dc comics (28 búsquedas)                      │
+│ 4. 2023 (21 búsquedas)                           │
+│ 5. high quality (18 búsquedas)                   │
+│                                                   │
+│ 🎛️ Filtros más usados:                           │
+│ 1. Solo clasificados (89%)                       │
+│ 2. Calidad 4-5⭐ (67%)                           │
+│ 3. DC + Marvel (54%)                             │
+│ 4. Últimos 5 años (43%)                          │
+└───────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="optimizacion-de-rendimiento">Optimización de Rendimiento</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">optimize_search_performance</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimizar rendimiento del sistema de búsqueda&quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. Índices de base de datos</span>
+    <span class="n">database_indexes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;CREATE INDEX idx_comics_title ON comicbooks(title)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX idx_comics_filename ON comicbooks(filename)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX idx_comics_publisher ON comicbooks(publisher)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX idx_comics_quality ON comicbooks(quality)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX idx_comics_year ON comicbooks(cover_date)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX idx_comics_classification ON comicbooks(is_cataloged)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CREATE INDEX idx_comics_size ON comicbooks(file_size)&quot;</span>
+    <span class="p">]</span>
+
+    <span class="c1"># 2. Cache de búsquedas frecuentes</span>
+    <span class="n">search_cache</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;cache_size&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s1">&#39;ttl_seconds&#39;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>  <span class="c1"># 1 hora</span>
+        <span class="s1">&#39;invalidate_on_change&#39;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">}</span>
+
+    <span class="c1"># 3. Búsqueda asíncrona para grandes colecciones</span>
+    <span class="n">async_search_config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;min_collection_size&#39;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+        <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="s1">&#39;max_concurrent_batches&#39;</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="p">}</span>
+</code></pre></div>
+<hr />
+<p><strong>¿Quieres saber más sobre el sistema de thumbnails?</strong> 👉 <a href="../../funcionalidades/thumbnails/">Thumbnails</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

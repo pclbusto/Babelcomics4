@@ -1,0 +1,2555 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../gestion-comics/">
+      
+      
+        <link rel="next" href="../filtros-busqueda/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Gestión de Volúmenes - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gestion-de-volumenes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Gestión de Volúmenes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../funcionalidades/catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../desarrollo/arquitectura/" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../referencia/configuracion/" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestion-comics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#que-es-un-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 ¿Qué es un Volumen?
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 ¿Qué es un Volumen?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definicion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definición
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejemplos-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ejemplos de Volúmenes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vista-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Vista de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Vista de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#navegacion-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Navegación Principal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#informacion-del-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información del Volumen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Información del Volumen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metadatos-basicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadatos Básicos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estadisticas-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estadísticas de Colección
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lista-de-issues-del-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Lista de Issues del Volumen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Lista de Issues del Volumen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vista-detallada-de-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista Detallada de Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estados-de-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estados de Issues
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estados de Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-catalogado" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Issue Catalogado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-sin-catalogar" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Issue Sin Catalogar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-faltante" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Issue Faltante
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#actualizacion-desde-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Actualización desde ComicVine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Actualización desde ComicVine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proceso-de-actualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Actualización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proceso de Actualización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actualizacion-manual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Actualización Manual
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sincronizacion-de-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sincronización de Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-actualizaciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración de Actualizaciones
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuración de Actualizaciones">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actualizacion-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Actualización Automática
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#historial-de-actualizaciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Historial de Actualizaciones
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-de-gestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ Herramientas de Gestión
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Herramientas de Gestión">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analisis-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Análisis de Colección
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Análisis de Colección">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completitud-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Completitud de Volúmenes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reporte-de-issues-faltantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reporte de Issues Faltantes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-duplicados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Duplicados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestión de Duplicados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deteccion-de-duplicados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Detección de Duplicados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolucion-de-duplicados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resolución de Duplicados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estadisticas-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Estadísticas de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Estadísticas de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dashboard de Volúmenes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metricas-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Métricas de Calidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-y-filtrado-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda y Filtrado de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda y Filtrado de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtros-avanzados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Avanzados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ordenamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ordenamiento
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consejos-para-gestion-eficiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 Consejos para Gestión Eficiente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💡 Consejos para Gestión Eficiente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-recomendado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo Recomendado
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flujo de Trabajo Recomendado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-configuracion-inicial" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Configuración Inicial
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mantenimiento-regular" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Mantenimiento Regular
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-expansion-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Expansión de Colección
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mejores-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejores Prácticas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mejores Prácticas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#organizacion-de-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Organización de Archivos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nomenclatura-consistente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nomenclatura Consistente
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-y-recuperacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Backup y Recuperación
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filtros-busqueda/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/thumbnails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/base-datos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../funcionalidades/interfaz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/modelos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/repositorios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/api-comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/configuracion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#que-es-un-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 ¿Qué es un Volumen?
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 ¿Qué es un Volumen?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definicion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definición
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejemplos-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ejemplos de Volúmenes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vista-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Vista de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Vista de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#navegacion-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Navegación Principal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#informacion-del-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      Información del Volumen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Información del Volumen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metadatos-basicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadatos Básicos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estadisticas-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estadísticas de Colección
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lista-de-issues-del-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Lista de Issues del Volumen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Lista de Issues del Volumen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vista-detallada-de-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista Detallada de Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estados-de-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estados de Issues
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estados de Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-catalogado" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Issue Catalogado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-sin-catalogar" class="md-nav__link">
+    <span class="md-ellipsis">
+      ❌ Issue Sin Catalogar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-faltante" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Issue Faltante
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#actualizacion-desde-comicvine" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔄 Actualización desde ComicVine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Actualización desde ComicVine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proceso-de-actualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Actualización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proceso de Actualización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actualizacion-manual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Actualización Manual
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sincronizacion-de-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sincronización de Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-actualizaciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración de Actualizaciones
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuración de Actualizaciones">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actualizacion-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Actualización Automática
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#historial-de-actualizaciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Historial de Actualizaciones
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-de-gestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ Herramientas de Gestión
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Herramientas de Gestión">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analisis-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Análisis de Colección
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Análisis de Colección">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completitud-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Completitud de Volúmenes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reporte-de-issues-faltantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reporte de Issues Faltantes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-duplicados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestión de Duplicados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestión de Duplicados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deteccion-de-duplicados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Detección de Duplicados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolucion-de-duplicados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resolución de Duplicados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estadisticas-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Estadísticas de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Estadísticas de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dashboard de Volúmenes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metricas-de-calidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Métricas de Calidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#busqueda-y-filtrado-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔍 Búsqueda y Filtrado de Volúmenes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔍 Búsqueda y Filtrado de Volúmenes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtros-avanzados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtros Avanzados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ordenamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ordenamiento
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consejos-para-gestion-eficiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 Consejos para Gestión Eficiente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💡 Consejos para Gestión Eficiente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-recomendado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo Recomendado
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flujo de Trabajo Recomendado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-configuracion-inicial" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Configuración Inicial
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mantenimiento-regular" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Mantenimiento Regular
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-expansion-de-coleccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Expansión de Colección
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mejores-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejores Prácticas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mejores Prácticas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#organizacion-de-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Organización de Archivos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nomenclatura-consistente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nomenclatura Consistente
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-y-recuperacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Backup y Recuperación
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="gestion-de-volumenes">Gestión de Volúmenes</h1>
+<p>La gestión de volúmenes en Babelcomics4 permite organizar y administrar series completas de comics, proporcionando una vista integral de tu colección a nivel de volumen y facilitando la catalogación automática con ComicVine.</p>
+<h2 id="que-es-un-volumen">📚 ¿Qué es un Volumen?</h2>
+<h3 id="definicion">Definición</h3>
+<p>Un <strong>volumen</strong> es una serie o colección específica de comics que comparten:</p>
+<ul>
+<li><strong>Título de la serie</strong>: Ej. "Batman", "Spider-Man", "The Walking Dead"</li>
+<li><strong>Editorial</strong>: DC Comics, Marvel Comics, Image Comics, etc.</li>
+<li><strong>Período de publicación</strong>: Años de inicio y fin</li>
+<li><strong>Numeración</strong>: Secuencia específica de issues</li>
+</ul>
+<h3 id="ejemplos-de-volumenes">Ejemplos de Volúmenes</h3>
+<div class="highlight"><pre><span></span><code>📗 Batman (2016) - DC Comics
+   ├── Batman #1 (2016)
+   ├── Batman #2 (2016)
+   ├── Batman #3 (2016)
+   └── ...
+
+📘 The Amazing Spider-Man (2018) - Marvel Comics
+   ├── The Amazing Spider-Man #1 (2018)
+   ├── The Amazing Spider-Man #2 (2018)
+   └── ...
+
+📙 The Walking Dead (2003) - Image Comics
+   ├── The Walking Dead #1 (2003)
+   ├── The Walking Dead #2 (2003)
+   └── ... hasta #193 (2019)
+</code></pre></div>
+<h2 id="vista-de-volumenes">🔍 Vista de Volúmenes</h2>
+<h3 id="navegacion-principal">Navegación Principal</h3>
+<div class="highlight"><pre><span></span><code>┌─── Lista de Volúmenes ─────────────────────────┐
+│                                               │
+│ 📗 Batman (2016) - DC Comics                 │
+│ ├── 45/100 issues en colección (45%)         │
+│ ├── Último actualizado: 2024-03-15           │
+│ └── [🔄 Actualizar ComicVine]                │
+│                                               │
+│ 📘 Spider-Man (2018) - Marvel Comics         │
+│ ├── 23/50 issues en colección (46%)          │
+│ ├── Issues faltantes: #5, #12, #18-20        │
+│ └── [🔄 Actualizar ComicVine]                │
+│                                               │
+│ 📙 The Walking Dead (2003) - Image Comics    │
+│ ├── 193/193 issues en colección (100%) ✅   │
+│ ├── ⭐ Colección completa                    │
+│ └── [🔄 Actualizar ComicVine]                │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="informacion-del-volumen">Información del Volumen</h3>
+<h4 id="metadatos-basicos">Metadatos Básicos</h4>
+<div class="highlight"><pre><span></span><code>┌─── Batman (2016) ─────────────────────────────┐
+│                                               │
+│ 📖 Editorial: DC Comics                       │
+│ 📅 Período: 2016 - 2021                      │
+│ 🔢 Total Issues: 100                          │
+│ 💾 En Colección: 45 (45%)                     │
+│ 🏷️ ID ComicVine: 91273                       │
+│                                               │
+│ 📝 Descripción:                               │
+│ La serie principal de Batman que comenzó      │
+│ durante el evento DC Rebirth, escrita por     │
+│ Tom King y otros autores destacados.          │
+│                                               │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h4 id="estadisticas-de-coleccion">Estadísticas de Colección</h4>
+<div class="highlight"><pre><span></span><code>┌─── Estadísticas de Colección ─────────────────┐
+│                                               │
+│ 📊 Progreso: ████████████░░░░░░░░ 45%        │
+│                                               │
+│ ✅ Issues Catalogados: 42                    │
+│ ❌ Issues Sin Catalogar: 3                   │
+│ 🔍 Issues Faltantes: 55                      │
+│ 🗑️ En Papelera: 0                           │
+│                                               │
+│ ⭐ Calidad Promedio: ⭐⭐⭐⭐ (4.2/5)        │
+│ 📁 Tamaño Total: 2.3 GB                      │
+│                                               │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="lista-de-issues-del-volumen">📋 Lista de Issues del Volumen</h2>
+<h3 id="vista-detallada-de-issues">Vista Detallada de Issues</h3>
+<div class="highlight"><pre><span></span><code>┌─── Batman (2016) - Issues ────────────────────┐
+│                                               │
+│ #1  ✅ Batman #1 - I Am Gotham               │
+│     📁 batman_001_2016.cbz | ⭐⭐⭐⭐⭐       │
+│     📅 2016-06-15 | 💾 45.2 MB                │
+│                                               │
+│ #2  ✅ Batman #2 - I Am Gotham               │
+│     📁 batman_002_2016.cbz | ⭐⭐⭐⭐         │
+│     📅 2016-07-06 | 💾 42.8 MB                │
+│                                               │
+│ #3  ❌ Batman #3 - I Am Gotham               │
+│     📁 batman_003_2016.cbz | Sin catalogar    │
+│     📅 2016-07-20 | 💾 41.5 MB                │
+│                                               │
+│ #4  🔍 Batman #4 - I Am Gotham               │
+│     Issue faltante en colección               │
+│     📅 2016-08-03                             │
+│                                               │
+│ #5  ✅ Batman #5 - I Am Gotham               │
+│     📁 batman_005_2016.cbz | ⭐⭐⭐⭐⭐       │
+│     📅 2016-08-17 | 💾 43.1 MB                │
+│                                               │
+└───────────────────────────────────────────────┘
+
+🔧 Controles:
+[📥 Importar Issues] [🔄 Actualizar ComicVine]
+[⭐ Cambiar Calidad] [🗑️ Gestionar Papelera]
+</code></pre></div>
+<h3 id="estados-de-issues">Estados de Issues</h3>
+<h4 id="issue-catalogado">✅ Issue Catalogado</h4>
+<div class="highlight"><pre><span></span><code>┌─── Batman #1 (2016) ──────────────────────────┐
+│ 🖼️ [Thumbnail Color]                         │
+│                                               │
+│ 📖 Título: Batman #1 - I Am Gotham           │
+│ 📁 Archivo: batman_001_2016.cbz              │
+│ ⭐ Calidad: ⭐⭐⭐⭐⭐ (5/5)                │
+│ 📅 Fecha Tapa: 2016-06-15                    │
+│ 💾 Tamaño: 45.2 MB                           │
+│ 🏷️ ComicVine ID: 38686                       │
+│                                               │
+│ 📝 Historia: &quot;I Am Gotham&quot; Part 1            │
+│ Two strange new heroes appear in Gotham...    │
+│                                               │
+│ 👥 Equipo Creativo:                          │
+│ ✏️ Guionista: Tom King                       │
+│ 🎨 Dibujante: David Finch                    │
+│ 🖌️ Entintador: Matt Banning                  │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h4 id="issue-sin-catalogar">❌ Issue Sin Catalogar</h4>
+<div class="highlight"><pre><span></span><code>┌─── comic_batman_003.cbz ──────────────────────┐
+│ 🖼️ [Thumbnail Escala Grises]                 │
+│                                               │
+│ 📁 Archivo: comic_batman_003.cbz             │
+│ ⭐ Calidad: Sin calificar                     │
+│ 📅 Modificado: 2024-03-10                    │
+│ 💾 Tamaño: 41.5 MB                           │
+│ 🏷️ Estado: Sin catalogar                     │
+│                                               │
+│ 🔧 Acciones:                                 │
+│ [🔍 Buscar en ComicVine]                     │
+│ [📝 Catalogar Manualmente]                   │
+│ [⭐ Asignar Calidad]                          │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h4 id="issue-faltante">🔍 Issue Faltante</h4>
+<div class="highlight"><pre><span></span><code>┌─── Batman #4 (2016) ──────────────────────────┐
+│ 🖼️ [Imagen de ComicVine]                     │
+│                                               │
+│ 📖 Título: Batman #4 - I Am Gotham           │
+│ 📅 Fecha Tapa: 2016-08-03                    │
+│ 🏷️ ComicVine ID: 38689                       │
+│ 🔍 Estado: No encontrado en colección        │
+│                                               │
+│ 📝 Historia: &quot;I Am Gotham&quot; Part 4            │
+│ Batman teams up with Gotham and Gotham Girl  │
+│ to face a new threat to the city.            │
+│                                               │
+│ 🔧 Acciones:                                 │
+│ [📥 Marcar como Adquirido]                   │
+│ [🔍 Buscar en Archivos]                      │
+│ [🛒 Añadir a Lista de Deseos]                │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="actualizacion-desde-comicvine">🔄 Actualización desde ComicVine</h2>
+<h3 id="proceso-de-actualizacion">Proceso de Actualización</h3>
+<h4 id="actualizacion-manual">Actualización Manual</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_volume_from_comicvine</span><span class="p">(</span><span class="n">volume_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Actualizar volumen completo desde ComicVine&quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. Obtener información actualizada del volumen</span>
+    <span class="n">volume_data</span> <span class="o">=</span> <span class="n">comicvine_client</span><span class="o">.</span><span class="n">get_volume_details</span><span class="p">(</span><span class="n">volume_id</span><span class="p">)</span>
+
+    <span class="c1"># 2. Actualizar metadatos del volumen</span>
+    <span class="n">update_volume_metadata</span><span class="p">(</span><span class="n">volume_data</span><span class="p">)</span>
+
+    <span class="c1"># 3. Obtener lista completa de issues</span>
+    <span class="n">issues_list</span> <span class="o">=</span> <span class="n">comicvine_client</span><span class="o">.</span><span class="n">get_volume_issues</span><span class="p">(</span><span class="n">volume_id</span><span class="p">)</span>
+
+    <span class="c1"># 4. Sincronizar con issues en colección</span>
+    <span class="n">sync_issues_with_collection</span><span class="p">(</span><span class="n">issues_list</span><span class="p">)</span>
+
+    <span class="c1"># 5. Descargar portadas faltantes</span>
+    <span class="n">download_missing_covers</span><span class="p">()</span>
+
+    <span class="c1"># 6. Actualizar estadísticas</span>
+    <span class="n">update_collection_stats</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="sincronizacion-de-issues">Sincronización de Issues</h4>
+<div class="highlight"><pre><span></span><code>graph TB
+    A[Obtener Issues ComicVine] --&gt; B[Comparar con Colección]
+    B --&gt; C{Issue Existe?}
+    C --&gt;|Sí| D[Actualizar Metadata]
+    C --&gt;|No| E[Marcar como Faltante]
+    D --&gt; F[Verificar Portada]
+    E --&gt; F
+    F --&gt; G[Actualizar Base Datos]
+    G --&gt; H[Refrescar UI]
+</code></pre></div>
+<h3 id="configuracion-de-actualizaciones">Configuración de Actualizaciones</h3>
+<h4 id="actualizacion-automatica">Actualización Automática</h4>
+<div class="highlight"><pre><span></span><code>┌─── Configuración Auto-Update ─────────────────┐
+│                                               │
+│ ⏰ Frecuencia: [Semanal ▼]                   │
+│ 🕐 Hora: [02:00] AM                          │
+│ 📅 Día: [Domingo]                            │
+│                                               │
+│ ✅ Actualizar metadata de volúmenes          │
+│ ✅ Sincronizar lista de issues               │
+│ ✅ Descargar portadas nuevas                 │
+│ ☐ Marcar issues faltantes como deseados      │
+│                                               │
+│ 🌐 Límite API: [200] requests/hora           │
+│ ⏱️ Delay entre requests: [500] ms            │
+│                                               │
+│ [💾 Guardar Configuración]                   │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h4 id="historial-de-actualizaciones">Historial de Actualizaciones</h4>
+<div class="highlight"><pre><span></span><code>┌─── Historial de Actualizaciones ─────────────┐
+│                                               │
+│ 📅 2024-03-15 14:30 - Batman (2016)          │
+│ ├── ✅ 5 issues actualizados                 │
+│ ├── 📥 3 portadas descargadas                │
+│ └── 🔍 2 issues faltantes detectados         │
+│                                               │
+│ 📅 2024-03-14 18:45 - Spider-Man (2018)      │
+│ ├── ✅ 2 issues actualizados                 │
+│ ├── ❌ Error API timeout (reintentado)       │
+│ └── ✅ Actualización completada               │
+│                                               │
+│ 📅 2024-03-13 12:20 - Walking Dead (2003)    │
+│ ├── ✅ Volumen completo actualizado          │
+│ ├── ℹ️ Sin cambios detectados               │
+│ └── ✅ Verificación completada               │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="herramientas-de-gestion">🛠️ Herramientas de Gestión</h2>
+<h3 id="analisis-de-coleccion">Análisis de Colección</h3>
+<h4 id="completitud-de-volumenes">Completitud de Volúmenes</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">analyze_collection_completeness</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analizar completitud de volúmenes en colección&quot;&quot;&quot;</span>
+
+    <span class="n">volumes_stats</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">volume</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Volume</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">total_issues</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">cantidad_numeros</span>
+        <span class="n">owned_issues</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">id_volume</span> <span class="o">==</span> <span class="n">volume</span><span class="o">.</span><span class="n">id_volume</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="n">completeness</span> <span class="o">=</span> <span class="p">(</span><span class="n">owned_issues</span> <span class="o">/</span> <span class="n">total_issues</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span> <span class="k">if</span> <span class="n">total_issues</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="n">volumes_stats</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;volume&#39;</span><span class="p">:</span> <span class="n">volume</span><span class="p">,</span>
+            <span class="s1">&#39;total_issues&#39;</span><span class="p">:</span> <span class="n">total_issues</span><span class="p">,</span>
+            <span class="s1">&#39;owned_issues&#39;</span><span class="p">:</span> <span class="n">owned_issues</span><span class="p">,</span>
+            <span class="s1">&#39;completeness&#39;</span><span class="p">:</span> <span class="n">completeness</span><span class="p">,</span>
+            <span class="s1">&#39;missing_issues&#39;</span><span class="p">:</span> <span class="n">total_issues</span> <span class="o">-</span> <span class="n">owned_issues</span>
+        <span class="p">})</span>
+
+    <span class="c1"># Ordenar por completitud</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">volumes_stats</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;completeness&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="reporte-de-issues-faltantes">Reporte de Issues Faltantes</h4>
+<div class="highlight"><pre><span></span><code>┌─── Issues Faltantes por Volumen ──────────────┐
+│                                               │
+│ 📗 Batman (2016) - 55 faltantes (55%)        │
+│ ├── #4, #8, #12-15, #18, #20-25             │
+│ ├── #30-35, #40, #45-50, #55-60             │
+│ └── #65-70, #75-80, #85-100                 │
+│                                               │
+│ 📘 Spider-Man (2018) - 27 faltantes (54%)    │
+│ ├── #5, #8, #12, #18-20, #25                │
+│ ├── #30-35, #40, #45-50                     │
+│ └── Volumen activo - Issues nuevos           │
+│                                               │
+│ 📙 X-Men (2019) - 12 faltantes (24%)         │
+│ ├── #15, #18, #22-25, #30                   │
+│ ├── #35, #40, #42, #45                      │
+│ └── Alta prioridad - Nearly complete         │
+└───────────────────────────────────────────────┘
+
+🎯 Acciones Sugeridas:
+[🛒 Generar Lista de Compras] [📊 Exportar Reporte]
+[⭐ Priorizar por Calidad] [💰 Estimar Costo]
+</code></pre></div>
+<h3 id="gestion-de-duplicados">Gestión de Duplicados</h3>
+<h4 id="deteccion-de-duplicados">Detección de Duplicados</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">detect_duplicate_issues</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Detectar issues duplicados en la colección&quot;&quot;&quot;</span>
+
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+        <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">id_volume</span><span class="p">,</span>
+        <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">numero</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span>
+        <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">id_volume</span><span class="p">,</span>
+        <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">numero</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">having</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Comicbook</span><span class="o">.</span><span class="n">id_comicbook</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="n">duplicate_groups</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">volume_id</span><span class="p">,</span> <span class="n">issue_number</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">duplicates</span><span class="p">:</span>
+        <span class="n">comics</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Comicbook</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">id_volume</span> <span class="o">==</span> <span class="n">volume_id</span><span class="p">,</span>
+            <span class="n">ComicbookInfo</span><span class="o">.</span><span class="n">numero</span> <span class="o">==</span> <span class="n">issue_number</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+        <span class="n">duplicate_groups</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;volume_id&#39;</span><span class="p">:</span> <span class="n">volume_id</span><span class="p">,</span>
+            <span class="s1">&#39;issue_number&#39;</span><span class="p">:</span> <span class="n">issue_number</span><span class="p">,</span>
+            <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span>
+            <span class="s1">&#39;comics&#39;</span><span class="p">:</span> <span class="n">comics</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">duplicate_groups</span>
+</code></pre></div>
+<h4 id="resolucion-de-duplicados">Resolución de Duplicados</h4>
+<div class="highlight"><pre><span></span><code>┌─── Duplicados Detectados ─────────────────────┐
+│                                               │
+│ 📗 Batman #15 (2016) - 2 copias             │
+│ ├── 📁 batman_015_v1.cbz | ⭐⭐⭐ | 42MB    │
+│ ├── 📁 batman_015_v2.cbz | ⭐⭐⭐⭐⭐ | 68MB│
+│ └── 🎯 Acción: Conservar v2, mover v1 a papelera │
+│                                               │
+│ 📘 Spider-Man #8 (2018) - 3 copias          │
+│ ├── 📁 spiderman_008_low.cbz | ⭐⭐ | 25MB   │
+│ ├── 📁 spiderman_008_med.cbz | ⭐⭐⭐ | 35MB │
+│ ├── 📁 spiderman_008_hq.cbz | ⭐⭐⭐⭐⭐ | 55MB │
+│ └── 🎯 Acción: Conservar HQ, eliminar otros   │
+│                                               │
+│ [🔧 Resolver Automáticamente] [📝 Manual]    │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="estadisticas-de-volumenes">📊 Estadísticas de Volúmenes</h2>
+<h3 id="dashboard-de-volumenes">Dashboard de Volúmenes</h3>
+<div class="highlight"><pre><span></span><code>┌─── Estadísticas de Colección ─────────────────┐
+│                                               │
+│ 📚 Total Volúmenes: 45                       │
+│ ✅ Completos (100%): 3 (6.7%)                │
+│ 🔄 En Progreso (50-99%): 12 (26.7%)          │
+│ 🆕 Iniciados (&lt;50%): 30 (66.7%)              │
+│                                               │
+│ 📊 Completitud Promedio: 34.5%               │
+│ 📈 Tendencia: +2.3% este mes                 │
+│                                               │
+├─── Por Editorial ─────────────────────────────┤
+│ 🦇 DC Comics: 18 volúmenes (40%)             │
+│ 🕷️ Marvel Comics: 15 volúmenes (33.3%)        │
+│ 🌟 Image Comics: 8 volúmenes (17.8%)         │
+│ 📚 Otros: 4 volúmenes (8.9%)                 │
+│                                               │
+├─── Por Década ────────────────────────────────┤
+│ 2020s: 20 volúmenes (44.4%) 📈               │
+│ 2010s: 15 volúmenes (33.3%) 📊               │
+│ 2000s: 8 volúmenes (17.8%) 📉                │
+│ 1990s: 2 volúmenes (4.4%) 📉                 │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="metricas-de-calidad">Métricas de Calidad</h3>
+<div class="highlight"><pre><span></span><code>┌─── Distribución de Calidad ───────────────────┐
+│                                               │
+│ ⭐⭐⭐⭐⭐ Excelente: 234 issues (22.3%)     │
+│ ⭐⭐⭐⭐ Muy Buena: 412 issues (39.2%)       │
+│ ⭐⭐⭐ Buena: 295 issues (28.1%)             │
+│ ⭐⭐ Regular: 89 issues (8.5%)                │
+│ ⭐ Baja: 21 issues (2.0%)                     │
+│                                               │
+│ 📊 Calidad Promedio: 3.8/5 ⭐⭐⭐⭐           │
+│ 🎯 Meta de Calidad: 4.0/5                    │
+│ 📈 Progreso: 95% hacia meta                  │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="busqueda-y-filtrado-de-volumenes">🔍 Búsqueda y Filtrado de Volúmenes</h2>
+<h3 id="filtros-avanzados">Filtros Avanzados</h3>
+<div class="highlight"><pre><span></span><code>┌─── Filtros de Volúmenes ──────────────────────┐
+│                                               │
+│ 🔍 Buscar: [batman rebirth         ] 🔎      │
+│                                               │
+│ 📊 Completitud:                               │
+│ ☐ Completos (100%)                           │
+│ ☑️ En progreso (1-99%)                       │
+│ ☐ Sin issues (0%)                            │
+│                                               │
+│ 🏢 Editorial:                                │
+│ ☑️ DC Comics         ☑️ Marvel Comics        │
+│ ☑️ Image Comics      ☐ Dark Horse            │
+│ ☐ IDW Publishing    ☐ Otras                  │
+│                                               │
+│ 📅 Período:                                  │
+│ Desde: [2010] Hasta: [2024]                  │
+│                                               │
+│ 📊 Estado:                                   │
+│ ☑️ Activos           ☐ Finalizados           │
+│ ☐ Cancelados         ☐ En pausa              │
+│                                               │
+│ [🔄 Aplicar Filtros] [❌ Limpiar]           │
+└───────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="ordenamiento">Ordenamiento</h3>
+<div class="highlight"><pre><span></span><code>Ordenar por:
+○ Nombre (A-Z)          ○ Nombre (Z-A)
+○ Completitud (Mayor)   ○ Completitud (Menor)
+○ Fecha Inicio (Nuevo)  ○ Fecha Inicio (Antiguo)
+○ Editorial             ○ Issues en Colección
+○ Última Actualización  ○ Calidad Promedio
+</code></pre></div>
+<h2 id="consejos-para-gestion-eficiente">💡 Consejos para Gestión Eficiente</h2>
+<h3 id="flujo-de-trabajo-recomendado">Flujo de Trabajo Recomendado</h3>
+<h4 id="1-configuracion-inicial">1. Configuración Inicial</h4>
+<ol>
+<li><strong>Importar colección</strong> existente</li>
+<li><strong>Configurar actualizaciones</strong> automáticas</li>
+<li><strong>Establecer perfiles</strong> de catalogación</li>
+<li><strong>Definir estructura</strong> de directorios</li>
+</ol>
+<h4 id="2-mantenimiento-regular">2. Mantenimiento Regular</h4>
+<ol>
+<li><strong>Revisar duplicados</strong> semanalmente</li>
+<li><strong>Actualizar volúmenes</strong> activos</li>
+<li><strong>Catalogar issues</strong> sin clasificar</li>
+<li><strong>Verificar integridad</strong> de archivos</li>
+</ol>
+<h4 id="3-expansion-de-coleccion">3. Expansión de Colección</h4>
+<ol>
+<li><strong>Identificar issues</strong> faltantes</li>
+<li><strong>Priorizar por completitud</strong> o calidad</li>
+<li><strong>Mantener listas</strong> de deseos</li>
+<li><strong>Integrar nuevas</strong> adquisiciones</li>
+</ol>
+<h3 id="mejores-practicas">Mejores Prácticas</h3>
+<h4 id="organizacion-de-archivos">Organización de Archivos</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Estructura recomendada</span>
+Comics/
+├──<span class="w"> </span>DC_Comics/
+│<span class="w">   </span>├──<span class="w"> </span>Batman_2016/
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>Batman_001_2016.cbz
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>Batman_002_2016.cbz
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>...
+│<span class="w">   </span>└──<span class="w"> </span>Superman_2018/
+│<span class="w">       </span>└──<span class="w"> </span>...
+├──<span class="w"> </span>Marvel_Comics/
+│<span class="w">   </span>├──<span class="w"> </span>Spider-Man_2018/
+│<span class="w">   </span>└──<span class="w"> </span>X-Men_2019/
+└──<span class="w"> </span>Image_Comics/
+<span class="w">    </span>└──<span class="w"> </span>Walking_Dead_2003/
+</code></pre></div>
+<h4 id="nomenclatura-consistente">Nomenclatura Consistente</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Formato sugerido para archivos</span>
+<span class="o">[</span>Serie<span class="o">]</span>_<span class="o">[</span>Número<span class="o">]</span>_<span class="o">[</span>Año<span class="o">]</span>.cbz
+
+<span class="c1"># Ejemplos</span>
+Batman_001_2016.cbz
+Amazing_Spider-Man_001_2018.cbz
+Walking_Dead_001_2003.cbz
+</code></pre></div>
+<h4 id="backup-y-recuperacion">Backup y Recuperación</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Backup regular de metadatos</span>
+sqlite3<span class="w"> </span>babelcomics.db<span class="w"> </span><span class="s2">&quot;.backup backup_</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span><span class="s2">.db&quot;</span>
+
+<span class="c1"># Backup de configuración</span>
+cp<span class="w"> </span>-r<span class="w"> </span>data/<span class="w"> </span>backup_data_<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>/
+
+<span class="c1"># Verificación de integridad</span>
+python<span class="w"> </span>verify_collection.py<span class="w"> </span>--check-files<span class="w"> </span>--check-metadata
+</code></pre></div>
+<hr />
+<p><strong>¿Listo para configurar filtros avanzados?</strong> 👉 <a href="../filtros-busqueda/">Filtros y Búsqueda</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2687 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentación completa del gestor de colección de comics Babelcomics4">
+      
+      
+        <meta name="author" content="Pedro">
+      
+      
+      
+        <link rel="prev" href="../base-datos/">
+      
+      
+        <link rel="next" href="../../desarrollo/arquitectura/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Interfaz GTK4 - Babelcomics4 - Gestor de Comics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#interfaz-gtk4" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-header__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Babelcomics4 - Gestor de Comics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Interfaz GTK4
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../usuario/instalacion/" class="md-tabs__link">
+          
+  
+  
+  Guía de Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../catalogacion/" class="md-tabs__link">
+          
+  
+  
+  Funcionalidades
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../desarrollo/arquitectura/" class="md-tabs__link">
+          
+  
+  
+  Desarrollo
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../referencia/configuracion/" class="md-tabs__link">
+          
+  
+  
+  Referencia
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Babelcomics4 - Gestor de Comics" class="md-nav__button md-logo" aria-label="Babelcomics4 - Gestor de Comics" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Babelcomics4 - Gestor de Comics
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía de Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guía de Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/instalacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Instalación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/primeros-pasos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-comics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Comics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/gestion-volumenes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gestión de Volúmenes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/filtros-busqueda/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filtros y Búsqueda
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integración ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Funcionalidades
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalogacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Catalogación
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../thumbnails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thumbnails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../base-datos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interfaz GTK4
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-de-la-interfaz" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎨 Arquitectura de la Interfaz
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎨 Arquitectura de la Interfaz">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stack-tecnologico" class="md-nav__link">
+    <span class="md-ellipsis">
+      Stack Tecnológico
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stack Tecnológico">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#componentes-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Componentes Principales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patrones-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      Patrones de Diseño
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Patrones de Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-view-controller-mvc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model-View-Controller (MVC)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-de-la-aplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ Estructura de la Aplicación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Estructura de la Aplicación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aplicacion-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aplicación Principal
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Aplicación Principal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comicmanagerapplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicManagerApplication
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ventana-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ventana Principal
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ventana Principal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mainwindow" class="md-nav__link">
+    <span class="md-ellipsis">
+      MainWindow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vistas-de-contenido" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 Vistas de Contenido
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 Vistas de Contenido">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vista-de-biblioteca" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista de Biblioteca
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vista de Biblioteca">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#libraryview" class="md-nav__link">
+    <span class="md-ellipsis">
+      LibraryView
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarjeta-de-comic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tarjeta de Comic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tarjeta de Comic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comiccard" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicCard
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#theming-y-estilos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎨 Theming y Estilos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎨 Theming y Estilos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estilos-css-personalizados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estilos CSS Personalizados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estilos CSS Personalizados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#archivo-stylecss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Archivo style.css
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sistema-de-iconos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sistema de Iconos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sistema de Iconos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iconos-personalizados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Iconos Personalizados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimizacion-de-rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 Optimización de Rendimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Optimización de Rendimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lazy-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lazy Loading
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lazy Loading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#carga-diferida-de-contenido" class="md-nav__link">
+    <span class="md-ellipsis">
+      Carga Diferida de Contenido
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Virtualización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Virtualización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vista-virtualizada-para-grandes-colecciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista Virtualizada para Grandes Colecciones
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internacionalizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌍 Internacionalización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌍 Internacionalización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#soporte-multi-idioma" class="md-nav__link">
+    <span class="md-ellipsis">
+      Soporte Multi-idioma
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Soporte Multi-idioma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-i18n" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración de i18n
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Desarrollo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Desarrollo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/modelos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Modelos de Datos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/repositorios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Repositorios
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../desarrollo/api-comicvine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API ComicVine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Referencia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Referencia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/configuracion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-de-la-interfaz" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎨 Arquitectura de la Interfaz
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎨 Arquitectura de la Interfaz">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stack-tecnologico" class="md-nav__link">
+    <span class="md-ellipsis">
+      Stack Tecnológico
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stack Tecnológico">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#componentes-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Componentes Principales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patrones-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      Patrones de Diseño
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Patrones de Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-view-controller-mvc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model-View-Controller (MVC)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-de-la-aplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ Estructura de la Aplicación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Estructura de la Aplicación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aplicacion-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aplicación Principal
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Aplicación Principal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comicmanagerapplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicManagerApplication
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ventana-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ventana Principal
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ventana Principal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mainwindow" class="md-nav__link">
+    <span class="md-ellipsis">
+      MainWindow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vistas-de-contenido" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 Vistas de Contenido
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 Vistas de Contenido">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vista-de-biblioteca" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista de Biblioteca
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vista de Biblioteca">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#libraryview" class="md-nav__link">
+    <span class="md-ellipsis">
+      LibraryView
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarjeta-de-comic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tarjeta de Comic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tarjeta de Comic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comiccard" class="md-nav__link">
+    <span class="md-ellipsis">
+      ComicCard
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#theming-y-estilos" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎨 Theming y Estilos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎨 Theming y Estilos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estilos-css-personalizados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estilos CSS Personalizados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estilos CSS Personalizados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#archivo-stylecss" class="md-nav__link">
+    <span class="md-ellipsis">
+      Archivo style.css
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sistema-de-iconos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sistema de Iconos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sistema de Iconos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iconos-personalizados" class="md-nav__link">
+    <span class="md-ellipsis">
+      Iconos Personalizados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimizacion-de-rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 Optimización de Rendimiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Optimización de Rendimiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lazy-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lazy Loading
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lazy Loading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#carga-diferida-de-contenido" class="md-nav__link">
+    <span class="md-ellipsis">
+      Carga Diferida de Contenido
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Virtualización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Virtualización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vista-virtualizada-para-grandes-colecciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vista Virtualizada para Grandes Colecciones
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internacionalizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      🌍 Internacionalización
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌍 Internacionalización">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#soporte-multi-idioma" class="md-nav__link">
+    <span class="md-ellipsis">
+      Soporte Multi-idioma
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Soporte Multi-idioma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-i18n" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración de i18n
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="interfaz-gtk4">Interfaz GTK4</h1>
+<p>Babelcomics4 utiliza GTK4 y libadwaita para proporcionar una interfaz moderna, nativa y responsive que sigue las directrices de diseño de GNOME, ofreciendo una experiencia de usuario fluida y accesible.</p>
+<h2 id="arquitectura-de-la-interfaz">🎨 Arquitectura de la Interfaz</h2>
+<h3 id="stack-tecnologico">Stack Tecnológico</h3>
+<h4 id="componentes-principales">Componentes Principales</h4>
+<div class="highlight"><pre><span></span><code><span class="n">UI_STACK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Toolkit&#39;</span><span class="p">:</span> <span class="s1">&#39;GTK 4.8+&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Design_System&#39;</span><span class="p">:</span> <span class="s1">&#39;libadwaita 1.2+&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Language&#39;</span><span class="p">:</span> <span class="s1">&#39;Python 3.13&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Binding&#39;</span><span class="p">:</span> <span class="s1">&#39;PyGObject (gi)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Icons&#39;</span><span class="p">:</span> <span class="s1">&#39;Adwaita Icon Theme&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Styling&#39;</span><span class="p">:</span> <span class="s1">&#39;CSS + Adwaita Styles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Accessibility&#39;</span><span class="p">:</span> <span class="s1">&#39;ATK + screen readers&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Dependencias principales</span>
+<span class="n">DEPENDENCIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;gtk4&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;=4.8.0&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;libadwaita&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;=1.2.0&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pygobject&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;=3.42.0&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;cairo&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;=1.20.0&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pango&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;=1.50.0&#39;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="patrones-de-diseno">Patrones de Diseño</h3>
+<h4 id="model-view-controller-mvc">Model-View-Controller (MVC)</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">gi.repository</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gtk</span><span class="p">,</span> <span class="n">Adw</span><span class="p">,</span> <span class="n">GObject</span><span class="p">,</span> <span class="n">Gio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseController</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Controlador base para todas las vistas&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">application</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">application</span> <span class="o">=</span> <span class="n">application</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear la vista asociada&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar señales y eventos&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mostrar la vista&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_view</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setup_signals</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseView</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vista base con funcionalidad común&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controller</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_ui</span><span class="p">()</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar elementos de la interfaz&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mostrar diálogo de error&quot;&quot;&quot;</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">Adw</span><span class="o">.</span><span class="n">MessageDialog</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_root</span><span class="p">(),</span>
+            <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">),</span>
+            <span class="n">message</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">details</span><span class="p">:</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="n">set_body</span><span class="p">(</span><span class="n">details</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">))</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_confirmation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mostrar diálogo de confirmación&quot;&quot;&quot;</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">Adw</span><span class="o">.</span><span class="n">MessageDialog</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_root</span><span class="p">(),</span>
+            <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Confirmación&quot;</span><span class="p">),</span>
+            <span class="n">message</span>
+        <span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s2">&quot;cancel&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Cancelar&quot;</span><span class="p">))</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">add_response</span><span class="p">(</span><span class="s2">&quot;confirm&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Confirmar&quot;</span><span class="p">))</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">set_response_appearance</span><span class="p">(</span><span class="s2">&quot;confirm&quot;</span><span class="p">,</span> <span class="n">Adw</span><span class="o">.</span><span class="n">ResponseAppearance</span><span class="o">.</span><span class="n">DESTRUCTIVE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">callback</span><span class="p">:</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+
+        <span class="n">dialog</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="estructura-de-la-aplicacion">🏗️ Estructura de la Aplicación</h2>
+<h3 id="aplicacion-principal">Aplicación Principal</h3>
+<h4 id="comicmanagerapplication">ComicManagerApplication</h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@Gtk</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="n">resource_path</span><span class="o">=</span><span class="s1">&#39;/org/gnome/Babelcomics4/ui/application.ui&#39;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicManagerApplication</span><span class="p">(</span><span class="n">Adw</span><span class="o">.</span><span class="n">Application</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aplicación principal de Babelcomics4&quot;&quot;&quot;</span>
+
+    <span class="n">__gtype_name__</span> <span class="o">=</span> <span class="s1">&#39;ComicManagerApplication&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_application_id</span><span class="p">(</span><span class="s2">&quot;org.gnome.Babelcomics4&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_flags</span><span class="p">(</span><span class="n">Gio</span><span class="o">.</span><span class="n">ApplicationFlags</span><span class="o">.</span><span class="n">HANDLES_OPEN</span><span class="p">)</span>
+
+        <span class="c1"># Controladores principales</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_controller</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preferences_controller</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comic_detail_controller</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Servicios</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comic_repository</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_generator</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_actions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_services</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">do_activate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Activar aplicación (primera vez o enfoque)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_controller</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">main_controller</span> <span class="o">=</span> <span class="n">MainController</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_controller</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar acciones de la aplicación&quot;&quot;&quot;</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;preferences&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_preferences</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;about&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_about</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_quit</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;import_comics&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_import_comics</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;scan_directory&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_scan_directory</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;update_comicvine&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_update_comicvine</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">SimpleAction</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;activate&quot;</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_services</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inicializar servicios de la aplicación&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.services</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseManager</span><span class="p">,</span> <span class="n">ComicRepository</span><span class="p">,</span> <span class="n">ThumbnailGenerator</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span> <span class="o">=</span> <span class="n">DatabaseManager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comic_repository</span> <span class="o">=</span> <span class="n">ComicRepository</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">get_session</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_generator</span> <span class="o">=</span> <span class="n">ThumbnailGenerator</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_preferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mostrar ventana de preferencias&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">preferences_controller</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">preferences_controller</span> <span class="o">=</span> <span class="n">PreferencesController</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preferences_controller</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">set_transient_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_active_window</span><span class="p">())</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="ventana-principal">Ventana Principal</h3>
+<h4 id="mainwindow">MainWindow</h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@Gtk</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="n">resource_path</span><span class="o">=</span><span class="s1">&#39;/org/gnome/Babelcomics4/ui/main_window.ui&#39;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MainWindow</span><span class="p">(</span><span class="n">Adw</span><span class="o">.</span><span class="n">ApplicationWindow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ventana principal de la aplicación&quot;&quot;&quot;</span>
+
+    <span class="n">__gtype_name__</span> <span class="o">=</span> <span class="s1">&#39;MainWindow&#39;</span>
+
+    <span class="c1"># Referencias a widgets del template</span>
+    <span class="n">header_bar</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">navigation_view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">search_entry</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">filter_button</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">view_switcher</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+
+    <span class="c1"># Páginas principales</span>
+    <span class="n">library_page</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">volumes_page</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">collection_page</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">application</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">application</span><span class="o">=</span><span class="n">application</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_header_bar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_navigation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_search</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_shortcuts</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_header_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar barra de título&quot;&quot;&quot;</span>
+        <span class="c1"># Botón de menú principal</span>
+        <span class="n">menu_button</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">MenuButton</span><span class="p">()</span>
+        <span class="n">menu_button</span><span class="o">.</span><span class="n">set_icon_name</span><span class="p">(</span><span class="s2">&quot;open-menu-symbolic&quot;</span><span class="p">)</span>
+        <span class="n">menu_button</span><span class="o">.</span><span class="n">set_menu_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">create_primary_menu</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_bar</span><span class="o">.</span><span class="n">pack_end</span><span class="p">(</span><span class="n">menu_button</span><span class="p">)</span>
+
+        <span class="c1"># Botón de filtros</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_button</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;clicked&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_filter_clicked</span><span class="p">)</span>
+
+        <span class="c1"># Botón de vista</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_switcher</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;notify::selected-page&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_view_changed</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_navigation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar navegación entre páginas&quot;&quot;&quot;</span>
+        <span class="c1"># Configurar páginas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">library_controller</span> <span class="o">=</span> <span class="n">LibraryController</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">application</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes_controller</span> <span class="o">=</span> <span class="n">VolumesController</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">application</span><span class="p">)</span>
+
+        <span class="c1"># Añadir controladores a las páginas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">library_page</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">library_controller</span><span class="o">.</span><span class="n">show</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes_page</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes_controller</span><span class="o">.</span><span class="n">show</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_search</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar búsqueda global&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_entry</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;search-changed&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_search_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_entry</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;activate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_search_activate</span><span class="p">)</span>
+
+        <span class="c1"># Configurar timeout para búsqueda en tiempo real</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_timeout_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_primary_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Crear menú principal&quot;&quot;&quot;</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">Menu</span><span class="p">()</span>
+
+        <span class="c1"># Sección de archivos</span>
+        <span class="n">file_section</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">Menu</span><span class="p">()</span>
+        <span class="n">file_section</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Import Comics&quot;</span><span class="p">),</span> <span class="s2">&quot;app.import_comics&quot;</span><span class="p">)</span>
+        <span class="n">file_section</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Scan Directory&quot;</span><span class="p">),</span> <span class="s2">&quot;app.scan_directory&quot;</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">append_section</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_section</span><span class="p">)</span>
+
+        <span class="c1"># Sección de herramientas</span>
+        <span class="n">tools_section</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">Menu</span><span class="p">()</span>
+        <span class="n">tools_section</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Update ComicVine&quot;</span><span class="p">),</span> <span class="s2">&quot;app.update_comicvine&quot;</span><span class="p">)</span>
+        <span class="n">tools_section</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Preferences&quot;</span><span class="p">),</span> <span class="s2">&quot;app.preferences&quot;</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">append_section</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">tools_section</span><span class="p">)</span>
+
+        <span class="c1"># Sección de ayuda</span>
+        <span class="n">help_section</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">Menu</span><span class="p">()</span>
+        <span class="n">help_section</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;About Babelcomics4&quot;</span><span class="p">),</span> <span class="s2">&quot;app.about&quot;</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">append_section</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">help_section</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">menu</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_search_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_entry</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Manejar cambios en la búsqueda&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_timeout_id</span><span class="p">:</span>
+            <span class="n">GLib</span><span class="o">.</span><span class="n">source_remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_timeout_id</span><span class="p">)</span>
+
+        <span class="c1"># Delay de 300ms para evitar búsquedas excesivas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_timeout_id</span> <span class="o">=</span> <span class="n">GLib</span><span class="o">.</span><span class="n">timeout_add</span><span class="p">(</span>
+            <span class="mi">300</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">perform_search</span><span class="p">,</span>
+            <span class="n">search_entry</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">perform_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_term</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Realizar búsqueda&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_timeout_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Aplicar búsqueda al controlador activo</span>
+        <span class="n">active_page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_switcher</span><span class="o">.</span><span class="n">get_selected_page</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">active_page</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Library</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">library_controller</span><span class="o">.</span><span class="n">set_search_term</span><span class="p">(</span><span class="n">search_term</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">active_page</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Volumes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volumes_controller</span><span class="o">.</span><span class="n">set_search_term</span><span class="p">(</span><span class="n">search_term</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">GLib</span><span class="o">.</span><span class="n">SOURCE_REMOVE</span>
+</code></pre></div>
+<h2 id="vistas-de-contenido">📚 Vistas de Contenido</h2>
+<h3 id="vista-de-biblioteca">Vista de Biblioteca</h3>
+<h4 id="libraryview">LibraryView</h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@Gtk</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="n">resource_path</span><span class="o">=</span><span class="s1">&#39;/org/gnome/Babelcomics4/ui/library_view.ui&#39;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LibraryView</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vista principal de la biblioteca de comics&quot;&quot;&quot;</span>
+
+    <span class="n">__gtype_name__</span> <span class="o">=</span> <span class="s1">&#39;LibraryView&#39;</span>
+
+    <span class="c1"># Widgets del template</span>
+    <span class="n">scrolled_window</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">grid_view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">list_view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">view_stack</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">status_page</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+
+        <span class="c1"># Modelos de datos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comic_model</span> <span class="o">=</span> <span class="n">Gio</span><span class="o">.</span><span class="n">ListStore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">ComicItem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_model</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">FilterListModel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comic_model</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sort_model</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">SortListModel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_model</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_views</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_selection</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_comics</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_views</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar vistas de grid y lista&quot;&quot;&quot;</span>
+        <span class="c1"># Vista de grid (por defecto)</span>
+        <span class="n">grid_factory</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">SignalListItemFactory</span><span class="p">()</span>
+        <span class="n">grid_factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_grid_item_setup</span><span class="p">)</span>
+        <span class="n">grid_factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;bind&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_grid_item_bind</span><span class="p">)</span>
+        <span class="n">grid_factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;unbind&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_grid_item_unbind</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_view</span><span class="o">.</span><span class="n">set_factory</span><span class="p">(</span><span class="n">grid_factory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_view</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sort_model</span><span class="p">)</span>
+
+        <span class="c1"># Vista de lista</span>
+        <span class="n">list_factory</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">SignalListItemFactory</span><span class="p">()</span>
+        <span class="n">list_factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_list_item_setup</span><span class="p">)</span>
+        <span class="n">list_factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;bind&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_list_item_bind</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_view</span><span class="o">.</span><span class="n">set_factory</span><span class="p">(</span><span class="n">list_factory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_view</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sort_model</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_grid_item_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">list_item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar elemento de grid&quot;&quot;&quot;</span>
+        <span class="n">card</span> <span class="o">=</span> <span class="n">ComicCard</span><span class="p">()</span>
+        <span class="n">list_item</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_grid_item_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">list_item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vincular datos a elemento de grid&quot;&quot;&quot;</span>
+        <span class="n">comic_item</span> <span class="o">=</span> <span class="n">list_item</span><span class="o">.</span><span class="n">get_item</span><span class="p">()</span>
+        <span class="n">card</span> <span class="o">=</span> <span class="n">list_item</span><span class="o">.</span><span class="n">get_child</span><span class="p">()</span>
+        <span class="n">card</span><span class="o">.</span><span class="n">bind_comic</span><span class="p">(</span><span class="n">comic_item</span><span class="p">)</span>
+
+        <span class="c1"># Configurar eventos</span>
+        <span class="n">card</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;clicked&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_comic_clicked</span><span class="p">,</span> <span class="n">comic_item</span><span class="p">)</span>
+        <span class="n">card</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;secondary-clicked&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_comic_secondary_clicked</span><span class="p">,</span> <span class="n">comic_item</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_comics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cargar comics desde la base de datos&quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">load_comics_thread</span><span class="p">():</span>
+            <span class="n">comics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">get_comics</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+            <span class="n">GLib</span><span class="o">.</span><span class="n">idle_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_comic_model</span><span class="p">,</span> <span class="n">comics</span><span class="p">)</span>
+
+        <span class="c1"># Cargar en hilo separado para no bloquear UI</span>
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">load_comics_thread</span><span class="p">)</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_comic_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comics</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualizar modelo con comics cargados&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comic_model</span><span class="o">.</span><span class="n">remove_all</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">comic</span> <span class="ow">in</span> <span class="n">comics</span><span class="p">:</span>
+            <span class="n">comic_item</span> <span class="o">=</span> <span class="n">ComicItem</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">comic_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comic_item</span><span class="p">)</span>
+
+        <span class="c1"># Mostrar página apropiada</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">comics</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_stack</span><span class="o">.</span><span class="n">set_visible_child</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scrolled_window</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status_page</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;No comics found&quot;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status_page</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Try adjusting your search or filters&quot;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view_stack</span><span class="o">.</span><span class="n">set_visible_child</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_page</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">GLib</span><span class="o">.</span><span class="n">SOURCE_REMOVE</span>
+</code></pre></div>
+<h3 id="tarjeta-de-comic">Tarjeta de Comic</h3>
+<h4 id="comiccard">ComicCard</h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@Gtk</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="n">resource_path</span><span class="o">=</span><span class="s1">&#39;/org/gnome/Babelcomics4/ui/comic_card.ui&#39;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComicCard</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tarjeta individual de comic&quot;&quot;&quot;</span>
+
+    <span class="n">__gtype_name__</span> <span class="o">=</span> <span class="s1">&#39;ComicCard&#39;</span>
+
+    <span class="c1"># Widgets del template</span>
+    <span class="n">thumbnail_image</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">title_label</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">subtitle_label</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">quality_box</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+    <span class="n">status_overlay</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Child</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comic_item</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_gestures</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_gestures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar gestos y eventos&quot;&quot;&quot;</span>
+        <span class="c1"># Click principal</span>
+        <span class="n">click_gesture</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">GestureClick</span><span class="p">()</span>
+        <span class="n">click_gesture</span><span class="o">.</span><span class="n">set_button</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Botón izquierdo</span>
+        <span class="n">click_gesture</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;pressed&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_primary_click</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_controller</span><span class="p">(</span><span class="n">click_gesture</span><span class="p">)</span>
+
+        <span class="c1"># Click secundario (menú contextual)</span>
+        <span class="n">right_click</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">GestureClick</span><span class="p">()</span>
+        <span class="n">right_click</span><span class="o">.</span><span class="n">set_button</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># Botón derecho</span>
+        <span class="n">right_click</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;pressed&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_secondary_click</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_controller</span><span class="p">(</span><span class="n">right_click</span><span class="p">)</span>
+
+        <span class="c1"># Hover para feedback visual</span>
+        <span class="n">motion_controller</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">EventControllerMotion</span><span class="p">()</span>
+        <span class="n">motion_controller</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;enter&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_hover_enter</span><span class="p">)</span>
+        <span class="n">motion_controller</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;leave&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_hover_leave</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_controller</span><span class="p">(</span><span class="n">motion_controller</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bind_comic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vincular datos del comic a la tarjeta&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comic_item</span> <span class="o">=</span> <span class="n">comic_item</span>
+        <span class="n">comic</span> <span class="o">=</span> <span class="n">comic_item</span><span class="o">.</span><span class="n">comic</span>
+
+        <span class="c1"># Título y subtítulo</span>
+        <span class="k">if</span> <span class="n">comic</span><span class="o">.</span><span class="n">is_cataloged</span> <span class="ow">and</span> <span class="n">comic</span><span class="o">.</span><span class="n">comic_info</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">title_label</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">comic</span><span class="o">.</span><span class="n">comic_info</span><span class="o">.</span><span class="n">display_title</span><span class="p">)</span>
+            <span class="n">publisher</span> <span class="o">=</span> <span class="n">comic</span><span class="o">.</span><span class="n">comic_info</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">nombre</span> <span class="k">if</span> <span class="n">comic</span><span class="o">.</span><span class="n">comic_info</span><span class="o">.</span><span class="n">volume</span> <span class="ow">and</span> <span class="n">comic</span><span class="o">.</span><span class="n">comic_info</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">publisher</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subtitle_label</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">publisher</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">title_label</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">comic</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subtitle_label</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">comic</span><span class="o">.</span><span class="n">file_size_mb</span><span class="si">}</span><span class="s2"> MB&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Thumbnail</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_thumbnail_async</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+
+        <span class="c1"># Indicadores de calidad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_quality_indicators</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+
+        <span class="c1"># Estado visual</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_visual_state</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_thumbnail_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cargar thumbnail de forma asíncrona&quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">load_thumbnail</span><span class="p">():</span>
+            <span class="n">thumbnail_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_application</span><span class="p">()</span><span class="o">.</span><span class="n">thumbnail_generator</span><span class="o">.</span><span class="n">get_thumbnail_path</span><span class="p">(</span><span class="n">comic</span><span class="p">)</span>
+            <span class="n">GLib</span><span class="o">.</span><span class="n">idle_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_thumbnail</span><span class="p">,</span> <span class="n">thumbnail_path</span><span class="p">)</span>
+
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">load_thumbnail</span><span class="p">)</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thumbnail_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Establecer imagen del thumbnail&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">thumbnail_path</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">thumbnail_path</span><span class="p">):</span>
+            <span class="n">pixbuf</span> <span class="o">=</span> <span class="n">GdkPixbuf</span><span class="o">.</span><span class="n">Pixbuf</span><span class="o">.</span><span class="n">new_from_file_at_scale</span><span class="p">(</span>
+                <span class="n">thumbnail_path</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">texture</span> <span class="o">=</span> <span class="n">Gdk</span><span class="o">.</span><span class="n">Texture</span><span class="o">.</span><span class="n">new_for_pixbuf</span><span class="p">(</span><span class="n">pixbuf</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_image</span><span class="o">.</span><span class="n">set_from_paintable</span><span class="p">(</span><span class="n">texture</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_image</span><span class="o">.</span><span class="n">set_from_icon_name</span><span class="p">(</span><span class="s2">&quot;image-missing-symbolic&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">GLib</span><span class="o">.</span><span class="n">SOURCE_REMOVE</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_quality_indicators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualizar indicadores de calidad&quot;&quot;&quot;</span>
+        <span class="c1"># Limpiar indicadores existentes</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quality_box</span><span class="o">.</span><span class="n">get_first_child</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">child</span><span class="p">:</span>
+            <span class="n">next_child</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">get_next_sibling</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">quality_box</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">next_child</span>
+
+        <span class="c1"># Añadir estrellas de calidad</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">star</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">Image</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">comic</span><span class="o">.</span><span class="n">calidad</span><span class="p">:</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">set_from_icon_name</span><span class="p">(</span><span class="s2">&quot;starred-symbolic&quot;</span><span class="p">)</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">add_css_class</span><span class="p">(</span><span class="s2">&quot;star-filled&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">set_from_icon_name</span><span class="p">(</span><span class="s2">&quot;non-starred-symbolic&quot;</span><span class="p">)</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">add_css_class</span><span class="p">(</span><span class="s2">&quot;star-empty&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">quality_box</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_visual_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Actualizar estado visual de la tarjeta&quot;&quot;&quot;</span>
+        <span class="c1"># Limpiar clases CSS existentes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_css_class</span><span class="p">(</span><span class="s2">&quot;comic-cataloged&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_css_class</span><span class="p">(</span><span class="s2">&quot;comic-uncataloged&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_css_class</span><span class="p">(</span><span class="s2">&quot;comic-trash&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Aplicar clase apropiada</span>
+        <span class="k">if</span> <span class="n">comic</span><span class="o">.</span><span class="n">en_papelera</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_css_class</span><span class="p">(</span><span class="s2">&quot;comic-trash&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">comic</span><span class="o">.</span><span class="n">is_cataloged</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_css_class</span><span class="p">(</span><span class="s2">&quot;comic-cataloged&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_css_class</span><span class="p">(</span><span class="s2">&quot;comic-uncataloged&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_primary_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gesture</span><span class="p">,</span> <span class="n">n_press</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Manejar click principal&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">n_press</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Doble click</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;activated&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comic_item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Click simple</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;clicked&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comic_item</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_secondary_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gesture</span><span class="p">,</span> <span class="n">n_press</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Manejar click secundario (menú contextual)&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;secondary-clicked&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comic_item</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_hover_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controller</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Efecto visual al pasar el mouse&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_css_class</span><span class="p">(</span><span class="s2">&quot;card-hover&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_hover_leave</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Quitar efecto visual al salir el mouse&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_css_class</span><span class="p">(</span><span class="s2">&quot;card-hover&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Señales personalizadas</span>
+    <span class="nd">@GObject</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">arg_types</span><span class="o">=</span><span class="p">(</span><span class="nb">object</span><span class="p">,))</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_item</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@GObject</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">arg_types</span><span class="o">=</span><span class="p">(</span><span class="nb">object</span><span class="p">,))</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">activated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_item</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@GObject</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">arg_types</span><span class="o">=</span><span class="p">(</span><span class="nb">object</span><span class="p">,))</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">secondary_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comic_item</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h2 id="theming-y-estilos">🎨 Theming y Estilos</h2>
+<h3 id="estilos-css-personalizados">Estilos CSS Personalizados</h3>
+<h4 id="archivo-stylecss">Archivo style.css</h4>
+<div class="highlight"><pre><span></span><code><span class="c">/* Estilos para tarjetas de comics */</span>
+<span class="p">.</span><span class="nc">comic-card</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">all</span><span class="w"> </span><span class="mi">200</span><span class="kt">ms</span><span class="w"> </span><span class="kc">ease-in-out</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="o">@</span><span class="n">card_bg_color</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="o">@</span><span class="n">card_border_color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">comic-card</span><span class="p">:</span><span class="nd">hover</span><span class="o">,</span>
+<span class="p">.</span><span class="nc">comic-card</span><span class="p">.</span><span class="nc">card-hover</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">transform</span><span class="p">:</span><span class="w"> </span><span class="nb">translateY</span><span class="p">(</span><span class="mi">-2</span><span class="kt">px</span><span class="p">);</span>
+<span class="w">    </span><span class="k">box-shadow</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="w"> </span><span class="mi">16</span><span class="kt">px</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.15</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">comic-card</span><span class="p">.</span><span class="nc">comic-cataloged</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">border-left</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="o">@</span><span class="n">success_color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">comic-card</span><span class="p">.</span><span class="nc">comic-uncataloged</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">border-left</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="o">@</span><span class="n">warning_color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">comic-card</span><span class="p">.</span><span class="nc">comic-uncataloged</span><span class="w"> </span><span class="nt">image</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">filter</span><span class="p">:</span><span class="w"> </span><span class="nb">grayscale</span><span class="p">(</span><span class="mi">100</span><span class="kt">%</span><span class="p">);</span>
+<span class="w">    </span><span class="k">opacity</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">comic-card</span><span class="p">.</span><span class="nc">comic-trash</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">opacity</span><span class="p">:</span><span class="w"> </span><span class="mf">0.6</span><span class="p">;</span>
+<span class="w">    </span><span class="k">filter</span><span class="p">:</span><span class="w"> </span><span class="nb">grayscale</span><span class="p">(</span><span class="mi">50</span><span class="kt">%</span><span class="p">);</span>
+<span class="w">    </span><span class="k">border-left</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="o">@</span><span class="n">error_color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* Indicadores de calidad */</span>
+<span class="p">.</span><span class="nc">star-filled</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="o">@</span><span class="n">accent_color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">star-empty</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="o">@</span><span class="n">insensitive_fg_color</span><span class="p">;</span>
+<span class="w">    </span><span class="k">opacity</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* Vista de volúmenes */</span>
+<span class="p">.</span><span class="nc">volume-row</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="k">background-color</span><span class="w"> </span><span class="mi">200</span><span class="kt">ms</span><span class="w"> </span><span class="kc">ease</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">volume-row</span><span class="p">:</span><span class="nd">hover</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="o">@</span><span class="n">card_hover_bg_color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">volume-complete</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">linear-gradient</span><span class="p">(</span>
+<span class="w">        </span><span class="mi">90</span><span class="kt">deg</span><span class="p">,</span>
+<span class="w">        </span><span class="kc">transparent</span><span class="w"> </span><span class="mi">0</span><span class="kt">%</span><span class="p">,</span>
+<span class="w">        </span><span class="err">@</span><span class="n">success_bg_color</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">volume-progress</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">linear-gradient</span><span class="p">(</span>
+<span class="w">        </span><span class="mi">90</span><span class="kt">deg</span><span class="p">,</span>
+<span class="w">        </span><span class="kc">transparent</span><span class="w"> </span><span class="mi">0</span><span class="kt">%</span><span class="p">,</span>
+<span class="w">        </span><span class="err">@</span><span class="n">accent_bg_color</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c">/* Filtros y controles */</span>
+<span class="p">.</span><span class="nc">filter-chip</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="w"> </span><span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="o">@</span><span class="n">accent_bg_color</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="o">@</span><span class="n">accent_fg_color</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="o">@</span><span class="n">accent_color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">filter-chip</span><span class="p">.</span><span class="nc">active</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="o">@</span><span class="n">accent_color</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="o">@</span><span class="n">accent_fg_color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* Animaciones de carga */</span>
+<span class="p">.</span><span class="nc">loading-spinner</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">animation</span><span class="p">:</span><span class="w"> </span><span class="n">spin</span><span class="w"> </span><span class="mi">1</span><span class="kt">s</span><span class="w"> </span><span class="kc">linear</span><span class="w"> </span><span class="kc">infinite</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">@</span><span class="k">keyframes</span><span class="w"> </span><span class="nt">spin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">from</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">transform</span><span class="p">:</span><span class="w"> </span><span class="nb">rotate</span><span class="p">(</span><span class="mi">0</span><span class="kt">deg</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">to</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">transform</span><span class="p">:</span><span class="w"> </span><span class="nb">rotate</span><span class="p">(</span><span class="mi">360</span><span class="kt">deg</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">/* Responsive design */</span>
+<span class="p">@</span><span class="k">media</span><span class="w"> </span><span class="o">(</span><span class="nt">max-width</span><span class="o">:</span><span class="w"> </span><span class="nt">768px</span><span class="o">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="nc">comic-card</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">.</span><span class="nc">volume-row</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">/* Dark mode adaptations */</span>
+<span class="p">@</span><span class="k">media</span><span class="w"> </span><span class="o">(</span><span class="nt">prefers-color-scheme</span><span class="o">:</span><span class="w"> </span><span class="nt">dark</span><span class="o">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="nc">comic-card</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">box-shadow</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">2</span><span class="kt">px</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.3</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">.</span><span class="nc">comic-card</span><span class="p">:</span><span class="nd">hover</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">box-shadow</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="w"> </span><span class="mi">16</span><span class="kt">px</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.4</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="sistema-de-iconos">Sistema de Iconos</h3>
+<h4 id="iconos-personalizados">Iconos Personalizados</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">IconManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gestor de iconos de la aplicación&quot;&quot;&quot;</span>
+
+    <span class="n">ICON_MAPPINGS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;comic-cataloged&#39;</span><span class="p">:</span> <span class="s1">&#39;emblem-ok-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;comic-uncataloged&#39;</span><span class="p">:</span> <span class="s1">&#39;dialog-question-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;comic-trash&#39;</span><span class="p">:</span> <span class="s1">&#39;user-trash-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;comic-error&#39;</span><span class="p">:</span> <span class="s1">&#39;dialog-error-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;quality-1&#39;</span><span class="p">:</span> <span class="s1">&#39;starred-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;quality-2&#39;</span><span class="p">:</span> <span class="s1">&#39;starred-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;quality-3&#39;</span><span class="p">:</span> <span class="s1">&#39;starred-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;quality-4&#39;</span><span class="p">:</span> <span class="s1">&#39;starred-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;quality-5&#39;</span><span class="p">:</span> <span class="s1">&#39;starred-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;publisher-dc&#39;</span><span class="p">:</span> <span class="s1">&#39;applications-graphics-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;publisher-marvel&#39;</span><span class="p">:</span> <span class="s1">&#39;applications-graphics-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;format-cbz&#39;</span><span class="p">:</span> <span class="s1">&#39;package-x-generic-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;format-cbr&#39;</span><span class="p">:</span> <span class="s1">&#39;package-x-generic-symbolic&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;format-pdf&#39;</span><span class="p">:</span> <span class="s1">&#39;application-pdf-symbolic&#39;</span>
+    <span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_icon_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">icon_key</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="s1">&#39;image-missing-symbolic&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener nombre de icono por clave&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ICON_MAPPINGS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">icon_key</span><span class="p">,</span> <span class="n">fallback</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_custom_icons</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cargar iconos personalizados de la aplicación&quot;&quot;&quot;</span>
+        <span class="n">icon_theme</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">IconTheme</span><span class="o">.</span><span class="n">get_for_display</span><span class="p">(</span><span class="n">Gdk</span><span class="o">.</span><span class="n">Display</span><span class="o">.</span><span class="n">get_default</span><span class="p">())</span>
+
+        <span class="c1"># Añadir directorio de iconos de la aplicación</span>
+        <span class="n">icon_theme</span><span class="o">.</span><span class="n">add_resource_path</span><span class="p">(</span><span class="s2">&quot;/org/gnome/Babelcomics4/icons&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Registrar iconos personalizados si están disponibles</span>
+        <span class="n">custom_icons</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;babelcomics4-app-icon&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;comic-book-symbolic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;volume-symbolic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;collection-symbolic&#39;</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">icon_name</span> <span class="ow">in</span> <span class="n">custom_icons</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">icon_theme</span><span class="o">.</span><span class="n">has_icon</span><span class="p">(</span><span class="n">icon_name</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Icono personalizado cargado: </span><span class="si">{</span><span class="n">icon_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="optimizacion-de-rendimiento">🚀 Optimización de Rendimiento</h2>
+<h3 id="lazy-loading">Lazy Loading</h3>
+<h4 id="carga-diferida-de-contenido">Carga Diferida de Contenido</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LazyComicLoader</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cargador lazy de contenido de comics&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loading_batches</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_lazy_loading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_view</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar carga lazy en vista de lista&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">on_items_changed</span><span class="p">(</span><span class="n">list_model</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">removed</span><span class="p">,</span> <span class="n">added</span><span class="p">):</span>
+            <span class="c1"># Verificar si necesitamos cargar más elementos</span>
+            <span class="n">last_visible</span> <span class="o">=</span> <span class="n">position</span> <span class="o">+</span> <span class="n">added</span>
+            <span class="n">total_items</span> <span class="o">=</span> <span class="n">list_model</span><span class="o">.</span><span class="n">get_n_items</span><span class="p">()</span>
+
+            <span class="c1"># Si estamos cerca del final, cargar más</span>
+            <span class="k">if</span> <span class="n">last_visible</span> <span class="o">&gt;</span> <span class="n">total_items</span> <span class="o">-</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_next_batch</span><span class="p">(</span><span class="n">list_model</span><span class="p">)</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;items-changed&quot;</span><span class="p">,</span> <span class="n">on_items_changed</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_next_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cargar siguiente lote de elementos&quot;&quot;&quot;</span>
+        <span class="n">current_size</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_n_items</span><span class="p">()</span>
+        <span class="n">batch_start</span> <span class="o">=</span> <span class="n">current_size</span>
+
+        <span class="c1"># Evitar cargas duplicadas</span>
+        <span class="k">if</span> <span class="n">batch_start</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loading_batches</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loading_batches</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">batch_start</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">load_batch_async</span><span class="p">():</span>
+            <span class="c1"># Simular carga de datos</span>
+            <span class="n">new_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_comics_batch</span><span class="p">(</span><span class="n">batch_start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">GLib</span><span class="o">.</span><span class="n">idle_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_items_to_model</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">new_items</span><span class="p">,</span> <span class="n">batch_start</span><span class="p">)</span>
+
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">load_batch_async</span><span class="p">)</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_items_to_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">batch_start</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Añadir elementos al modelo&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loading_batches</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">batch_start</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">GLib</span><span class="o">.</span><span class="n">SOURCE_REMOVE</span>
+</code></pre></div>
+<h3 id="virtualizacion">Virtualización</h3>
+<h4 id="vista-virtualizada-para-grandes-colecciones">Vista Virtualizada para Grandes Colecciones</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VirtualizedComicView</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">ScrolledWindow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vista virtualizada para manejar grandes colecciones&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+
+        <span class="c1"># Configurar scrolling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_policy</span><span class="p">(</span><span class="n">Gtk</span><span class="o">.</span><span class="n">PolicyType</span><span class="o">.</span><span class="n">NEVER</span><span class="p">,</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">PolicyType</span><span class="o">.</span><span class="n">AUTOMATIC</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_kinetic_scrolling</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_overlay_scrolling</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Modelo virtual</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">virtual_model</span> <span class="o">=</span> <span class="n">VirtualComicModel</span><span class="p">(</span><span class="n">controller</span><span class="p">)</span>
+
+        <span class="c1"># Vista con soporte de virtualización</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_view</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">ListView</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_view</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">virtual_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_view</span><span class="o">.</span><span class="n">set_single_click_activate</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Factory para elementos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_item_factory</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_view</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_item_factory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar factory de elementos con pooling&quot;&quot;&quot;</span>
+        <span class="n">factory</span> <span class="o">=</span> <span class="n">Gtk</span><span class="o">.</span><span class="n">SignalListItemFactory</span><span class="p">()</span>
+        <span class="n">factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_item_setup</span><span class="p">)</span>
+        <span class="n">factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;bind&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_item_bind</span><span class="p">)</span>
+        <span class="n">factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;unbind&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_item_unbind</span><span class="p">)</span>
+        <span class="n">factory</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;teardown&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_item_teardown</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_view</span><span class="o">.</span><span class="n">set_factory</span><span class="p">(</span><span class="n">factory</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_item_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">list_item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup con pooling de widgets&quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pooled_widget</span><span class="p">()</span> <span class="ow">or</span> <span class="n">ComicCard</span><span class="p">()</span>
+        <span class="n">list_item</span><span class="o">.</span><span class="n">set_child</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pooled_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener widget reutilizable del pool&quot;&quot;&quot;</span>
+        <span class="c1"># Implementar pool de widgets para mejor rendimiento</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_widget_pool&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget_pool</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget_pool</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">return_to_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Devolver widget al pool&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_widget_pool&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_widget_pool</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_widget_pool</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>  <span class="c1"># Límite del pool</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">unbind_comic</span><span class="p">()</span>  <span class="c1"># Limpiar datos</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_widget_pool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="internacionalizacion">🌍 Internacionalización</h2>
+<h3 id="soporte-multi-idioma">Soporte Multi-idioma</h3>
+<h4 id="configuracion-de-i18n">Configuración de i18n</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">gettext</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">locale</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">InternationalizationManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gestor de internacionalización&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="s1">&#39;babelcomics4&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">localedir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;locale&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_locale</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_locale</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_locale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configurar locale del sistema&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Detectar locale del sistema</span>
+            <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">system_locale</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">getlocale</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Configurar gettext</span>
+            <span class="n">gettext</span><span class="o">.</span><span class="n">bindtextdomain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">localedir</span><span class="p">)</span>
+            <span class="n">gettext</span><span class="o">.</span><span class="n">textdomain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span>
+
+            <span class="c1"># Instalar función _ globalmente</span>
+            <span class="n">gettext</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">localedir</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_locale</span> <span class="o">=</span> <span class="n">system_locale</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Locale configurado: </span><span class="si">{</span><span class="n">system_locale</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">locale</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error configurando locale: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Fallback a inglés</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_locale</span> <span class="o">=</span> <span class="s1">&#39;en_US&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_available_locales</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtener locales disponibles&quot;&quot;&quot;</span>
+        <span class="n">locales</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localedir</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localedir</span><span class="p">):</span>
+                <span class="n">locale_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localedir</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="s1">&#39;LC_MESSAGES&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="si">}</span><span class="s1">.mo&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">locale_path</span><span class="p">):</span>
+                    <span class="n">locales</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">locales</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_locale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locale_code</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cambiar locale de la aplicación&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">translation</span> <span class="o">=</span> <span class="n">gettext</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">localedir</span><span class="p">,</span> <span class="p">[</span><span class="n">locale_code</span><span class="p">])</span>
+            <span class="n">translation</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_locale</span> <span class="o">=</span> <span class="n">locale_code</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Traducción no encontrada para: </span><span class="si">{</span><span class="n">locale_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<hr />
+<p><strong>¿Quieres conocer más sobre el desarrollo?</strong> 👉 <a href="../../desarrollo/modelos/">Modelos de Datos</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
