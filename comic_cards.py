@@ -334,13 +334,20 @@ class VolumeCard(BaseCard):
                 # Verificar si es una imagen real (no la imagen por defecto)
                 if cover_path and os.path.exists(cover_path) and not cover_path.endswith("Volumen_sin_caratula.png"):
                     print(f"✅ Imagen real encontrada: {cover_path}")
-                    # Solo generar thumbnail si hay imagen real
-                    self.thumbnail_generator.request_thumbnail(
-                        cover_path,
-                        self.item.id_volume,
-                        "volumes",
-                        self.load_thumbnail
-                    )
+
+                    # Si la imagen es JPG descargada de ComicVine, cargarla directamente
+                    if cover_path.endswith('.jpg') and 'data/thumbnails/volumes' in cover_path:
+                        print(f"📷 Cargando imagen JPG directamente: {cover_path}")
+                        self.load_thumbnail(cover_path)
+                    else:
+                        # Para otros archivos (CBZ, CBR, etc.), generar thumbnail
+                        print(f"🔄 Generando thumbnail para: {cover_path}")
+                        self.thumbnail_generator.request_thumbnail(
+                            cover_path,
+                            self.item.id_volume,
+                            "volumes",
+                            self.load_thumbnail
+                        )
                 else:
                     print(f"⚠️ No hay imagen real disponible")
                     print(f"📊 image_url del volumen: {getattr(self.item, 'image_url', 'No definida')}")

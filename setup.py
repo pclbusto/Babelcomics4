@@ -54,7 +54,7 @@ def create_directories():
         "data/thumbnails/comics",
         "data/thumbnails/volumes",
         "data/thumbnails/publishers",
-        "data/thumbnails/comicbookinfo_issues",
+        "data/thumbnails/comicbook_info",
 
         # Directorios de logs
         "logs",

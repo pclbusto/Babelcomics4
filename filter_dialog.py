@@ -17,15 +17,18 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
         super().__init__()
         self.parent_window = parent_window
         self.current_view = current_view
-        
+
         # Configurar ventana
         self.set_title("Filtros Avanzados")
         self.set_default_size(450, 600)
         self.set_transient_for(parent_window)
         self.set_modal(True)
-        
+
         # Crear contenido
         self.create_content()
+
+        # Cargar estado de filtros actual
+        self.load_current_filters()
         
     def create_content(self):
         """Crear contenido del diálogo"""
@@ -292,7 +295,9 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
                 if min_quality > 0 or max_quality < 5:
                     filters['quality_range'] = (min_quality, max_quality)
                     
-                if not self.include_trash.get_active():
+                if self.include_trash.get_active():
+                    filters['include_trash'] = True
+                else:
                     filters['exclude_trash'] = True
                     
             elif self.current_view == "volumes":
@@ -371,11 +376,84 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
                 self.has_description.set_active(False)
                 self.has_logo.set_active(False)
                 self.has_website.set_active(False)
-                
+
+            # Limpiar filtros en la ventana principal también
+            if hasattr(self.parent_window, 'apply_advanced_filters'):
+                self.parent_window.apply_advanced_filters({})
+                print("✓ Filtros limpiados en la ventana principal")
+
             print("✓ Filtros limpiados")
-            
+
         except Exception as e:
             print(f"Error limpiando filtros: {e}")
+
+    def load_current_filters(self):
+        """Cargar filtros actuales desde la ventana principal"""
+        try:
+            # Obtener filtros actuales de la ventana principal
+            current_filters = getattr(self.parent_window, 'current_filters', {})
+            print(f"🔄 Cargando filtros actuales en diálogo: {current_filters}")
+
+            if self.current_view == "comics":
+                # Cargar filtros de comics
+                if 'classification' in current_filters:
+                    classification_value = current_filters['classification']
+                    if classification_value is True:
+                        self.classification_combo.set_selected(1)  # Solo clasificados
+                    elif classification_value is False:
+                        self.classification_combo.set_selected(2)  # Solo sin clasificar
+
+                if 'quality_range' in current_filters:
+                    min_quality, max_quality = current_filters['quality_range']
+                    self.quality_min.set_value(min_quality)
+                    self.quality_max.set_value(max_quality)
+
+                if 'include_trash' in current_filters:
+                    self.include_trash.set_active(True)
+                elif 'exclude_trash' in current_filters:
+                    self.include_trash.set_active(False)
+                else:
+                    # Por defecto, excluir papelera
+                    self.include_trash.set_active(False)
+
+            elif self.current_view == "volumes":
+                # Cargar filtros de volúmenes
+                if 'year_range' in current_filters:
+                    min_year, max_year = current_filters['year_range']
+                    self.year_min.set_value(min_year)
+                    self.year_max.set_value(max_year)
+
+                if 'count_range' in current_filters:
+                    min_count, max_count = current_filters['count_range']
+                    self.count_min.set_value(min_count)
+                    self.count_max.set_value(max_count)
+
+                if 'completion' in current_filters:
+                    completion_value = current_filters['completion']
+                    self.completion_combo.set_selected(completion_value)
+
+                if 'publisher_name' in current_filters:
+                    publisher_filter = current_filters['publisher_name']
+                    self.publisher_entry.set_text(publisher_filter)
+
+            elif self.current_view == "publishers":
+                # Cargar filtros de editoriales
+                if 'volume_range' in current_filters:
+                    min_volumes, max_volumes = current_filters['volume_range']
+                    self.volume_min.set_value(min_volumes)
+                    self.volume_max.set_value(max_volumes)
+
+                if 'has_description' in current_filters:
+                    self.has_description.set_active(current_filters['has_description'])
+                if 'has_logo' in current_filters:
+                    self.has_logo.set_active(current_filters['has_logo'])
+                if 'has_website' in current_filters:
+                    self.has_website.set_active(current_filters['has_website'])
+
+            print(f"✅ Filtros cargados correctamente en el diálogo")
+
+        except Exception as e:
+            print(f"Error cargando filtros actuales: {e}")
 
 
 # Nota: QuickFilterBar removida - ya no se usa en la aplicación principal

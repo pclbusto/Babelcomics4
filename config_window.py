@@ -18,6 +18,13 @@ gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Adw, GLib, Gio
 
+# Importaciones para la base de datos
+from sqlalchemy.orm import sessionmaker
+from entidades import engine
+from entidades.setup_model import Setup
+from entidades.setup_directorio_model import SetupDirectorio
+from repositories.setup_repository import SetupRepository
+
 
 class ConfigWindow(Adw.PreferencesWindow):
     """Ventana de configuración usando Adwaita PreferencesWindow"""
@@ -33,8 +40,28 @@ class ConfigWindow(Adw.PreferencesWindow):
         if parent_window:
             self.set_transient_for(parent_window)
 
+        # Inicializar conexión a BD
+        self.setup_database()
+
         # Crear las páginas de configuración
         self.setup_pages()
+
+    def setup_database(self):
+        """Inicializar conexión a la base de datos"""
+        try:
+            Session = sessionmaker(bind=engine)
+            self.session = Session()
+            self.setup_repo = SetupRepository(self.session)
+
+            # Obtener o crear configuración
+            self.config = self.setup_repo.obtener_o_crear_configuracion()
+            print("✅ Configuración cargada desde BD")
+
+        except Exception as e:
+            print(f"❌ Error conectando a BD: {e}")
+            self.config = None
+            self.session = None
+            self.setup_repo = None
 
     def setup_pages(self):
         """Configurar las páginas de preferencias"""
@@ -77,12 +104,15 @@ class ConfigWindow(Adw.PreferencesWindow):
         # API Key
         self.api_key_row = Adw.PasswordEntryRow()
         self.api_key_row.set_title("API Key de ComicVine")
-        # PasswordEntryRow no tiene set_subtitle, usar descripción del grupo
 
-        # Cargar API key actual si existe
-        current_api_key = self.get_current_api_key()
-        if current_api_key:
-            self.api_key_row.set_text(current_api_key)
+        # Cargar API key desde BD
+        if self.config:
+            current_api_key = self.config.get_api_key()
+            if current_api_key:
+                self.api_key_row.set_text(current_api_key)
+
+        # Conectar cambios para guardar automáticamente
+        self.api_key_row.connect("changed", self.on_api_key_changed)
 
         comicvine_group.add(self.api_key_row)
 
@@ -106,14 +136,23 @@ class ConfigWindow(Adw.PreferencesWindow):
         comicvine_group.add(validate_row)
 
         # Rate limiting
-        rate_limit_row = Adw.SpinRow()
-        rate_limit_row.set_title("Intervalo entre requests")
-        rate_limit_row.set_subtitle("Segundos entre llamadas a la API (mín: 0.5)")
-        rate_limit_adjustment = Gtk.Adjustment(value=0.5, lower=0.5, upper=5.0, step_increment=0.1)
-        rate_limit_row.set_adjustment(rate_limit_adjustment)
-        rate_limit_row.set_digits(1)
+        self.rate_limit_row = Adw.SpinRow()
+        self.rate_limit_row.set_title("Intervalo entre requests")
+        self.rate_limit_row.set_subtitle("Segundos entre llamadas a la API (mín: 0.5)")
 
-        comicvine_group.add(rate_limit_row)
+        # Cargar valor desde BD
+        current_rate = 0.5
+        if self.config:
+            current_rate = self.config.rate_limit_interval
+
+        rate_limit_adjustment = Gtk.Adjustment(value=current_rate, lower=0.5, upper=5.0, step_increment=0.1)
+        self.rate_limit_row.set_adjustment(rate_limit_adjustment)
+        self.rate_limit_row.set_digits(1)
+
+        # Conectar cambios
+        self.rate_limit_row.connect("changed", self.on_rate_limit_changed)
+
+        comicvine_group.add(self.rate_limit_row)
 
         page.add(comicvine_group)
 
@@ -151,6 +190,138 @@ class ConfigWindow(Adw.PreferencesWindow):
 
         page.add(dirs_group)
 
+        # Grupo Directorios de Escaneo
+        self.setup_scan_directories_group(page)
+
+    def setup_scan_directories_group(self, page):
+        """Configurar grupo de directorios para escanear cómics"""
+        scan_dirs_group = Adw.PreferencesGroup()
+        scan_dirs_group.set_title("Directorios de Escaneo")
+        scan_dirs_group.set_description("Carpetas donde buscar archivos de cómics para catalogar")
+
+        # Agregar nuevo directorio
+        add_dir_row = Adw.ActionRow()
+        add_dir_row.set_title("Agregar directorio")
+        add_dir_row.set_subtitle("Seleccionar nueva carpeta para escanear")
+
+        add_button = Gtk.Button()
+        add_button.set_icon_name("folder-new-symbolic")
+        add_button.set_valign(Gtk.Align.CENTER)
+        add_button.add_css_class("suggested-action")
+        add_button.connect("clicked", self.on_add_scan_directory)
+        add_dir_row.add_suffix(add_button)
+
+        scan_dirs_group.add(add_dir_row)
+
+        # Botón para escanear directorios
+        scan_row = Adw.ActionRow()
+        scan_row.set_title("Escanear directorios")
+        scan_row.set_subtitle("Buscar nuevos cómics en los directorios configurados")
+
+        self.scan_button = Gtk.Button()
+        self.scan_button.set_label("Escanear")
+        self.scan_button.set_valign(Gtk.Align.CENTER)
+        self.scan_button.add_css_class("suggested-action")
+        self.scan_button.connect("clicked", self.on_scan_directories)
+        scan_row.add_suffix(self.scan_button)
+
+        # Progress bar para escaneo (inicialmente oculta)
+        self.scan_progress = Gtk.ProgressBar()
+        self.scan_progress.set_visible(False)
+        self.scan_progress.set_valign(Gtk.Align.CENTER)
+        self.scan_progress.set_hexpand(True)
+        scan_row.add_suffix(self.scan_progress)
+
+        # Botón cancelar escaneo (inicialmente oculto)
+        self.cancel_scan_button = Gtk.Button()
+        self.cancel_scan_button.set_label("Cancelar")
+        self.cancel_scan_button.set_valign(Gtk.Align.CENTER)
+        self.cancel_scan_button.add_css_class("destructive-action")
+        self.cancel_scan_button.set_visible(False)
+        self.cancel_scan_button.connect("clicked", self.on_cancel_scan)
+        scan_row.add_suffix(self.cancel_scan_button)
+
+        # Label de estado del escaneo
+        self.scan_status = Gtk.Label()
+        self.scan_status.set_visible(False)
+        self.scan_status.set_halign(Gtk.Align.START)
+        self.scan_status.add_css_class("dim-label")
+        scan_row.add_suffix(self.scan_status)
+
+        scan_dirs_group.add(scan_row)
+
+        # Lista de directorios configurados
+        self.scan_dirs_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.refresh_scan_directories_list()
+
+        # Agregar la lista al grupo usando una fila expandible
+        dirs_list_row = Adw.ActionRow()
+        dirs_list_row.set_title("Directorios configurados")
+        dirs_list_row.set_child(self.scan_dirs_box)
+        scan_dirs_group.add(dirs_list_row)
+
+        page.add(scan_dirs_group)
+
+    def refresh_scan_directories_list(self):
+        """Actualizar la lista de directorios de escaneo"""
+        # Limpiar lista actual
+        while self.scan_dirs_box.get_first_child():
+            self.scan_dirs_box.remove(self.scan_dirs_box.get_first_child())
+
+        if not self.config:
+            return
+
+        # Obtener directorios de escaneo (activo=True)
+        scan_directories = [d for d in self.config.directorios if d.activo]
+
+        if not scan_directories:
+            # Mostrar mensaje si no hay directorios
+            no_dirs_label = Gtk.Label()
+            no_dirs_label.set_markup("<i>No hay directorios configurados para escanear</i>")
+            no_dirs_label.set_halign(Gtk.Align.START)
+            no_dirs_label.add_css_class("dim-label")
+            self.scan_dirs_box.append(no_dirs_label)
+            return
+
+        # Mostrar cada directorio
+        for directory in scan_directories:
+            dir_row = self.create_scan_directory_row(directory)
+            self.scan_dirs_box.append(dir_row)
+
+    def create_scan_directory_row(self, directory):
+        """Crear una fila para un directorio de escaneo"""
+        row = Adw.ActionRow()
+
+        # Verificar si el directorio existe
+        path_exists = directory.is_valid_path()
+
+        row.set_title(Path(directory.directorio_path).name)
+        row.set_subtitle(directory.directorio_path)
+
+        if not path_exists:
+            row.add_css_class("error")
+            row.set_subtitle(f"❌ {directory.directorio_path} (no encontrado)")
+
+        # Botón para abrir directorio
+        if path_exists:
+            open_button = Gtk.Button()
+            open_button.set_icon_name("folder-open-symbolic")
+            open_button.set_valign(Gtk.Align.CENTER)
+            open_button.set_tooltip_text("Abrir directorio")
+            open_button.connect("clicked", lambda btn, path=directory.directorio_path: self.open_directory(path))
+            row.add_suffix(open_button)
+
+        # Botón para eliminar
+        remove_button = Gtk.Button()
+        remove_button.set_icon_name("user-trash-symbolic")
+        remove_button.set_valign(Gtk.Align.CENTER)
+        remove_button.add_css_class("destructive-action")
+        remove_button.set_tooltip_text("Eliminar directorio")
+        remove_button.connect("clicked", lambda btn, dir_id=directory.id: self.on_remove_scan_directory(dir_id))
+        row.add_suffix(remove_button)
+
+        return row
+
     def setup_interface_group(self, page):
         """Configurar grupo de interfaz"""
         interface_group = Adw.PreferencesGroup()
@@ -158,36 +329,59 @@ class ConfigWindow(Adw.PreferencesWindow):
         interface_group.set_description("Configuración de la interfaz de usuario")
 
         # Modo oscuro/claro
-        theme_row = Adw.ComboRow()
-        theme_row.set_title("Tema")
-        theme_row.set_subtitle("Apariencia de la aplicación")
+        self.theme_row = Adw.ComboRow()
+        self.theme_row.set_title("Tema")
+        self.theme_row.set_subtitle("Apariencia de la aplicación")
 
         theme_model = Gtk.StringList()
         theme_model.append("Seguir sistema")
         theme_model.append("Claro")
         theme_model.append("Oscuro")
-        theme_row.set_model(theme_model)
-        theme_row.set_selected(0)
+        self.theme_row.set_model(theme_model)
 
-        interface_group.add(theme_row)
+        # Cargar tema desde BD
+        if self.config:
+            if self.config.modo_oscuro:
+                self.theme_row.set_selected(2)  # Oscuro
+            else:
+                self.theme_row.set_selected(1)  # Claro
+        else:
+            self.theme_row.set_selected(0)  # Seguir sistema
+
+        self.theme_row.connect("notify::selected-item", self.on_theme_changed)
+        interface_group.add(self.theme_row)
 
         # Tamaño de thumbnails
-        thumbnail_size_row = Adw.SpinRow()
-        thumbnail_size_row.set_title("Tamaño de thumbnails")
-        thumbnail_size_row.set_subtitle("Píxeles para las miniaturas")
-        size_adjustment = Gtk.Adjustment(value=200, lower=100, upper=400, step_increment=10)
-        thumbnail_size_row.set_adjustment(size_adjustment)
+        self.thumbnail_size_row = Adw.SpinRow()
+        self.thumbnail_size_row.set_title("Tamaño de thumbnails")
+        self.thumbnail_size_row.set_subtitle("Píxeles para las miniaturas")
 
-        interface_group.add(thumbnail_size_row)
+        # Cargar valor desde BD
+        current_size = 200
+        if self.config:
+            current_size = self.config.thumbnail_size
 
-        # Items por página
-        items_per_page_row = Adw.SpinRow()
-        items_per_page_row.set_title("Items por lote")
-        items_per_page_row.set_subtitle("Cantidad de items a cargar por vez")
-        items_adjustment = Gtk.Adjustment(value=20, lower=10, upper=100, step_increment=5)
-        items_per_page_row.set_adjustment(items_adjustment)
+        size_adjustment = Gtk.Adjustment(value=current_size, lower=100, upper=400, step_increment=10)
+        self.thumbnail_size_row.set_adjustment(size_adjustment)
+        self.thumbnail_size_row.connect("changed", self.on_thumbnail_size_changed)
 
-        interface_group.add(items_per_page_row)
+        interface_group.add(self.thumbnail_size_row)
+
+        # Items por lote
+        self.items_per_batch_row = Adw.SpinRow()
+        self.items_per_batch_row.set_title("Items por lote")
+        self.items_per_batch_row.set_subtitle("Cantidad de items a cargar por vez")
+
+        # Cargar valor desde BD
+        current_batch = 20
+        if self.config:
+            current_batch = self.config.items_per_batch
+
+        items_adjustment = Gtk.Adjustment(value=current_batch, lower=10, upper=100, step_increment=5)
+        self.items_per_batch_row.set_adjustment(items_adjustment)
+        self.items_per_batch_row.connect("changed", self.on_items_per_batch_changed)
+
+        interface_group.add(self.items_per_batch_row)
 
         page.add(interface_group)
 
@@ -252,29 +446,48 @@ class ConfigWindow(Adw.PreferencesWindow):
         perf_group.set_description("Configuraciones que afectan el rendimiento")
 
         # Workers concurrentes
-        workers_row = Adw.SpinRow()
-        workers_row.set_title("Workers concurrentes")
-        workers_row.set_subtitle("Número de hilos para descargas paralelas")
-        workers_adjustment = Gtk.Adjustment(value=5, lower=1, upper=20, step_increment=1)
-        workers_row.set_adjustment(workers_adjustment)
+        self.workers_row = Adw.SpinRow()
+        self.workers_row.set_title("Workers concurrentes")
+        self.workers_row.set_subtitle("Número de hilos para descargas paralelas")
 
-        perf_group.add(workers_row)
+        # Cargar valor desde BD
+        current_workers = 5
+        if self.config:
+            current_workers = self.config.workers_concurrentes
+
+        workers_adjustment = Gtk.Adjustment(value=current_workers, lower=1, upper=20, step_increment=1)
+        self.workers_row.set_adjustment(workers_adjustment)
+        self.workers_row.connect("changed", self.on_workers_changed)
+
+        perf_group.add(self.workers_row)
 
         # Cache de thumbnails
-        cache_row = Adw.SwitchRow()
-        cache_row.set_title("Cache de thumbnails")
-        cache_row.set_subtitle("Mantener thumbnails en memoria")
-        cache_row.set_active(True)
+        self.cache_row = Adw.SwitchRow()
+        self.cache_row.set_title("Cache de thumbnails")
+        self.cache_row.set_subtitle("Mantener thumbnails en memoria")
 
-        perf_group.add(cache_row)
+        # Cargar valor desde BD
+        if self.config:
+            self.cache_row.set_active(self.config.cache_thumbnails)
+        else:
+            self.cache_row.set_active(True)
+
+        self.cache_row.connect("notify::active", self.on_cache_changed)
+        perf_group.add(self.cache_row)
 
         # Limpieza automática
-        cleanup_row = Adw.SwitchRow()
-        cleanup_row.set_title("Limpieza automática")
-        cleanup_row.set_subtitle("Limpiar archivos temporales al cerrar")
-        cleanup_row.set_active(True)
+        self.cleanup_row = Adw.SwitchRow()
+        self.cleanup_row.set_title("Limpieza automática")
+        self.cleanup_row.set_subtitle("Limpiar archivos temporales al cerrar")
 
-        perf_group.add(cleanup_row)
+        # Cargar valor desde BD
+        if self.config:
+            self.cleanup_row.set_active(self.config.limpieza_automatica)
+        else:
+            self.cleanup_row.set_active(True)
+
+        self.cleanup_row.connect("notify::active", self.on_cleanup_changed)
+        perf_group.add(self.cleanup_row)
 
         page.add(perf_group)
 
@@ -348,26 +561,362 @@ class ConfigWindow(Adw.PreferencesWindow):
 
         page.add(thumbnails_group)
 
-    def get_current_api_key(self):
-        """Obtener API key actual desde el archivo"""
+    # Métodos callback para cambios de configuración
+    def on_api_key_changed(self, entry):
+        """Callback cuando cambia la API key"""
+        if not self.config:
+            return
+
+        api_key = entry.get_text().strip()
+        self.config.set_api_key(api_key)
+        self.save_config()
+
+    def on_rate_limit_changed(self, spin_row):
+        """Callback cuando cambia el rate limit"""
+        if not self.config:
+            return
+
+        self.config.rate_limit_interval = spin_row.get_value()
+        self.save_config()
+
+    def on_theme_changed(self, combo_row, param):
+        """Callback cuando cambia el tema"""
+        if not self.config:
+            return
+
+        selected = combo_row.get_selected()
+        if selected == 0:  # Seguir sistema
+            # Por ahora mantener como False, después se puede implementar detección de sistema
+            self.config.modo_oscuro = False
+        elif selected == 1:  # Claro
+            self.config.modo_oscuro = False
+        elif selected == 2:  # Oscuro
+            self.config.modo_oscuro = True
+
+        self.save_config()
+
+    def on_thumbnail_size_changed(self, spin_row):
+        """Callback cuando cambia el tamaño de thumbnails"""
+        if not self.config:
+            return
+
+        self.config.thumbnail_size = int(spin_row.get_value())
+        self.save_config()
+
+    def on_items_per_batch_changed(self, spin_row):
+        """Callback cuando cambia items por lote"""
+        if not self.config:
+            return
+
+        self.config.items_per_batch = int(spin_row.get_value())
+        self.save_config()
+
+    def on_workers_changed(self, spin_row):
+        """Callback cuando cambia workers concurrentes"""
+        if not self.config:
+            return
+
+        self.config.workers_concurrentes = int(spin_row.get_value())
+        self.save_config()
+
+    def on_cache_changed(self, switch_row, param):
+        """Callback cuando cambia cache de thumbnails"""
+        if not self.config:
+            return
+
+        self.config.cache_thumbnails = switch_row.get_active()
+        self.save_config()
+
+    def on_cleanup_changed(self, switch_row, param):
+        """Callback cuando cambia limpieza automática"""
+        if not self.config:
+            return
+
+        self.config.limpieza_automatica = switch_row.get_active()
+        self.save_config()
+
+    def save_config(self):
+        """Guardar configuración en la base de datos"""
+        if self.setup_repo and self.session:
+            try:
+                self.setup_repo.guardar_configuracion(self.config)
+                print("🔧 Configuración guardada")
+            except Exception as e:
+                print(f"❌ Error guardando configuración: {e}")
+
+    # Métodos para gestión de directorios de escaneo
+    def on_add_scan_directory(self, button):
+        """Abrir diálogo para seleccionar directorio de escaneo"""
+        dialog = Gtk.FileDialog()
+        dialog.set_title("Seleccionar directorio para escanear")
+        dialog.select_folder(
+            parent=self,
+            cancellable=None,
+            callback=self.on_folder_selected
+        )
+
+    def on_folder_selected(self, dialog, result):
+        """Callback cuando se selecciona un directorio"""
         try:
-            from helpers.comicvine_cliente import ComicVineClient
-            # Intentar leer desde el archivo directamente
-            with open("helpers/comicvine_cliente.py", "r") as f:
-                content = f.read()
-                # Buscar la línea con MY_API_KEY
-                for line in content.split('\n'):
-                    if 'MY_API_KEY = ' in line and not line.strip().startswith('#'):
-                        # Extraer la clave entre comillas
-                        start = line.find("'") + 1
-                        end = line.rfind("'")
-                        if start > 0 and end > start:
-                            api_key = line[start:end]
-                            if api_key != 'TU_API_KEY':
-                                return api_key
+            folder = dialog.select_folder_finish(result)
+            if folder:
+                folder_path = folder.get_path()
+                self.add_scan_directory(folder_path)
         except Exception as e:
-            print(f"Error leyendo API key: {e}")
-        return ""
+            if "cancelled" not in str(e).lower():
+                print(f"Error seleccionando directorio: {e}")
+
+    def add_scan_directory(self, directory_path):
+        """Agregar un nuevo directorio de escaneo"""
+        if not self.config or not self.session:
+            return
+
+        abs_path = str(Path(directory_path).absolute())
+
+        # Verificar que no exista ya
+        existing = any(d.directorio_path == abs_path for d in self.config.directorios)
+        if existing:
+            self.show_error_message(f"El directorio ya está configurado:\n{abs_path}")
+            return
+
+        # Verificar que el directorio existe
+        if not Path(abs_path).exists() or not Path(abs_path).is_dir():
+            self.show_error_message(f"El directorio no existe o no es válido:\n{abs_path}")
+            return
+
+        try:
+            # Crear nuevo directorio en BD
+            new_directory = SetupDirectorio(
+                setup_id=self.config.setupkey,
+                directorio_path=abs_path,
+                activo=True  # Para escaneo
+            )
+            self.session.add(new_directory)
+            self.session.commit()
+
+            # Actualizar la configuración cargada
+            self.config.directorios.append(new_directory)
+
+            # Actualizar la UI
+            self.refresh_scan_directories_list()
+
+            print(f"✅ Directorio agregado: {abs_path}")
+            self.show_success_message(f"Directorio agregado exitosamente:\n{abs_path}")
+
+        except Exception as e:
+            print(f"❌ Error agregando directorio: {e}")
+            self.show_error_message(f"Error agregando directorio:\n{e}")
+
+    def on_remove_scan_directory(self, directory_id):
+        """Mostrar confirmación para eliminar directorio"""
+        # Buscar el directorio
+        directory = None
+        for d in self.config.directorios:
+            if d.id == directory_id:
+                directory = d
+                break
+
+        if not directory:
+            return
+
+        dialog = Adw.MessageDialog.new(self)
+        dialog.set_heading("Eliminar directorio de escaneo")
+        dialog.set_body(f"¿Estás seguro de que quieres eliminar este directorio?\n\n{directory.directorio_path}\n\nEsto no eliminará los archivos, solo dejará de escanearlo.")
+        dialog.add_response("cancel", "Cancelar")
+        dialog.add_response("remove", "Eliminar")
+        dialog.set_response_appearance("remove", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("cancel")
+        dialog.connect("response", lambda d, r, dir_id=directory_id: self.on_remove_directory_confirmed(d, r, dir_id))
+        dialog.present()
+
+    def on_remove_directory_confirmed(self, dialog, response, directory_id):
+        """Confirmar eliminación de directorio"""
+        if response == "remove":
+            self.remove_scan_directory(directory_id)
+
+    def remove_scan_directory(self, directory_id):
+        """Eliminar directorio de escaneo de la BD"""
+        if not self.session:
+            return
+
+        try:
+            # Eliminar de BD
+            directory = self.session.query(SetupDirectorio).filter_by(id=directory_id).first()
+            if directory:
+                directory_path = directory.directorio_path
+                self.session.delete(directory)
+                self.session.commit()
+
+                # Actualizar configuración en memoria
+                self.config.directorios = [d for d in self.config.directorios if d.id != directory_id]
+
+                # Actualizar UI
+                self.refresh_scan_directories_list()
+
+                print(f"✅ Directorio eliminado: {directory_path}")
+                self.show_success_message(f"Directorio eliminado exitosamente:\n{directory_path}")
+
+        except Exception as e:
+            print(f"❌ Error eliminando directorio: {e}")
+            self.show_error_message(f"Error eliminando directorio:\n{e}")
+
+    # Métodos para escaneo de directorios
+    def on_scan_directories(self, button):
+        """Iniciar escaneo de directorios configurados"""
+        # Verificar que hay directorios configurados
+        if not self.config:
+            self.show_error_message("No se pudo cargar la configuración")
+            return
+
+        scan_directories = [d for d in self.config.directorios if d.activo]
+        if not scan_directories:
+            self.show_error_message("No hay directorios configurados para escanear.\n\nAgrega al menos un directorio antes de escanear.")
+            return
+
+        # Mostrar confirmación
+        dialog = Adw.MessageDialog.new(self)
+        dialog.set_heading("Escanear directorios de cómics")
+
+        dir_list = "\n".join([f"• {Path(d.directorio_path).name}" for d in scan_directories[:5]])
+        if len(scan_directories) > 5:
+            dir_list += f"\n... y {len(scan_directories) - 5} más"
+
+        dialog.set_body(f"¿Quieres escanear los siguientes directorios en busca de nuevos cómics?\n\n{dir_list}\n\nEsto puede tardar varios minutos dependiendo del tamaño de las carpetas.")
+
+        dialog.add_response("cancel", "Cancelar")
+        dialog.add_response("scan", "Escanear")
+        dialog.set_response_appearance("scan", Adw.ResponseAppearance.SUGGESTED)
+        dialog.set_default_response("cancel")
+        dialog.connect("response", self.on_scan_directories_confirmed)
+        dialog.present()
+
+    def on_scan_directories_confirmed(self, dialog, response):
+        """Confirmar inicio de escaneo"""
+        if response == "scan":
+            self.start_directory_scan()
+
+    def start_directory_scan(self):
+        """Iniciar proceso de escaneo en hilo separado"""
+        # Cambiar UI a modo escaneando
+        self.scan_button.set_visible(False)
+        self.scan_progress.set_visible(True)
+        self.cancel_scan_button.set_visible(True)
+        self.scan_status.set_visible(True)
+        self.scan_status.set_text("Iniciando escaneo...")
+
+        # Variables de estado
+        self.scan_cancelled = False
+        self.current_scanner = None
+
+        # Iniciar en hilo separado
+        import threading
+        threading.Thread(target=self.scan_directories_worker, daemon=True).start()
+
+    def scan_directories_worker(self):
+        """Worker que maneja el escaneo de directorios"""
+        try:
+            from helpers.comic_scanner import ComicScanner
+
+            # Crear scanner con callbacks
+            self.current_scanner = ComicScanner(
+                progress_callback=self.on_scan_progress,
+                status_callback=self.on_scan_status
+            )
+
+            # Ejecutar escaneo
+            stats = self.current_scanner.scan_directories(skip_existing=True)
+
+            # Mostrar resultado final en el hilo principal
+            GLib.idle_add(lambda: self.finish_directory_scan(stats))
+
+        except Exception as e:
+            print(f"Error en escaneo de directorios: {e}")
+            import traceback
+            traceback.print_exc()
+            GLib.idle_add(lambda: self.scan_status.set_text(f"Error: {e}"))
+            GLib.idle_add(self.finish_directory_scan_with_error)
+
+    def on_scan_progress(self, progress):
+        """Callback para progreso del escaneo (0.0-1.0)"""
+        GLib.idle_add(lambda: self.scan_progress.set_fraction(progress))
+
+    def on_scan_status(self, message):
+        """Callback para estado del escaneo"""
+        GLib.idle_add(lambda: self.scan_status.set_text(message))
+
+    def on_cancel_scan(self, button):
+        """Cancelar escaneo en progreso"""
+        if self.current_scanner:
+            self.current_scanner.cancel_scan()
+            self.scan_cancelled = True
+            self.scan_status.set_text("Cancelando...")
+
+    def finish_directory_scan(self, stats):
+        """Finalizar proceso de escaneo exitoso"""
+        # Restaurar UI
+        self.scan_button.set_visible(True)
+        self.scan_progress.set_visible(False)
+        self.cancel_scan_button.set_visible(False)
+        self.scan_progress.set_fraction(0)
+
+        # Mostrar resultado final
+        final_text = f"Completado: +{stats['comics_added']} cómics"
+        if stats['comics_skipped'] > 0:
+            final_text += f" (omitidos: {stats['comics_skipped']})"
+
+        self.scan_status.set_text(final_text)
+
+        # Ocultar status después de 10 segundos
+        GLib.timeout_add_seconds(10, lambda: self.scan_status.set_visible(False))
+
+        # Mostrar mensaje detallado de resultado
+        message_parts = [
+            "Escaneo de directorios completado.",
+            f"📁 Archivos encontrados: {stats['total_files_found']}",
+            f"✅ Cómics agregados: {stats['comics_added']}",
+        ]
+
+        if stats['comics_skipped'] > 0:
+            message_parts.append(f"⏭️ Cómics omitidos (ya existían): {stats['comics_skipped']}")
+
+        if stats['errors'] > 0:
+            message_parts.append(f"❌ Errores: {stats['errors']}")
+
+        elapsed_min = stats['elapsed_time'] / 60
+        if elapsed_min >= 1:
+            message_parts.append(f"⏱️ Tiempo: {elapsed_min:.1f} minutos")
+        else:
+            message_parts.append(f"⏱️ Tiempo: {stats['elapsed_time']:.1f} segundos")
+
+        if stats['comics_added'] > 0:
+            self.show_success_message("\n".join(message_parts))
+        elif stats['comics_skipped'] > 0:
+            # Solo cómics omitidos, no es error pero tampoco gran éxito
+            message_parts.insert(1, "ℹ️ No se encontraron cómics nuevos.")
+            dialog = Adw.MessageDialog.new(self)
+            dialog.set_heading("Escaneo completado")
+            dialog.set_body("\n".join(message_parts))
+            dialog.add_response("ok", "OK")
+            dialog.present()
+        else:
+            message_parts.insert(1, "ℹ️ No se encontraron archivos de cómics.")
+            self.show_success_message("\n".join(message_parts))
+
+    def finish_directory_scan_with_error(self):
+        """Finalizar proceso de escaneo con error"""
+        # Restaurar UI
+        self.scan_button.set_visible(True)
+        self.scan_progress.set_visible(False)
+        self.cancel_scan_button.set_visible(False)
+        self.scan_progress.set_fraction(0)
+
+        # Ocultar status después de 5 segundos
+        GLib.timeout_add_seconds(5, lambda: self.scan_status.set_visible(False))
+
+    def __del__(self):
+        """Cerrar conexión de BD al destruir la ventana"""
+        if hasattr(self, 'session') and self.session:
+            self.session.close()
 
     def on_validate_api_key(self, button):
         """Validar la API key ingresada"""
@@ -394,8 +943,10 @@ class ConfigWindow(Adw.PreferencesWindow):
                         '<span color="green">✅ Conexión exitosa</span>'
                     ))
 
-                    # Guardar la API key
-                    GLib.idle_add(lambda: self.save_api_key(api_key))
+                    # Guardar la API key en BD
+                    if self.config:
+                        GLib.idle_add(lambda: self.config.set_api_key(api_key))
+                        GLib.idle_add(self.save_config)
                 else:
                     GLib.idle_add(lambda: self.connection_status.set_markup(
                         '<span color="red">❌ Error de conexión</span>'
@@ -408,29 +959,6 @@ class ConfigWindow(Adw.PreferencesWindow):
 
         import threading
         threading.Thread(target=validate_worker, daemon=True).start()
-
-    def save_api_key(self, api_key):
-        """Guardar API key en el archivo"""
-        try:
-            # Leer el archivo actual
-            with open("helpers/comicvine_cliente.py", "r") as f:
-                content = f.read()
-
-            # Reemplazar la línea de MY_API_KEY
-            lines = content.split('\n')
-            for i, line in enumerate(lines):
-                if 'MY_API_KEY = ' in line and not line.strip().startswith('#'):
-                    lines[i] = f"    MY_API_KEY = '{api_key}'"
-                    break
-
-            # Escribir de vuelta
-            with open("helpers/comicvine_cliente.py", "w") as f:
-                f.write('\n'.join(lines))
-
-            print(f"API Key guardada exitosamente")
-
-        except Exception as e:
-            print(f"Error guardando API key: {e}")
 
     def on_open_data_directory(self, button):
         """Abrir directorio de datos"""
@@ -572,7 +1100,7 @@ class ConfigWindow(Adw.PreferencesWindow):
                     (thumb_dir / "volumes").mkdir(exist_ok=True)
                     (thumb_dir / "comics").mkdir(exist_ok=True)
                     (thumb_dir / "publishers").mkdir(exist_ok=True)
-                    (thumb_dir / "comicbookinfo_issues").mkdir(exist_ok=True)
+                    (thumb_dir / "comicbook_info").mkdir(exist_ok=True)
 
                 self.show_success_message("Cache de thumbnails limpiado exitosamente")
             except Exception as e:

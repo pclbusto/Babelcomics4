@@ -74,6 +74,15 @@ except ImportError as e:
     print(f"Error importando ventana de detalle: {e}")
     VOLUME_DETAIL_AVAILABLE = False
 
+# Importar página de detalle de cómic
+try:
+    from comic_detail_page import create_comic_detail_page
+    print("Página de detalle de cómic importada correctamente")
+    COMIC_DETAIL_AVAILABLE = True
+except ImportError as e:
+    print(f"Error importando página de detalle de cómic: {e}")
+    COMIC_DETAIL_AVAILABLE = False
+
 
 class ComicManagerWindow(Adw.ApplicationWindow):
     """Ventana principal modularizada"""
@@ -88,7 +97,14 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Estado de la aplicación
         self.current_view = "comics"
         self.current_filters = {}
-        self.search_text = ""
+
+        # Filtros independientes por vista
+        self.search_states = {
+            "comics": {"text": "", "filters": {}},
+            "volumes": {"text": "", "filters": {}},
+            "publishers": {"text": "", "filters": {}},
+            "arcs": {"text": "", "filters": {}}
+        }
         
         # Inicializar gestores
         self.selection_manager = SelectionManager()
@@ -101,6 +117,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Inicializar componentes
         self.init_database()
         self.thumbnail_generator = ThumbnailGenerator()
+        self.thumbnail_generator.set_session(self.session)
         
         # Configurar callbacks del selection manager
         self.selection_manager.add_callback('selection_changed', self.on_selection_changed)
@@ -170,6 +187,11 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         download_volumes_action = Gio.SimpleAction.new("download_volumes", None)
         download_volumes_action.connect("activate", self.on_download_volumes_action)
         self.add_action(download_volumes_action)
+
+        # Acción para regenerar portada
+        regenerate_cover_action = Gio.SimpleAction.new("regenerate_cover", GLib.VariantType.new("s"))
+        regenerate_cover_action.connect("activate", self.on_regenerate_cover_action)
+        self.add_action(regenerate_cover_action)
         
     def setup_keyboard_shortcuts(self):
         """Configurar atajos de teclado"""
@@ -284,11 +306,13 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         header.pack_end(download_volumes_button)
 
         # Botón filtros avanzados
-        filter_button = Gtk.Button()
-        filter_button.set_icon_name("funnel-symbolic")
-        filter_button.set_tooltip_text("Filtros avanzados")
-        filter_button.connect("clicked", self.on_advanced_filters_clicked)
-        header.pack_end(filter_button)
+        self.filter_button = Gtk.Button()
+        self.filter_button.set_icon_name("preferences-system-symbolic")
+        self.filter_button.set_tooltip_text("Filtros avanzados")
+        self.filter_button.connect("clicked", self.on_advanced_filters_clicked)
+        # Agregar una clase CSS para asegurar que sea visible
+        self.filter_button.add_css_class("suggested-action")
+        header.pack_end(self.filter_button)
 
         # Botón actualizar
         refresh_button = Gtk.Button()
@@ -504,14 +528,28 @@ class ComicManagerWindow(Adw.ApplicationWindow):
     def update_ui_for_view(self, view):
         """Actualizar UI según la vista"""
         placeholders = {
-            "comics": "Buscar comics...",
+            "comics": "Buscar comics (ej: Superman+2015)...",
             "volumes": "Buscar volúmenes...",
             "publishers": "Buscar editoriales...",
             "arcs": "Buscar arcos..."
         }
-        
+
         self.search_entry.set_placeholder_text(placeholders.get(view, "Buscar..."))
-        
+
+        # Guardar el estado actual antes de cambiar
+        if hasattr(self, 'current_view') and self.current_view in self.search_states:
+            self.search_states[self.current_view]["filters"] = self.current_filters.copy()
+            print(f"💾 Guardando filtros para {self.current_view}: {self.current_filters}")
+
+        # Restaurar estado de búsqueda de esta vista
+        search_state = self.search_states.get(view, {"text": "", "filters": {}})
+        self.search_entry.set_text(search_state["text"])
+        self.current_filters = search_state["filters"].copy()
+        print(f"🔄 Restaurando filtros para {view}: {self.current_filters}")
+
+        # Actualizar estado visual del botón de filtros
+        self.update_filter_button_state()
+
         # Cargar contenido para la nueva vista
         print(f"Cargando contenido para: {view}")
         self.load_items_batch()
@@ -729,7 +767,10 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         
         if item_type == "comics" and CATALOGING_AVAILABLE:
             menu.append("Catalogar", f"win.catalog_item('{item_id}')")
-            
+
+        if item_type == "comics":
+            menu.append("Regenerar Portada", f"win.regenerate_cover('{item_id}')")
+
         menu.append("Mover a papelera", f"win.trash_item('{item_id}')")
         menu.append("Ver detalles", f"win.show_details('{item_id}')")
         
@@ -776,6 +817,15 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Implementar diálogo de detalles
         self.show_toast(f"Detalles de item {item_id} (por implementar)", "info")
 
+    def on_regenerate_cover_action(self, action, parameter):
+        """Regenerar portada/thumbnail de un comic"""
+        item_id = parameter.get_string()
+        try:
+            item_id_int = int(item_id)
+            self.regenerate_comic_cover(item_id_int)
+        except ValueError:
+            self.show_toast("ID de item inválido", "error")
+
     def on_show_about_action(self, action, parameter):
         """Mostrar diálogo Acerca de (acción)"""
         show_about_dialog(self)
@@ -816,7 +866,63 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         except Exception as e:
             print(f"Error moviendo item a papelera: {e}")
             self.show_toast(f"Error: {e}", "error")
-            
+
+    def regenerate_comic_cover(self, comic_id):
+        """Regenerar thumbnail/portada de un comic específico"""
+        try:
+            print(f"\n=== REGENERANDO COVER PARA COMIC {comic_id} ===")
+
+            # Obtener el comic de la base de datos
+            comic = self.session.query(Comicbook).get(comic_id)
+            if not comic:
+                self.show_toast("Comic no encontrado", "error")
+                return
+
+            print(f"Comic encontrado: {comic.nombre_archivo}")
+            print(f"Ruta del archivo: {comic.path}")
+
+            # Verificar que el archivo existe
+            if not os.path.exists(comic.path):
+                self.show_toast("Archivo de comic no encontrado", "error")
+                return
+
+            print(f"Archivo existe: ✓")
+
+            # Obtener ruta del thumbnail actual
+            thumbnail_path = self.thumbnail_generator.get_cached_thumbnail_path(comic_id, "comics")
+            print(f"Ruta del thumbnail: {thumbnail_path}")
+            print(f"Thumbnail existe antes: {'✓' if thumbnail_path.exists() else '✗'}")
+
+            # Limpiar thumbnail existente para forzar regeneración
+            self.thumbnail_generator.clear_cache_for_item(comic_id, "comics")
+            print(f"Cache limpiado: ✓")
+
+            # Usar el flujo normal del ThumbnailGenerator que ahora tiene lógica inteligente
+            print(f"Regenerando usando flujo normal con lógica inteligente...")
+            self.thumbnail_generator.request_thumbnail(
+                comic.path,
+                comic.id_comicbook,
+                "comics",
+                lambda path: print(f"✓ Thumbnail regenerado: {path}" if path else "✗ Error regenerando")
+            )
+
+            # Verificar resultado después de un momento
+            import time
+            time.sleep(0.5)  # Dar tiempo al worker thread
+            print(f"Thumbnail regenerado: {'✓' if thumbnail_path.exists() else '✗'}")
+
+            self.show_toast("Portada regenerada exitosamente", "success")
+
+            # Refrescar la vista actual para mostrar el nuevo thumbnail
+            self.clear_content()
+            self.load_items_batch()
+
+        except Exception as e:
+            print(f"Error regenerando portada: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_toast(f"Error regenerando portada: {e}", "error")
+
     def on_select_all(self, widget, args):
         """Seleccionar todos los items en modo selección"""
         if self.selection_manager.selection_mode:
@@ -856,15 +962,17 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Obtener comics filtrados"""
         try:
             self.comic_repository.limpiar_filtros()
-            
-            # Aplicar filtro de búsqueda
-            if self.search_text:
-                self.comic_repository.filtrar(path=self.search_text)
-                
+
+            # Aplicar filtro de búsqueda usando estado de la vista actual
+            search_text = self.search_states["comics"]["text"]
+            if search_text:
+                # Soporte para búsquedas avanzadas con "+"
+                self.apply_advanced_comic_search(search_text)
+
             # Aplicar filtros avanzados y rápidos
             print(f"🎯 Justo antes de apply_comic_filters(), current_filters = {self.current_filters}")
             self.apply_comic_filters()
-            
+
             comics = self.comic_repository.obtener_todos_los_comics()
             print(f"Obtenidos {len(comics)} comics")
             return comics
@@ -876,10 +984,11 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Obtener volúmenes filtrados"""
         try:
             self.volume_repository.limpiar_filtros()
-            
-            # Aplicar filtro de búsqueda
-            if self.search_text:
-                self.volume_repository.filtrar(nombre=self.search_text)
+
+            # Aplicar filtro de búsqueda usando estado de la vista actual
+            search_text = self.search_states["volumes"]["text"]
+            if search_text:
+                self.volume_repository.filtrar(nombre=search_text)
                 
             # Aplicar filtros avanzados
             self.apply_volume_filters()
@@ -895,20 +1004,64 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Obtener editoriales filtradas"""
         try:
             self.publisher_repository.limpiar_filtros()
-            
-            if self.search_text:
-                self.publisher_repository.filtrar(nombre=self.search_text)
-                
+
+            # Aplicar filtro de búsqueda usando estado de la vista actual
+            search_text = self.search_states["publishers"]["text"]
+            if search_text:
+                self.publisher_repository.filtrar(nombre=search_text)
+
             publishers = self.publisher_repository.obtener_pagina(0, 1000, "nombre", "asc")
             print(f"Obtenidas {len(publishers)} editoriales")
             return publishers
         except Exception as e:
             print(f"Error obteniendo editoriales: {e}")
             return []
-            
+
+    def apply_advanced_comic_search(self, search_text):
+        """Aplicar búsqueda avanzada para comics con soporte para operadores"""
+        try:
+            # Si contiene "+", es una búsqueda con múltiples términos
+            if "+" in search_text:
+                terms = [term.strip() for term in search_text.split("+") if term.strip()]
+                print(f"🔍 Búsqueda avanzada con términos: {terms}")
+
+                # Aplicar cada término como filtro AND
+                for term in terms:
+                    # Si el término es numérico, buscar en año o número
+                    if term.isdigit():
+                        # Intentar filtrar por año o número de issue
+                        year = int(term)
+                        self.comic_repository.filtrar_año_o_numero(year)
+                        print(f"  - Filtrando por año/número: {year}")
+                    else:
+                        # Buscar en path (nombre del archivo)
+                        self.comic_repository.filtrar(path=term)
+                        print(f"  - Filtrando por texto: {term}")
+            else:
+                # Búsqueda simple
+                self.comic_repository.filtrar(path=search_text)
+                print(f"🔍 Búsqueda simple: {search_text}")
+
+        except Exception as e:
+            print(f"Error en búsqueda avanzada: {e}")
+            # Fallback a búsqueda simple
+            self.comic_repository.filtrar(path=search_text)
+
     def apply_comic_filters(self):
         """Aplicar filtros para comics"""
         print(f"🔍 Aplicando filtros de comics. Filtros actuales: {self.current_filters}")
+
+        # Manejar filtro de papelera
+        if 'include_trash' in self.current_filters:
+            print(f"🗑️ Incluyendo elementos en papelera")
+            # No aplicar filtro de papelera - mostrar todos
+        elif 'exclude_trash' in self.current_filters:
+            print(f"🗑️ Aplicando filtro de papelera: exclude_trash=True")
+            self.comic_repository.filtrar(en_papelera=False)
+        else:
+            # Si no hay filtro explícito, por defecto excluir papelera
+            print(f"🗑️ Aplicando filtro por defecto: excluyendo papelera")
+            self.comic_repository.filtrar(en_papelera=False)
 
         # Filtros avanzados
         if 'classification' in self.current_filters:
@@ -920,10 +1073,6 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             min_quality, max_quality = self.current_filters['quality_range']
             print(f"⭐ Aplicando filtro de calidad: {min_quality}-{max_quality}")
             # Aquí necesitarías implementar el filtro de calidad en el repositorio
-
-        if 'exclude_trash' in self.current_filters:
-            print(f"🗑️ Aplicando filtro de papelera: exclude_trash=True")
-            self.comic_repository.filtrar(en_papelera=False)
 
         print(f"✅ Filtros finales aplicados al repositorio: {self.comic_repository.filtros}")
         
@@ -989,20 +1138,25 @@ class ComicManagerWindow(Adw.ApplicationWindow):
     def on_search_changed(self, entry):
         """Manejar cambio en búsqueda"""
         new_text = entry.get_text().strip()
-        
+
+        # Obtener texto actual de la vista
+        current_search = self.search_states[self.current_view]["text"]
+
         # Solo buscar si el texto cambió significativamente
-        if new_text != self.search_text:
-            self.search_text = new_text
-            
+        if new_text != current_search:
+            # Guardar estado de búsqueda para esta vista
+            self.search_states[self.current_view]["text"] = new_text
+
             # Debounce: usar timeout para evitar demasiadas búsquedas
             if hasattr(self, 'search_timeout'):
                 GLib.source_remove(self.search_timeout)
-                
+
             self.search_timeout = GLib.timeout_add(300, self.perform_search)
         
     def perform_search(self):
         """Ejecutar búsqueda"""
-        print(f"Buscando: '{self.search_text}' en {self.current_view}")
+        search_text = self.search_states[self.current_view]["text"]
+        print(f"Buscando: '{search_text}' en {self.current_view}")
         self.clear_content()
         self.load_items_batch()
         return False  # No repetir timeout
@@ -1035,12 +1189,37 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         self.current_filters.update(filters)
         print(f"🔄 Filtros actuales después de actualizar: {self.current_filters}")
 
+        # Guardar los filtros en el estado de la vista actual
+        if self.current_view in self.search_states:
+            self.search_states[self.current_view]["filters"] = self.current_filters.copy()
+            print(f"💾 Filtros guardados en estado de {self.current_view}")
+
+        # Actualizar indicador visual del botón de filtros
+        self.update_filter_button_state()
+
         self.clear_content()
         self.load_items_batch()
 
         # Mostrar confirmación
         self.show_toast(f"Filtros aplicados para {self.current_view}", "success")
-        
+
+    def update_filter_button_state(self):
+        """Actualizar el estado visual del botón de filtros"""
+        try:
+            if self.current_filters:
+                # Hay filtros activos - mostrar como activo
+                self.filter_button.remove_css_class("suggested-action")
+                self.filter_button.add_css_class("accent")
+                filter_count = len(self.current_filters)
+                self.filter_button.set_tooltip_text(f"Filtros avanzados ({filter_count} activos)")
+            else:
+                # Sin filtros - mostrar normal
+                self.filter_button.remove_css_class("accent")
+                self.filter_button.add_css_class("suggested-action")
+                self.filter_button.set_tooltip_text("Filtros avanzados")
+        except Exception as e:
+            print(f"Error actualizando estado del botón de filtros: {e}")
+
     def show_toast(self, message, toast_type="info"):
         """Mostrar notificación toast"""
         toast = Adw.Toast()
@@ -1078,10 +1257,14 @@ class ComicManagerWindow(Adw.ApplicationWindow):
                 print(f"Error navegando al detalle del volumen: {e}")
                 self.show_toast("Error abriendo detalle del volumen", "error")
 
-        elif self.current_view == "comics":
-            # Aquí podrías agregar detalle de cómic en el futuro
-            print(f"Detalle de cómic no implementado aún")
-            self.show_toast("Detalle de cómic no implementado", "info")
+        elif self.current_view == "comics" and COMIC_DETAIL_AVAILABLE:
+            # Navegar al detalle del cómic
+            try:
+                self.navigate_to_comic_detail(item)
+                print(f"Navegando al detalle del cómic: {os.path.basename(item.path)}")
+            except Exception as e:
+                print(f"Error navegando al detalle del cómic: {e}")
+                self.show_toast("Error abriendo detalle del cómic", "error")
 
         elif self.current_view == "publishers":
             # Aquí podrías agregar detalle de editorial en el futuro
@@ -1150,6 +1333,18 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         physical_page.main_window = self
 
         return physical_page
+
+    def navigate_to_comic_detail(self, comic):
+        """Navegar al detalle del cómic usando NavigationView"""
+        try:
+            # Crear página de detalle del cómic
+            comic_detail_page = create_comic_detail_page(comic, self.session, self.thumbnail_generator, self)
+            # Navegar a la página
+            self.navigation_view.push(comic_detail_page)
+        except Exception as e:
+            print(f"Error creando página de detalle del cómic: {e}")
+            import traceback
+            traceback.print_exc()
 
     def setup_css(self):
         """Configurar CSS personalizado"""

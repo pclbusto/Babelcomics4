@@ -6,4 +6,5 @@ Base = declarative_base()
 
 from entidades.publisher_model import Publisher
 from entidades.setup_model import Setup
+from entidades.setup_directorio_model import SetupDirectorio
 from entidades.volume_model import Volume

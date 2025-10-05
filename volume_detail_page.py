@@ -333,15 +333,14 @@ def calculate_completion(volume, session):
     try:
         owned_count = 0
         if Comicbook and ComicbookInfo:
-            subquery = session.query(ComicbookInfo.id_comicbook_info).filter(
-                ComicbookInfo.id_volume == volume.id_volume
-            ).subquery()
+            # Contar números únicos de issues que tenemos físicamente
+            from sqlalchemy import func, distinct
 
-            owned_count = session.query(Comicbook).filter(
-                Comicbook.id_comicbook_info.in_(
-                    session.query(subquery.c.id_comicbook_info)
-                )
-            ).count()
+            owned_count = session.query(func.count(distinct(ComicbookInfo.numero))).join(
+                Comicbook, ComicbookInfo.id_comicbook_info == Comicbook.id_comicbook_info
+            ).filter(
+                ComicbookInfo.id_volume == volume.id_volume
+            ).scalar() or 0
 
         if volume.cantidad_numeros > 0:
             percentage = (owned_count / volume.cantidad_numeros) * 100
@@ -758,6 +757,7 @@ def perform_comicvine_update(volume, session, main_window, tab_view):
     try:
         from helpers.comicvine_cliente import ComicVineClient
         from helpers.image_downloader import download_image
+        from repositories.volume_repository import VolumeRepository
 
         # Crear cliente con API key (debería venir de configuración)
         api_key = "7e4368b71c5a66d710a62e996a660024f6a868d4"  # TODO: Mover a configuración
@@ -771,13 +771,31 @@ def perform_comicvine_update(volume, session, main_window, tab_view):
             show_update_error(main_window, "No se pudo obtener información del volumen")
             return False
 
+        # NUEVA FUNCIONALIDAD: Actualizar información básica del volumen primero
+        show_update_progress(main_window, "Actualizando información del volumen...")
+        volume_repo = VolumeRepository(session)
+
+        try:
+            # Usar la nueva función para actualizar toda la información del volumen
+            updated_volume = volume_repo.update_volume_from_comicvine(volume, volume_details)
+            print(f"✅ Información del volumen actualizada: {updated_volume.nombre}")
+        except Exception as e:
+            print(f"❌ Error actualizando información del volumen: {e}")
+            # Hacer rollback de la sesión para poder continuar
+            try:
+                session.rollback()
+                print("🔄 Rollback de sesión realizado, continuando con issues...")
+            except Exception as rollback_error:
+                print(f"❌ Error en rollback: {rollback_error}")
+            # Continuar con la actualización de issues aunque falle la actualización del volumen
+
         show_update_progress(main_window, "Obteniendo lista de issues...")
 
         # Obtener todos los issues del volumen
         issues_list = volume_details.get('issues', [])
         if not issues_list:
-            show_update_success(main_window, "El volumen está actualizado (sin nuevos issues)")
-            return False
+            show_update_success(main_window, f"Volumen actualizado exitosamente. No hay issues nuevos.")
+            return True
 
         # Extraer IDs de issues
         issue_ids = [issue['id'] for issue in issues_list if 'id' in issue]
@@ -935,7 +953,7 @@ def download_issue_cover(issue_data, volume, session):
         print(f"DEBUG: Nombre limpio del volumen: '{clean_volume_name}'")
 
         carpeta_destino = os.path.join(
-            "data", "thumbnails", "comicbookinfo_issues",
+            "data", "thumbnails", "comicbook_info",
             f"{clean_volume_name}_{volume.id_volume}"
         )
         print(f"DEBUG: Carpeta destino: {carpeta_destino}")
@@ -1236,12 +1254,11 @@ def refresh_issues_tab_delayed(volume, main_window):
     import time
     time.sleep(1)  # Pequeño delay para asegurar que las imágenes estén escritas
 
-    # Refrescar thumbnails
+    # Refrescar vista sin borrar cache
     if hasattr(main_window, 'navigation_view'):
         try:
-            # Forzar regeneración de thumbnails
-            main_window.thumbnail_generator.clear_all_cache()
-            # Re-navegar al detalle del volumen para refrescar
+            # Solo re-navegar para refrescar la vista, SIN borrar cache
+            print(f"DEBUG: Refrescando vista del volumen {volume.nombre} sin borrar cache")
             main_window.navigate_to_volume_detail(volume)
         except Exception as e:
             print(f"Error refrescando vista: {e}")

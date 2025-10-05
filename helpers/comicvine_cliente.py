@@ -119,10 +119,16 @@ class ComicVineClient:
 
         # Primera llamada para obtener el total de resultados y la primera página
         initial_params = {'limit': self.API_RESULTS_LIMIT, 'offset': current_offset}
+
+        # Construir filtros correctamente
+        filters = []
         if query:
-            initial_params['filter'] = f'name:{query}'
+            filters.append(f'name:{query}')
         if publisher_id:
-            initial_params['filter'] = initial_params.get('filter', '') + f',publisher:{publisher_id}' 
+            filters.append(f'publisher:{publisher_id}')
+
+        if filters:
+            initial_params['filter'] = ','.join(filters) 
         
         first_data = self._make_api_request('volumes/', initial_params)
         
@@ -143,10 +149,17 @@ class ComicVineClient:
                     offset = page_num * self.API_RESULTS_LIMIT
                     if offset < total_results: # Asegurarse de no ir más allá del total
                         page_params = {'limit': self.API_RESULTS_LIMIT, 'offset': offset}
+
+                        # Construir filtros correctamente para cada página
+                        page_filters = []
                         if query:
-                            page_params['filter'] = f'name:{query}'
+                            page_filters.append(f'name:{query}')
                         if publisher_id:
-                            page_params['filter'] = page_params.get('filter', '') + f',publisher:{publisher_id}' 
+                            page_filters.append(f'publisher:{publisher_id}')
+
+                        if page_filters:
+                            page_params['filter'] = ','.join(page_filters)
+
                         pages_to_fetch.append(page_params)
 
                 # Ejecutar las llamadas en paralelo

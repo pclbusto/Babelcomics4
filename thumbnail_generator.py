@@ -39,7 +39,7 @@ class ThumbnailGenerator:
         
     def _create_cache_directories(self):
         """Crear directorios de cache"""
-        subdirs = ["comics", "volumes", "publishers", "arcs"]
+        subdirs = ["comics", "volumes", "publishers", "comicbook_info"]
         for subdir in subdirs:
             (self.cache_dir / subdir).mkdir(parents=True, exist_ok=True)
             
@@ -136,7 +136,7 @@ class ThumbnailGenerator:
             return
             
         # Intentar generar thumbnail
-        success = self._generate_thumbnail(item_path, thumbnail_path, item_type)
+        success = self._generate_thumbnail(item_path, thumbnail_path, item_type, item_id)
         
         if success:
             print(f"Thumbnail generado: {thumbnail_path}")
@@ -146,24 +146,38 @@ class ThumbnailGenerator:
             print(f"No se pudo generar thumbnail para {item_type} {item_id}")
             GLib.idle_add(callback, None)
             
-    def _generate_thumbnail(self, source_path, target_path, item_type):
+    def _generate_thumbnail(self, source_path, target_path, item_type, item_id=None):
         """Generar thumbnail según el tipo de archivo"""
         if not source_path or not os.path.exists(source_path):
             return False
-            
+
         try:
             if item_type == "comics":
-                return self._generate_comic_thumbnail(source_path, target_path)
+                return self._generate_comic_thumbnail(source_path, target_path, item_id)
             else:
                 return self._generate_image_thumbnail(source_path, target_path)
         except Exception as e:
             print(f"Error generando thumbnail: {e}")
             return False
             
-    def _generate_comic_thumbnail(self, comic_path, thumbnail_path):
-        """Generar thumbnail desde archivo de comic"""
+    def _generate_comic_thumbnail(self, comic_path, thumbnail_path, comic_id=None):
+        """Generar thumbnail desde archivo de comic con lógica inteligente de cover"""
         extension = comic_path.lower()
-        
+
+        # Si tenemos comic_id, intentar usar la lógica inteligente de cover
+        if comic_id and hasattr(self, 'session') and self.session:
+            try:
+                cover_image_path = self._find_smart_cover_image(comic_id, comic_path)
+                if cover_image_path and cover_image_path != comic_path:
+                    # Usar imagen específica de cover
+                    success = self._generate_image_thumbnail(cover_image_path, thumbnail_path)
+                    # Limpiar archivo temporal si fue extraído
+                    self._cleanup_temp_file(cover_image_path)
+                    return success
+            except Exception as e:
+                print(f"Error con lógica inteligente de cover, usando método normal: {e}")
+
+        # Fallback al método original
         if extension.endswith('.cbz'):
             return self._extract_from_cbz(comic_path, thumbnail_path)
         elif extension.endswith('.cbr'):
@@ -385,6 +399,211 @@ class ThumbnailGenerator:
                     
         except Exception as e:
             print(f"Error analizando CBR: {e}")
+
+    def _find_smart_cover_image(self, comic_id, comic_path):
+        """
+        Encontrar imagen de cover inteligentemente:
+        1. Si tiene comic_detail, buscar página marcada como cover (tipoPagina=1)
+        2. Si no, extraer primera página del archivo
+        """
+        try:
+            print(f"\n🔍 SMART COVER SEARCH para comic {comic_id}")
+            print(f"Archivo: {comic_path}")
+
+            if not hasattr(self, 'session') or not self.session:
+                print("❌ No hay sesión de BD, usando extracción directa")
+                return self._extract_first_page_from_comic_file(comic_path)
+
+            # Importar dentro del método para evitar dependencias circulares
+            from entidades.comicbook_detail_model import Comicbook_Detail
+
+            # Contar total de páginas para este comic
+            total_pages = self.session.query(Comicbook_Detail).filter(
+                Comicbook_Detail.comicbook_id == comic_id
+            ).count()
+            print(f"📄 Total páginas en BD: {total_pages}")
+
+            # Buscar página marcada como cover
+            cover_page = self.session.query(Comicbook_Detail).filter(
+                Comicbook_Detail.comicbook_id == comic_id,
+                Comicbook_Detail.tipoPagina == 1  # COVER
+            ).first()
+
+            if cover_page:
+                print(f"✅ COVER encontrado: {cover_page.nombre_pagina} (tipoPagina={cover_page.tipoPagina})")
+                print(f"📄 Orden de página: {cover_page.ordenPagina}")
+
+                # Extraer esa página específica del archivo original
+                extracted_cover = self._extract_specific_page_from_comic(comic_path, cover_page.ordenPagina)
+                if extracted_cover:
+                    print(f"🎯 USANDO COVER MARCADO (extraído): {extracted_cover}")
+                    return extracted_cover
+                else:
+                    print(f"⚠️ Error extrayendo cover marcado, usando primera página")
+            else:
+                print(f"❌ No hay página marcada como COVER (tipoPagina=1)")
+
+            # Fallback: extraer primera página del archivo
+            print(f"📦 Extrayendo primera página del archivo...")
+            extracted = self._extract_first_page_from_comic_file(comic_path)
+            print(f"🎯 USANDO PRIMERA PÁGINA: {extracted}")
+            return extracted
+
+        except Exception as e:
+            print(f"💥 Error en lógica inteligente de cover: {e}")
+            import traceback
+            traceback.print_exc()
+            return self._extract_first_page_from_comic_file(comic_path)
+
+    def _extract_specific_page_from_comic(self, comic_path, page_order):
+        """Extraer una página específica por orden del archivo de comic"""
+        import tempfile
+
+        try:
+            print(f"🎯 Extrayendo página #{page_order} de {os.path.basename(comic_path)}")
+
+            if comic_path.lower().endswith('.cbz'):
+                with self.zipfile.ZipFile(comic_path, 'r') as zip_file:
+                    # Encontrar archivos de imagen
+                    image_files = [
+                        f for f in zip_file.namelist()
+                        if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.bmp'))
+                        and not f.startswith('__MACOSX')
+                        and '/' not in f.split('/')[-1][:1]  # Evitar archivos ocultos
+                    ]
+
+                    if image_files:
+                        # Ordenar para mantener consistencia
+                        image_files.sort()
+                        print(f"📄 Total imágenes encontradas: {len(image_files)}")
+
+                        # Verificar si el orden está dentro del rango (1-based)
+                        if 1 <= page_order <= len(image_files):
+                            target_image = image_files[page_order - 1]  # Convertir a 0-based
+                            print(f"📖 Página #{page_order}: {target_image}")
+
+                            # Extraer a temporal
+                            temp_dir = tempfile.mkdtemp(dir='/tmp')
+                            temp_path = os.path.join(temp_dir, os.path.basename(target_image))
+
+                            with zip_file.open(target_image) as source:
+                                with open(temp_path, 'wb') as target:
+                                    target.write(source.read())
+
+                            print(f"✅ Página extraída: {temp_path}")
+                            return temp_path
+                        else:
+                            print(f"❌ Orden {page_order} fuera de rango (1-{len(image_files)})")
+
+            elif comic_path.lower().endswith('.cbr') and self.has_rarfile:
+                with self.rarfile.RarFile(comic_path, 'r') as rar_file:
+                    image_files = [
+                        f for f in rar_file.namelist()
+                        if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.bmp'))
+                    ]
+
+                    if image_files:
+                        image_files.sort()
+                        print(f"📄 Total imágenes encontradas: {len(image_files)}")
+
+                        if 1 <= page_order <= len(image_files):
+                            target_image = image_files[page_order - 1]
+                            print(f"📖 Página #{page_order}: {target_image}")
+
+                            temp_dir = tempfile.mkdtemp(dir='/tmp')
+                            temp_path = os.path.join(temp_dir, os.path.basename(target_image))
+
+                            image_data = rar_file.read(target_image)
+                            with open(temp_path, 'wb') as f:
+                                f.write(image_data)
+
+                            print(f"✅ Página extraída: {temp_path}")
+                            return temp_path
+                        else:
+                            print(f"❌ Orden {page_order} fuera de rango (1-{len(image_files)})")
+
+            return None
+
+        except Exception as e:
+            print(f"💥 Error extrayendo página #{page_order}: {e}")
+            return None
+
+    def _extract_first_page_from_comic_file(self, comic_path):
+        """Extraer primera página de un archivo de comic a archivo temporal"""
+        import tempfile
+
+        try:
+            if comic_path.lower().endswith('.cbz'):
+                with self.zipfile.ZipFile(comic_path, 'r') as zip_file:
+                    # Encontrar archivos de imagen
+                    image_files = [
+                        f for f in zip_file.namelist()
+                        if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.bmp'))
+                        and not f.startswith('__MACOSX')
+                        and '/' not in f.split('/')[-1][:1]  # Evitar archivos ocultos
+                    ]
+
+                    if image_files:
+                        # Ordenar y tomar primera
+                        image_files.sort()
+                        first_image = image_files[0]
+
+                        # Extraer a temporal
+                        temp_dir = tempfile.mkdtemp(dir='/tmp')
+                        temp_path = os.path.join(temp_dir, os.path.basename(first_image))
+
+                        with zip_file.open(first_image) as source:
+                            with open(temp_path, 'wb') as target:
+                                target.write(source.read())
+
+                        return temp_path
+
+            elif comic_path.lower().endswith('.cbr') and self.has_rarfile:
+                with self.rarfile.RarFile(comic_path, 'r') as rar_file:
+                    image_files = [
+                        f for f in rar_file.namelist()
+                        if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.bmp'))
+                    ]
+
+                    if image_files:
+                        image_files.sort()
+                        first_image = image_files[0]
+
+                        temp_dir = tempfile.mkdtemp(dir='/tmp')
+                        temp_path = os.path.join(temp_dir, os.path.basename(first_image))
+
+                        image_data = rar_file.read(first_image)
+                        with open(temp_path, 'wb') as f:
+                            f.write(image_data)
+
+                        return temp_path
+
+            return None
+
+        except Exception as e:
+            print(f"Error extrayendo primera página: {e}")
+            return None
+
+    def _cleanup_temp_file(self, file_path):
+        """Limpiar archivo temporal"""
+        try:
+            import tempfile
+            if file_path and file_path.startswith(tempfile.gettempdir()):
+                if os.path.exists(file_path):
+                    os.unlink(file_path)
+                # Intentar limpiar directorio si está vacío
+                parent_dir = os.path.dirname(file_path)
+                try:
+                    if not os.listdir(parent_dir):
+                        os.rmdir(parent_dir)
+                except:
+                    pass
+        except Exception as e:
+            print(f"Error limpiando temporal: {e}")
+
+    def set_session(self, session):
+        """Configurar sesión de base de datos para lógica inteligente"""
+        self.session = session
 
 
 # Función de utilidad para instalar dependencias

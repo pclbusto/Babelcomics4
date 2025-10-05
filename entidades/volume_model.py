@@ -34,7 +34,7 @@ class Volume(Base):
         # Si no existe la local, intentar con image_url (formato antiguo)
         if self.image_url:
             nombre_archivo = self.image_url.rsplit("/", 1)[-1]
-            ruta_antigua = os.path.join("data", "thumbnails", "volumenes", nombre_archivo)
+            ruta_antigua = os.path.join("data", "thumbnails", "volumes", nombre_archivo)
             print(f"INFO: Ruta antigua: {ruta_antigua}")
             if os.path.exists(ruta_antigua):
                 print(f"INFO: Encontrada imagen antigua: {ruta_antigua}")

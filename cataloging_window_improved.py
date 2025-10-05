@@ -362,7 +362,7 @@ class MetadataComicItem(Gtk.ListBoxRow):
             # Buscar cover en directorio de issues
             if hasattr(self.comicbook_info, 'volume') and self.comicbook_info.volume:
                 volume_name = self.comicbook_info.volume.nombre.replace("/", "_").replace("\\", "_")
-                cover_dir = f"data/thumbnails/comicbookinfo_issues/{volume_name}_{self.comicbook_info.volume.id_volume}"
+                cover_dir = f"data/thumbnails/comicbook_info/{volume_name}_{self.comicbook_info.volume.id_volume}"
                 cover_path = f"{cover_dir}/{self.comicbook_info.id_comicbook_info}-{self.comicbook_info.numero}.jpg"
 
                 if os.path.exists(cover_path):
@@ -439,7 +439,7 @@ class CoverPreviewWidget(Gtk.Box):
             # Buscar cover en directorio de issues
             if hasattr(comicbook_info, 'volume') and comicbook_info.volume:
                 volume_name = comicbook_info.volume.nombre.replace("/", "_").replace("\\", "_")
-                cover_dir = f"data/thumbnails/comicbookinfo_issues/{volume_name}_{comicbook_info.volume.id_volume}"
+                cover_dir = f"data/thumbnails/comicbook_info/{volume_name}_{comicbook_info.volume.id_volume}"
                 cover_path = f"{cover_dir}/{comicbook_info.id_comicbook_info}-{comicbook_info.numero}.jpg"
 
                 print(f"DEBUG Metadata: Buscando cover en: {cover_path}")

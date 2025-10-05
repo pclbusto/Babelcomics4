@@ -31,6 +31,11 @@ class ComicbookRepository(BaseRepository):
                     # Campo booleano: comparación directa
                     print(f"🗑️ Filtrando por en_papelera = {valor}")
                     query = query.filter(Comicbook.en_papelera == valor)
+                elif campo == 'path_año_numero':
+                    # Filtro especial para búsquedas con años/números
+                    for numero in valor:
+                        print(f"📅 Filtrando por año/número en path: {numero}")
+                        query = query.filter(Comicbook.path.ilike(f"%{numero}%"))
                 elif hasattr(getattr(Comicbook, campo), 'ilike'):
                     print(f"🔍 Filtrando por {campo} LIKE '%{valor}%'")
                     query = query.filter(getattr(Comicbook, campo).ilike(f"%{valor}%"))
@@ -50,3 +55,12 @@ class ComicbookRepository(BaseRepository):
     def obtener_total(self):
         """Obtiene el número total de cómics, aplicando los filtros actuales."""
         return super().obtener_total(Comicbook)
+
+    def filtrar_año_o_numero(self, valor):
+        """
+        Filtrar comics por año o número en el path del archivo.
+        Busca el valor numérico en el nombre del archivo.
+        """
+        if 'path_año_numero' not in self.filtros:
+            self.filtros['path_año_numero'] = []
+        self.filtros['path_año_numero'].append(str(valor))

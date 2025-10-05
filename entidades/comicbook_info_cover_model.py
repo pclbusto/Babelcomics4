@@ -33,7 +33,7 @@ class ComicbookInfoCover(Base):
             covers_destination_folder = os.path.join(
                 "data",
                 "thumbnails",
-                "comicbookinfo_issues",
+                "comicbook_info",
                 f"{clean_volume_name}_{self.comic_info.volume.id_volume}" # Combinar nombre limpio y ID
             )
             ruta = os.path.join(covers_destination_folder, nombre_archivo)
