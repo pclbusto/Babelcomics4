@@ -743,18 +743,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-creacion-de-issues-faltantes" class="md-nav__link">
+  <a href="#2-creacionactualizacion-de-issues" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Creación de Issues Faltantes
+      2. Creación/Actualización de Issues
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-descarga-concurrente-de-imagenes" class="md-nav__link">
+  <a href="#3-descarga-de-multiples-portadas" class="md-nav__link">
     <span class="md-ellipsis">
-      3. Descarga Concurrente de Imágenes
+      3. Descarga de Múltiples Portadas
     </span>
   </a>
   
@@ -786,6 +786,39 @@
       Estructura de Directorios
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nuevas-funcionalidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      🆕 Nuevas Funcionalidades
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🆕 Nuevas Funcionalidades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiples-portadas-por-issue" class="md-nav__link">
+    <span class="md-ellipsis">
+      Múltiples Portadas por Issue
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#navegacion-mejorada" class="md-nav__link">
+    <span class="md-ellipsis">
+      Navegación Mejorada
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1608,18 +1641,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-creacion-de-issues-faltantes" class="md-nav__link">
+  <a href="#2-creacionactualizacion-de-issues" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Creación de Issues Faltantes
+      2. Creación/Actualización de Issues
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-descarga-concurrente-de-imagenes" class="md-nav__link">
+  <a href="#3-descarga-de-multiples-portadas" class="md-nav__link">
     <span class="md-ellipsis">
-      3. Descarga Concurrente de Imágenes
+      3. Descarga de Múltiples Portadas
     </span>
   </a>
   
@@ -1651,6 +1684,39 @@
       Estructura de Directorios
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nuevas-funcionalidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      🆕 Nuevas Funcionalidades
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🆕 Nuevas Funcionalidades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiples-portadas-por-issue" class="md-nav__link">
+    <span class="md-ellipsis">
+      Múltiples Portadas por Issue
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#navegacion-mejorada" class="md-nav__link">
+    <span class="md-ellipsis">
+      Navegación Mejorada
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1991,7 +2057,7 @@
 
     <span class="k">return</span> <span class="n">volume_data</span><span class="p">,</span> <span class="n">issues</span>
 </code></pre></div>
-<h4 id="2-creacion-de-issues-faltantes">2. Creación de Issues Faltantes</h4>
+<h4 id="2-creacionactualizacion-de-issues">2. Creación/Actualización de Issues</h4>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">issue_data</span> <span class="ow">in</span> <span class="n">issues</span><span class="p">:</span>
     <span class="c1"># Verificar si el issue ya existe</span>
     <span class="n">existing</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ComicbookInfo</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span>
@@ -1999,33 +2065,78 @@
         <span class="n">numero</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;issue_number&#39;</span><span class="p">]</span>
     <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">existing</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">existing</span><span class="p">:</span>
+        <span class="c1"># Actualizar issue existente con datos de ComicVine</span>
+        <span class="n">existing</span><span class="o">.</span><span class="n">comicvine_id</span> <span class="o">=</span> <span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">existing</span><span class="o">.</span><span class="n">url_api_detalle</span> <span class="o">=</span> <span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;api_detail_url&#39;</span><span class="p">]</span>
+        <span class="n">existing</span><span class="o">.</span><span class="n">url_sitio_web</span> <span class="o">=</span> <span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;site_detail_url&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">existing</span><span class="o">.</span><span class="n">titulo</span><span class="p">:</span>
+            <span class="n">existing</span><span class="o">.</span><span class="n">titulo</span> <span class="o">=</span> <span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">existing</span><span class="o">.</span><span class="n">resumen</span><span class="p">:</span>
+            <span class="n">existing</span><span class="o">.</span><span class="n">resumen</span> <span class="o">=</span> <span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Crear nuevo issue</span>
         <span class="n">new_issue</span> <span class="o">=</span> <span class="n">ComicbookInfo</span><span class="p">(</span>
             <span class="n">titulo</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
             <span class="n">numero</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;issue_number&#39;</span><span class="p">],</span>
             <span class="n">fecha_tapa</span><span class="o">=</span><span class="n">parse_date</span><span class="p">(</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;cover_date&#39;</span><span class="p">]),</span>
             <span class="n">resumen</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">],</span>
-            <span class="n">id_comicvine</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+            <span class="n">comicvine_id</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">url_api_detalle</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;api_detail_url&#39;</span><span class="p">],</span>
+            <span class="n">url_sitio_web</span><span class="o">=</span><span class="n">issue_data</span><span class="p">[</span><span class="s1">&#39;site_detail_url&#39;</span><span class="p">],</span>
+            <span class="n">id_volume</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">id_volume</span>
         <span class="p">)</span>
         <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_issue</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="3-descarga-concurrente-de-imagenes">3. Descarga Concurrente de Imágenes</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download_covers_in_background</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Descargar portadas en segundo plano&quot;&quot;&quot;</span>
+<h4 id="3-descarga-de-multiples-portadas">3. Descarga de Múltiples Portadas</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_issue_cover_records</span><span class="p">(</span><span class="n">issue</span><span class="p">,</span> <span class="n">issue_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Crear registros de portadas para un issue (principal + associated_images)&quot;&quot;&quot;</span>
+
+    <span class="n">covers_created</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># 1. Portada principal desde el campo &#39;image&#39;</span>
+    <span class="n">main_image</span> <span class="o">=</span> <span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="n">main_image</span> <span class="ow">and</span> <span class="n">main_image</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;medium_url&#39;</span><span class="p">):</span>
+        <span class="n">main_cover</span> <span class="o">=</span> <span class="n">ComicbookInfoCover</span><span class="p">(</span>
+            <span class="n">id_comicbook_info</span><span class="o">=</span><span class="n">issue</span><span class="o">.</span><span class="n">id_comicbook_info</span><span class="p">,</span>
+            <span class="n">url_imagen</span><span class="o">=</span><span class="n">main_image</span><span class="p">[</span><span class="s1">&#39;medium_url&#39;</span><span class="p">],</span>
+            <span class="n">tipo_portada</span><span class="o">=</span><span class="s1">&#39;principal&#39;</span>
+        <span class="p">)</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">main_cover</span><span class="p">)</span>
+        <span class="n">covers_created</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># 2. Portadas variantes desde &#39;associated_images&#39;</span>
+    <span class="n">associated_images</span> <span class="o">=</span> <span class="n">issue_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;associated_images&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">associated_images</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;medium_url&#39;</span><span class="p">):</span>
+            <span class="n">variant_cover</span> <span class="o">=</span> <span class="n">ComicbookInfoCover</span><span class="p">(</span>
+                <span class="n">id_comicbook_info</span><span class="o">=</span><span class="n">issue</span><span class="o">.</span><span class="n">id_comicbook_info</span><span class="p">,</span>
+                <span class="n">url_imagen</span><span class="o">=</span><span class="n">img</span><span class="p">[</span><span class="s1">&#39;medium_url&#39;</span><span class="p">],</span>
+                <span class="n">tipo_portada</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;variant_</span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">variant_cover</span><span class="p">)</span>
+            <span class="n">covers_created</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">covers_created</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">download_covers_in_background</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Descargar todas las portadas en segundo plano&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">download_worker</span><span class="p">():</span>
         <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
             <span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">issues</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">portadas</span> <span class="ow">and</span> <span class="n">issue</span><span class="o">.</span><span class="n">portadas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">url_imagen</span><span class="p">:</span>
-                    <span class="n">future</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
-                        <span class="n">download_single_cover</span><span class="p">,</span>
-                        <span class="n">issue</span><span class="o">.</span><span class="n">portadas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">url_imagen</span><span class="p">,</span>
-                        <span class="n">issue</span><span class="o">.</span><span class="n">id_comicbook_info</span>
-                    <span class="p">)</span>
-                    <span class="n">futures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">future</span><span class="p">)</span>
+                <span class="c1"># Descargar todas las portadas del issue</span>
+                <span class="k">for</span> <span class="n">cover</span> <span class="ow">in</span> <span class="n">issue</span><span class="o">.</span><span class="n">portadas</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cover</span><span class="o">.</span><span class="n">url_imagen</span><span class="p">:</span>
+                        <span class="n">future</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                            <span class="n">download_single_cover</span><span class="p">,</span>
+                            <span class="n">cover</span><span class="o">.</span><span class="n">url_imagen</span><span class="p">,</span>
+                            <span class="n">issue</span><span class="o">.</span><span class="n">id_comicbook_info</span><span class="p">,</span>
+                            <span class="n">cover</span><span class="o">.</span><span class="n">tipo_portada</span>
+                        <span class="p">)</span>
+                        <span class="n">futures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">future</span><span class="p">)</span>
 
             <span class="c1"># Esperar a que terminen todas las descargas</span>
             <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">:</span>
@@ -2040,18 +2151,37 @@
 <h2 id="gestion-de-imagenes">🖼️ Gestión de Imágenes</h2>
 <h3 id="estructura-de-directorios">Estructura de Directorios</h3>
 <div class="highlight"><pre><span></span><code>data/thumbnails/
-├── volumes/                    # Portadas de volúmenes
-│   ├── 12345.jpg              # volume_id.jpg
+├── volumes/                      # Portadas de volúmenes
+│   ├── 12345.jpg                # volume_id.jpg
 │   └── 67890.jpg
-├── comicbookinfo_issues/       # Portadas de issues
-│   ├── Superman_12345/         # volumen_id_comicvine
-│   │   ├── issue_001.jpg       # issue_id.jpg
-│   │   ├── issue_002.jpg
+├── comicbook_info/              # Portadas de issues (ACTUALIZADO)
+│   ├── Superman_12345/          # volumen_nombre_id
+│   │   ├── cover_main.jpg       # Portada principal
+│   │   ├── cover_variant_1.jpg  # Portada variante 1
+│   │   ├── cover_variant_2.jpg  # Portada variante 2
 │   │   └── ...
 │   └── Batman_67890/
-└── comics/                     # Thumbnails de archivos
-    ├── 1.jpg                   # comic_id.jpg
+│       ├── cover_main.jpg
+│       └── cover_variant_1.jpg
+├── comicinfo/                   # Thumbnails para carrusel
+│   ├── issue_111701.jpg         # issue_id.jpg (cache)
+│   └── issue_114181.jpg
+└── comics/                      # Thumbnails de archivos
+    ├── 1.jpg                    # comic_id.jpg
     └── 2.jpg
+</code></pre></div>
+<h3 id="nuevas-funcionalidades">🆕 Nuevas Funcionalidades</h3>
+<h4 id="multiples-portadas-por-issue">Múltiples Portadas por Issue</h4>
+<ul>
+<li><strong>Portada Principal</strong>: Del campo <code>image</code> de ComicVine</li>
+<li><strong>Portadas Variantes</strong>: Del campo <code>associated_images</code></li>
+<li><strong>Carrusel de Portadas</strong>: Navegación entre portadas en la UI</li>
+<li><strong>Búsqueda Robusta</strong>: Encuentra archivos con patrones alternativos</li>
+</ul>
+<h4 id="navegacion-mejorada">Navegación Mejorada</h4>
+<div class="highlight"><pre><span></span><code>Volume Details → ComicbookInfo Details → Physical Comics View
+     ↑               ↑ (Carousel)           ↑
+   Metadata      Multiple Covers      Archivos Físicos
 </code></pre></div>
 <h3 id="generacion-de-rutas">Generación de Rutas</h3>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_cover_destination_path</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">issue</span><span class="p">):</span>
