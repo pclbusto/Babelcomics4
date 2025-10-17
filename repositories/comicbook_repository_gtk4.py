@@ -36,6 +36,16 @@ class ComicbookRepository(BaseRepository):
                     for numero in valor:
                         print(f"📅 Filtrando por año/número en path: {numero}")
                         query = query.filter(Comicbook.path.ilike(f"%{numero}%"))
+                elif campo == 'path_multiple_terms':
+                    # Filtro especial para múltiples términos (AND)
+                    for term in valor:
+                        print(f"🔗 Filtrando por término (AND): {term}")
+                        query = query.filter(Comicbook.path.ilike(f"%{term}%"))
+                elif campo == 'path_exclude_terms':
+                    # Filtro especial para exclusión de términos (NOT)
+                    for term in valor:
+                        print(f"🚫 Excluyendo término: {term}")
+                        query = query.filter(~Comicbook.path.ilike(f"%{term}%"))
                 elif hasattr(getattr(Comicbook, campo), 'ilike'):
                     print(f"🔍 Filtrando por {campo} LIKE '%{valor}%'")
                     query = query.filter(getattr(Comicbook, campo).ilike(f"%{valor}%"))
@@ -64,3 +74,17 @@ class ComicbookRepository(BaseRepository):
         if 'path_año_numero' not in self.filtros:
             self.filtros['path_año_numero'] = []
         self.filtros['path_año_numero'].append(str(valor))
+
+    def filtrar_multiple_path_terms(self, terms):
+        """
+        Filtrar comics que contengan TODOS los términos en el path (AND).
+        """
+        if terms:
+            self.filtros['path_multiple_terms'] = terms
+
+    def filtrar_path_exclude_terms(self, exclude_terms):
+        """
+        Filtrar comics que NO contengan ninguno de los términos (NOT).
+        """
+        if exclude_terms:
+            self.filtros['path_exclude_terms'] = exclude_terms

@@ -7,11 +7,15 @@ import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
-from gi.repository import Gtk, Adw
+from gi.repository import Gtk, Adw, GObject
 
 
 class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
     """Diálogo de filtros avanzados"""
+
+    __gsignals__ = {
+        'filters-applied': (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+    }
     
     def __init__(self, parent_window, current_view):
         super().__init__()
@@ -26,6 +30,9 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
 
         # Crear contenido
         self.create_content()
+
+        # Configurar shortcuts de teclado
+        self.setup_keyboard_shortcuts()
 
         # Cargar estado de filtros actual
         self.load_current_filters()
@@ -124,7 +131,6 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
         self.quality_max.set_range(0, 5)
         self.quality_max.set_value(5)
         quality_group.add(self.quality_max)
-        quality_group.add(self.quality_max)
         
         # Estado de papelera
         trash_group = Adw.PreferencesGroup()
@@ -160,7 +166,6 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
         self.year_max.set_range(1900, 2030)
         self.year_max.set_value(2030)
         year_group.add(self.year_max)
-        year_group.add(self.year_max)
         
         # Cantidad de números
         count_group = Adw.PreferencesGroup()
@@ -179,7 +184,6 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
         self.count_max.set_subtitle("Cantidad máxima de números")
         self.count_max.set_range(0, 1000)
         self.count_max.set_value(1000)
-        count_group.add(self.count_max)
         count_group.add(self.count_max)
         
         # Completitud de la colección
@@ -235,7 +239,6 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
         self.volume_max.set_subtitle("Cantidad máxima de volúmenes")
         self.volume_max.set_range(0, 1000)
         self.volume_max.set_value(1000)
-        volume_group.add(self.volume_max)
         volume_group.add(self.volume_max)
         
         # Información disponible
@@ -334,11 +337,10 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
                 if self.has_website.get_active():
                     filters['has_website'] = True
             
-            # Aplicar filtros en la ventana principal
-            if hasattr(self.parent_window, 'apply_advanced_filters'):
-                self.parent_window.apply_advanced_filters(filters)
-                print(f"✓ Filtros aplicados para {self.current_view}: {filters}")
-            
+            # Emitir señal con los filtros
+            self.emit('filters-applied', filters)
+            print(f"✓ Filtros aplicados para {self.current_view}: {filters}")
+
             self.close()
             
         except Exception as e:
@@ -454,6 +456,45 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
 
         except Exception as e:
             print(f"Error cargando filtros actuales: {e}")
+
+    def setup_keyboard_shortcuts(self):
+        """Configurar atajos de teclado para la ventana de filtros"""
+        # Ctrl+Enter para aplicar filtros
+        apply_shortcut = Gtk.Shortcut()
+        apply_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>Return"))
+        apply_shortcut.set_action(Gtk.CallbackAction.new(self.on_apply_filters_shortcut))
+
+        # Shift+Ctrl+R para limpiar filtros
+        clear_shortcut = Gtk.Shortcut()
+        clear_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("<Shift><Control>r"))
+        clear_shortcut.set_action(Gtk.CallbackAction.new(self.on_clear_filters_shortcut))
+
+        # Escape para cerrar
+        escape_shortcut = Gtk.Shortcut()
+        escape_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("Escape"))
+        escape_shortcut.set_action(Gtk.CallbackAction.new(self.on_escape_shortcut))
+
+        controller = Gtk.ShortcutController()
+        controller.add_shortcut(apply_shortcut)
+        controller.add_shortcut(clear_shortcut)
+        controller.add_shortcut(escape_shortcut)
+
+        self.add_controller(controller)
+
+    def on_apply_filters_shortcut(self, widget, args):
+        """Aplicar filtros con Ctrl+Enter"""
+        self.on_apply_filters(None)
+        return True
+
+    def on_clear_filters_shortcut(self, widget, args):
+        """Limpiar filtros con Ctrl+Shift+R"""
+        self.on_clear_filters(None)
+        return True
+
+    def on_escape_shortcut(self, widget, args):
+        """Cerrar ventana con Escape"""
+        self.close()
+        return True
 
 
 # Nota: QuickFilterBar removida - ya no se usa en la aplicación principal

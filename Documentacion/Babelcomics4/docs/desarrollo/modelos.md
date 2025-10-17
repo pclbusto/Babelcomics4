@@ -336,8 +336,8 @@ class ComicbookInfo(BaseModel):
     puntuacion_usuarios = Column(Float, nullable=True)
     numero_votos = Column(Integer, default=0, nullable=False)
 
-    # Referencias a ComicVine
-    id_comicvine = Column(Integer, nullable=True, unique=True, index=True)
+    # Referencias a ComicVine (MEJORADO)
+    comicvine_id = Column(Integer, nullable=False, default=0)  # Actualizado para guardar siempre
     ultima_sync_comicvine = Column(DateTime, nullable=True)
 
     # Relación con volumen

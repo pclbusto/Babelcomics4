@@ -156,24 +156,41 @@ graph TB
 └───────────────────────────────┘
 ```
 
-### Acciones en Lote
+### 🆕 Acciones en Lote Mejoradas
 
-#### Selección Múltiple
+#### Multiselección Avanzada
 1. **Activar modo selección**: Click en 📊
-2. **Seleccionar comics**: Click en las cards deseadas
-3. **Ejecutar acción**: Desde menú contextual
+2. **Seleccionar comics individuales**: Click en las cards deseadas
+3. **Seleccionar todos los comics**: **Ctrl+A** (NUEVO)
+4. **Ejecutar acción**: Desde menú contextual unificado
 
-#### Acciones Disponibles
+#### Métodos de Selección
 ```
-┌─── Acciones en Lote ──────────┐
-│ 🗑️ Mover a Papelera          │
-│ ⭐ Cambiar Calidad            │
-│ 📝 Editar Información         │
-│ 🔄 Actualizar ComicVine       │
-│ 📁 Mover Archivos             │
-│ 🏷️ Aplicar Etiquetas         │
-└───────────────────────────────┘
+┌─── Métodos de Selección ──────────────┐
+│ 🖱️ Click Individual: Selección manual │
+│ 🔗 Ctrl+Click: Agregar a selección   │
+│ 🌐 Ctrl+A: Seleccionar TODOS         │
+│ ⬜ Shift+Click: Rango de selección    │
+└───────────────────────────────────────┘
 ```
+
+#### Context Menu Unificado
+```
+┌─── Menú Contextual (1 o N items) ────┐
+│ 🗑️ Enviar a Papelera                 │
+│ 📋 Catalogar Comics                   │
+│ ⭐ Cambiar Calidad                    │
+│ 📝 Editar Información                 │
+│ 🔄 Actualizar ComicVine               │
+│ 📁 Mover Archivos                     │
+│ 🏷️ Aplicar Etiquetas                 │
+└───────────────────────────────────────┘
+```
+
+#### Operaciones Bulk Optimizadas
+- **Procesamiento Unificado**: Una sola función maneja 1 o N elementos
+- **Transacciones Eficientes**: Batch processing en base de datos
+- **Feedback Visual**: Progreso en tiempo real para operaciones largas
 
 ### Gestión de Papelera
 

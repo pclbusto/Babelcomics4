@@ -9,7 +9,7 @@ import re
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
-from gi.repository import Gtk, Adw, GObject, Pango, GdkPixbuf, Gdk, GLib
+from gi.repository import Gtk, Adw, GObject, Pango, GdkPixbuf, Gdk, GLib, Gio
 from entidades.comicbook_model import Comicbook
 from entidades.volume_model import Volume
 from entidades.comicbook_info_model import ComicbookInfo
@@ -599,6 +599,12 @@ class ImprovedCatalogingWindow(Adw.Window):
         self.physical_list.add_css_class("boxed-list")
         self.physical_list.connect("row-selected", self.on_physical_selected)
 
+        # Configurar menú contextual
+        self.setup_context_menu()
+
+        # Configurar tecla Delete
+        self.setup_delete_key_handler()
+
         scrolled.set_child(self.physical_list)
         physical_box.append(scrolled)
 
@@ -842,6 +848,77 @@ class ImprovedCatalogingWindow(Adw.Window):
         # Recargar metadata si se extrajeron números
         if numbers_changed and hasattr(self, 'selected_volume') and self.selected_volume:
             self.load_volume_metadata()
+
+    def setup_context_menu(self):
+        """Configurar menú contextual para la lista de físicos"""
+        # Crear gestor de click derecho
+        gesture = Gtk.GestureClick.new()
+        gesture.set_button(3)  # Botón derecho
+        gesture.connect("pressed", self.on_right_click)
+        self.physical_list.add_controller(gesture)
+
+        # Crear menú contextual simple usando Gtk.Popover
+        self.context_menu = Gtk.Popover()
+
+        # Crear contenido del menú
+        menu_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        menu_box.add_css_class("menu")
+
+        remove_button = Gtk.Button.new_with_label("Eliminar de la lista")
+        remove_button.add_css_class("flat")
+        remove_button.add_css_class("menu-item")
+        remove_button.connect("clicked", self.on_remove_button_clicked)
+
+        menu_box.append(remove_button)
+        self.context_menu.set_child(menu_box)
+
+    def setup_delete_key_handler(self):
+        """Configurar manejo de la tecla Delete"""
+        key_controller = Gtk.EventControllerKey()
+        key_controller.connect("key-pressed", self.on_key_pressed)
+        self.physical_list.add_controller(key_controller)
+
+    def on_right_click(self, gesture, n_press, x, y):
+        """Manejar click derecho en la lista"""
+        # Obtener el row bajo el cursor
+        row = self.physical_list.get_row_at_y(int(y))
+        if row:
+            self.physical_list.select_row(row)
+            # Posicionar y mostrar menú contextual
+            rect = Gdk.Rectangle()
+            rect.x = int(x)
+            rect.y = int(y)
+            self.context_menu.set_pointing_to(rect)
+            self.context_menu.set_parent(self.physical_list)
+            self.context_menu.popup()
+
+    def on_key_pressed(self, controller, keyval, keycode, state):
+        """Manejar teclas presionadas"""
+        if keyval == Gdk.KEY_Delete:
+            self.remove_selected_from_list()
+            return True
+        return False
+
+    def on_remove_button_clicked(self, button):
+        """Manejar click en el botón eliminar del menú contextual"""
+        self.context_menu.popdown()
+        self.remove_selected_from_list()
+
+    def remove_selected_from_list(self):
+        """Eliminar el elemento seleccionado de la lista"""
+        selected_row = self.physical_list.get_selected_row()
+        if selected_row and hasattr(selected_row, 'comicbook'):
+            # Remover de la lista de comics
+            if selected_row.comicbook in self.comicbooks:
+                self.comicbooks.remove(selected_row.comicbook)
+
+            # Remover de la lista visual
+            self.physical_list.remove(selected_row)
+
+            # Limpiar preview si era el seleccionado
+            self.physical_preview.set_placeholder()
+
+            print(f"Comic {selected_row.comicbook.nombre} eliminado de la lista de catalogación")
 
     def on_save_cataloging(self, button):
         """Guardar catalogación"""

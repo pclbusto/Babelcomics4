@@ -186,7 +186,7 @@ class VolumeDetailWindow(Adw.ApplicationWindow):
 
         # Contenedor de imagen
         image_container = Gtk.Box()
-        image_container.set_size_request(250, 350)
+        image_container.set_size_request(125, 175)
 
         # Imagen del volumen
         self.volume_image = Gtk.Picture()
@@ -472,8 +472,8 @@ class VolumeDetailWindow(Adw.ApplicationWindow):
                     # Crear card para metadata con contador
                     comic_card = self.create_issue_card(comic_info, physical_count)
 
-                    # Tamaños más grandes ahora que tienen toda la pestaña
-                    comic_card.set_size_request(220, 350)
+                    # Tamaños reducidos para mejor visualización
+                    comic_card.set_size_request(110, 175)
 
                     # Hacer que sea clickeable para ver físicos de este issue
                     click_gesture = Gtk.GestureClick()

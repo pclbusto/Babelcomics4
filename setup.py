@@ -95,7 +95,7 @@ def install_icons():
         if size == "128x128" or size == "256x256":
             # Copiar directamente para tamaños grandes
             shutil.copy2(icon_source, target_path)
-            print(f"📎 {size}/apps/babelcomics4.png (copiado)")
+            print(f"📎 {size}/apps/Babelcomics4.png (copiado)")
         else:
             # Redimensionar para tamaños pequeños
             try:
@@ -105,7 +105,7 @@ def install_icons():
                     str(target_path)
                 ]
                 subprocess.run(cmd, check=True, capture_output=True)
-                print(f"🔄 {size}/apps/babelcomics4.png (redimensionado)")
+                print(f"🔄 {size}/apps/Babelcomics4.png (redimensionado)")
             except subprocess.CalledProcessError as e:
                 print(f"❌ Error redimensionando {size}: {e}")
                 return False
@@ -115,8 +115,8 @@ def install_icons():
     if svg_source.exists():
         scalable_dir = icon_base / "scalable/apps"
         scalable_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(svg_source, scalable_dir / "babelcomics4.svg")
-        print("🎨 scalable/apps/babelcomics4.svg (SVG)")
+        shutil.copy2(svg_source, scalable_dir / "Babelcomics4.svg")
+        print("🎨 scalable/apps/Babelcomics4.svg (SVG)")
 
     # Actualizar cache de iconos
     try:
@@ -188,14 +188,14 @@ def create_desktop_file():
     desktop_dir = Path.home() / ".local/share/applications"
     desktop_dir.mkdir(parents=True, exist_ok=True)
 
-    desktop_file = desktop_dir / "babelcomics4.desktop"
+    desktop_file = desktop_dir / "Babelcomics4.desktop"
     current_dir = Path.cwd().absolute()
 
     desktop_content = f"""[Desktop Entry]
 Name=Babelcomics4
 Comment=Gestor completo de colección de comics digitales
 Exec=python3 {current_dir}/Babelcomic4.py
-Icon=babelcomics4
+Icon=Babelcomics4
 Terminal=false
 Type=Application
 Categories=Graphics;Office;AudioVideo;
@@ -278,7 +278,7 @@ def main():
         ("Verificar dependencias", check_dependencies),
         ("Crear directorios", create_directories),
         ("Instalar dependencias Python", install_python_dependencies),
-        ("Configurar base de datos", setup_database),
+        # ("Configurar base de datos", setup_database),
         ("Instalar iconos", install_icons),
         ("Crear entrada en menú", create_desktop_file),
         ("Crear script de inicio", create_startup_script)

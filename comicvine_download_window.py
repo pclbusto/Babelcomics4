@@ -133,7 +133,6 @@ class VolumeSearchCard(Gtk.Box):
             import requests
             from io import BytesIO
 
-            print(f"DEBUG: Descargando cover: {image_url}")
 
             # Descargar imagen
             response = requests.get(image_url, timeout=10)
@@ -164,7 +163,7 @@ class VolumeSearchCard(Gtk.Box):
                 # Actualizar UI en main thread
                 GLib.idle_add(self.set_cover_from_pixbuf, pixbuf)
             else:
-                print(f"DEBUG: No se pudo crear pixbuf para {image_url}")
+                pass
 
         except Exception as e:
             print(f"Error descargando cover {image_url}: {e}")
@@ -207,7 +206,6 @@ GObject.signal_new('selection-changed', VolumeSearchCard, GObject.SignalFlags.RU
 
 class ComicVineDownloadWindow(Adw.Window):
     """Ventana para buscar y descargar volúmenes desde ComicVine"""
-
     def __init__(self, parent_window, session, selected_volume_callback=None):
         super().__init__()
         self.parent_window = parent_window
@@ -228,19 +226,70 @@ class ComicVineDownloadWindow(Adw.Window):
         self.init_comicvine_client()
         self.setup_keyboard_shortcuts()
 
-    def load_publishers(self):
-        """Cargar editoriales en el ComboBox"""
+    def _safe_int(self, value, default=0):
+        """Convierte un valor a entero de forma segura"""
+        if value is None:
+            return default
         try:
-            from repositories.publisher_repository import PublisherRepository
-            publisher_repo = PublisherRepository(self.session)
-            publishers = publisher_repo.obtener_todas()
+            if isinstance(value, str):
+                # Remover espacios y caracteres no numéricos comunes
+                value = value.strip()
+                if not value:
+                    return default
+            return int(value)
+        except (ValueError, TypeError):
+            return default
 
-            for publisher in publishers:
-                # Solo agregar editoriales que tengan ID de ComicVine
-                if publisher.id_comicvine:
-                    self.publisher_combo.append(str(publisher.id_comicvine), publisher.nombre)
-        except Exception as e:
-            print(f"Error cargando editoriales: {e}")
+    def load_publishers_from_results(self):
+        """Cargar editoriales encontradas en los resultados de búsqueda"""
+
+        # Guardar referencia a los resultados para evitar que se pierdan
+        if hasattr(self, 'publisher_combo'):
+            # Desconectar temporalmente el callback para evitar filtrado prematuro
+            try:
+                self.publisher_combo.disconnect_by_func(self.on_publisher_filter_changed)
+            except:
+                pass  # Si no estaba conectado, continuar
+
+        # Limpiar combobox actual (excepto "Todas las editoriales")
+        self.publisher_combo.remove_all()
+        self.publisher_combo.append("", "Todas las editoriales")
+
+        if not self.search_results:
+            self.publisher_combo.set_active(0)
+            # Reconectar callback incluso en caso de error
+            self.publisher_combo.connect("changed", self.on_publisher_filter_changed)
+            return
+
+        # Recopilar editoriales únicas de los resultados
+        publishers_found = {}
+
+        for volume in self.search_results:
+            publisher = volume.get('publisher')
+            if publisher and publisher.get('name'):
+                publisher_name = publisher['name']
+                publisher_id = str(publisher.get('id', publisher_name))
+                if publisher_name not in publishers_found:
+                    publishers_found[publisher_name] = publisher_id
+
+        # Agregar editoriales al combobox ordenadas alfabéticamente
+        for publisher_name in sorted(publishers_found.keys()):
+            publisher_id = publishers_found[publisher_name]
+            self.publisher_combo.append(publisher_id, publisher_name)
+
+        self.publisher_combo.set_active(0)  # Seleccionar "Todas las editoriales"
+
+        # Conectar/reconectar TODOS los callbacks de filtros
+        self.publisher_combo.connect("changed", self.on_publisher_filter_changed)
+
+        # Conectar callbacks de año si no están conectados
+        try:
+            print("Conectando callbacks de filtros...")
+            self.year_from_spin.connect("value-changed", self.on_year_filter_changed)
+            self.year_to_spin.connect("value-changed", self.on_year_filter_changed)
+            self.sort_combo.connect("changed", self.on_sort_changed)
+        except:
+            pass
 
     def setup_ui(self):
         """Configurar la interfaz de usuario"""
@@ -332,13 +381,6 @@ class ComicVineDownloadWindow(Adw.Window):
         self.search_entry.connect("activate", self.on_search_clicked)
         main_search_box.append(self.search_entry)
 
-        # ComboBox de editorial
-        self.publisher_combo = Gtk.ComboBoxText()
-        self.publisher_combo.append("", "Todas las editoriales")
-        self.publisher_combo.set_active(0)
-        self.publisher_combo.set_size_request(150, -1)
-        self.load_publishers()
-        main_search_box.append(self.publisher_combo)
 
         # Botón buscar
         self.search_button = Gtk.Button.new_with_label("Buscar")
@@ -363,9 +405,10 @@ class ComicVineDownloadWindow(Adw.Window):
 
         # Año desde
         self.year_from_spin = Gtk.SpinButton()
-        self.year_from_spin.set_range(1900, 2030)
-        self.year_from_spin.set_value(1900)
+        self.year_from_spin.set_range(1900, 2030)   
+        self.year_from_spin.set_value(1950)  # Valor más restrictivo por defecto
         self.year_from_spin.set_tooltip_text("Año desde")
+        # NO conectar callback aún - se conectará después de la primera búsqueda
         date_filter_box.append(self.year_from_spin)
 
         dash_label = Gtk.Label(label="—")
@@ -374,8 +417,9 @@ class ComicVineDownloadWindow(Adw.Window):
         # Año hasta
         self.year_to_spin = Gtk.SpinButton()
         self.year_to_spin.set_range(1900, 2030)
-        self.year_to_spin.set_value(2030)
+        self.year_to_spin.set_value(2025)  # Valor más restrictivo por defecto
         self.year_to_spin.set_tooltip_text("Año hasta")
+        # NO conectar callback aún - se conectará después de la primera búsqueda
         date_filter_box.append(self.year_to_spin)
 
         filters_box.append(date_filter_box)
@@ -383,6 +427,25 @@ class ComicVineDownloadWindow(Adw.Window):
         # Separador visual
         separator1 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         filters_box.append(separator1)
+
+        # Filtro por editorial
+        publisher_filter_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        publisher_label = Gtk.Label(label="Editorial:")
+        publisher_filter_box.append(publisher_label)
+
+        # ComboBox de editorial (se populará con resultados de búsqueda)
+        self.publisher_combo = Gtk.ComboBoxText()
+        self.publisher_combo.append("", "Todas las editoriales")
+        self.publisher_combo.set_active(0)
+        self.publisher_combo.set_size_request(150, -1)
+        # NO conectar callback aún - se conectará después de la primera búsqueda
+        publisher_filter_box.append(self.publisher_combo)
+
+        filters_box.append(publisher_filter_box)
+
+        # Separador visual
+        separator1_5 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        filters_box.append(separator1_5)
 
         # Ordenamiento
         sort_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
@@ -398,7 +461,7 @@ class ComicVineDownloadWindow(Adw.Window):
         self.sort_combo.append("count_asc", "Menos números")
         self.sort_combo.append("publisher_asc", "Editorial (A-Z)")
         self.sort_combo.set_active(0)  # Por defecto: fecha más reciente
-        self.sort_combo.connect("changed", self.on_sort_changed)
+        # NO conectar callback aún - se conectará después de la primera búsqueda
         sort_box.append(self.sort_combo)
 
         filters_box.append(sort_box)
@@ -407,10 +470,22 @@ class ComicVineDownloadWindow(Adw.Window):
         separator2 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         filters_box.append(separator2)
 
-        # Botón aplicar filtros
-        apply_filters_button = Gtk.Button.new_with_label("Aplicar Filtros")
-        apply_filters_button.connect("clicked", self.on_apply_filters_clicked)
-        filters_box.append(apply_filters_button)
+        # Botón para resetear filtros y label informativo
+        reset_and_info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+
+        # Botón resetear filtros
+        reset_filters_button = Gtk.Button.new_with_label("Mostrar Todo")
+        reset_filters_button.set_tooltip_text("Resetear todos los filtros")
+        reset_filters_button.connect("clicked", self.on_reset_filters_clicked)
+        reset_and_info_box.append(reset_filters_button)
+
+        # Label informativo de filtros (automáticos)
+        self.filter_info_label = Gtk.Label(label="Filtros automáticos")
+        self.filter_info_label.add_css_class("caption")
+        self.filter_info_label.add_css_class("dim-label")
+        reset_and_info_box.append(self.filter_info_label)
+
+        filters_box.append(reset_and_info_box)
 
         search_box.append(filters_box)
         parent.append(search_box)
@@ -487,14 +562,79 @@ class ComicVineDownloadWindow(Adw.Window):
     def setup_keyboard_shortcuts(self):
         """Configurar atajos de teclado"""
         # Escape para cerrar
-        controller = Gtk.EventControllerKey()
-        controller.connect("key-pressed", self.on_key_pressed)
+        escape_shortcut = Gtk.Shortcut()
+        escape_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("Escape"))
+        escape_shortcut.set_action(Gtk.CallbackAction.new(self.on_escape_shortcut))
+
+        # Ctrl+A para seleccionar todos
+        select_all_shortcut = Gtk.Shortcut()
+        select_all_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>a"))
+        select_all_shortcut.set_action(Gtk.CallbackAction.new(self.on_select_all_shortcut))
+
+        # Shift+Ctrl+A para deseleccionar todos
+        deselect_all_shortcut = Gtk.Shortcut()
+        deselect_all_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("<Shift><Control>a"))
+        deselect_all_shortcut.set_action(Gtk.CallbackAction.new(self.on_deselect_all_shortcut))
+
+        # Ctrl+Enter para descargar
+        download_shortcut = Gtk.Shortcut()
+        download_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>Return"))
+        download_shortcut.set_action(Gtk.CallbackAction.new(self.on_download_shortcut))
+
+        # Ctrl+F para enfocar búsqueda
+        focus_search_shortcut = Gtk.Shortcut()
+        focus_search_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>f"))
+        focus_search_shortcut.set_action(Gtk.CallbackAction.new(self.on_focus_search_shortcut))
+
+        # Enter para buscar (cuando campo está enfocado)
+        search_shortcut = Gtk.Shortcut()
+        search_shortcut.set_trigger(Gtk.ShortcutTrigger.parse_string("Return"))
+        search_shortcut.set_action(Gtk.CallbackAction.new(self.on_search_shortcut))
+
+        controller = Gtk.ShortcutController()
+        controller.add_shortcut(escape_shortcut)
+        controller.add_shortcut(select_all_shortcut)
+        controller.add_shortcut(deselect_all_shortcut)
+        controller.add_shortcut(download_shortcut)
+        controller.add_shortcut(focus_search_shortcut)
+        controller.add_shortcut(search_shortcut)
+
         self.add_controller(controller)
 
-    def on_key_pressed(self, controller, keyval, keycode, state):
-        """Manejar teclas presionadas"""
-        if keyval == 65307:  # Escape key
-            self.close()
+    def on_escape_shortcut(self, widget, args):
+        """Cerrar con Escape"""
+        self.close()
+        return True
+
+    def on_select_all_shortcut(self, widget, args):
+        """Seleccionar todos con Ctrl+A"""
+        if hasattr(self, 'select_all_button'):
+            self.select_all_button.emit('clicked')
+        return True
+
+    def on_deselect_all_shortcut(self, widget, args):
+        """Deseleccionar todos con Ctrl+Shift+A"""
+        if hasattr(self, 'deselect_all_button'):
+            self.deselect_all_button.emit('clicked')
+        return True
+
+    def on_download_shortcut(self, widget, args):
+        """Descargar con Ctrl+Enter"""
+        if hasattr(self, 'download_button'):
+            self.download_button.emit('clicked')
+        return True
+
+    def on_focus_search_shortcut(self, widget, args):
+        """Enfocar búsqueda con Ctrl+F"""
+        if hasattr(self, 'search_entry'):
+            self.search_entry.grab_focus()
+        return True
+
+    def on_search_shortcut(self, widget, args):
+        """Buscar con Enter (solo si el campo de búsqueda está enfocado)"""
+        if hasattr(self, 'search_entry') and self.search_entry.has_focus():
+            if hasattr(self, 'search_button'):
+                self.search_button.emit('clicked')
             return True
         return False
 
@@ -523,7 +663,7 @@ class ComicVineDownloadWindow(Adw.Window):
         self.results_label.set_text("Buscando...")
 
         # Limpiar resultados anteriores
-        self.clear_results()
+        self.clear_all_results()
 
         # Buscar en background
         threading.Thread(
@@ -539,16 +679,12 @@ class ComicVineDownloadWindow(Adw.Window):
                 GLib.idle_add(self.show_search_error, "Cliente ComicVine no disponible")
                 return
 
-            print(f"DEBUG: Buscando '{query}' en ComicVine...")
 
             # Buscar volúmenes
             if publisher_id and publisher_id.strip():
-                print(f"DEBUG: Filtrando por editorial ID: {publisher_id}")
                 volumes = self.comicvine_client.get_volumes(query=query, publisher_id=publisher_id)
             else:
                 volumes = self.comicvine_client.get_volumes(query=query)
-
-            print(f"DEBUG: Encontrados {len(volumes)} volúmenes")
 
             # Verificar cuáles ya están descargados
             volume_repo = VolumeRepository(self.session)
@@ -577,7 +713,8 @@ class ComicVineDownloadWindow(Adw.Window):
                 self.results_label.set_text("No se encontraron volúmenes")
                 self.filtered_results = []
             else:
-                print(f"DEBUG: Encontrados {len(volumes)} volúmenes, aplicando filtros...")
+                # Cargar editoriales encontradas en los resultados
+                self.load_publishers_from_results()
                 # Aplicar filtros y ordenamiento automáticamente
                 self.apply_filters_and_sorting()
 
@@ -597,7 +734,7 @@ class ComicVineDownloadWindow(Adw.Window):
         self.search_spinner.stop()
 
     def clear_results(self):
-        """Limpiar resultados anteriores"""
+        """Limpiar solo la visualización de resultados"""
         child = self.results_flowbox.get_first_child()
         while child:
             next_child = child.get_next_sibling()
@@ -605,7 +742,12 @@ class ComicVineDownloadWindow(Adw.Window):
             child = next_child
 
         self.volume_cards = []
+
+    def clear_all_results(self):
+        """Limpiar resultados y datos completamente (nueva búsqueda)"""
+        self.clear_results()
         self.search_results = []
+        self.filtered_results = []
 
     def on_card_selection_changed(self, card, selected):
         """Card seleccionado/deseleccionado"""
@@ -853,56 +995,106 @@ class ComicVineDownloadWindow(Adw.Window):
 
     def on_sort_changed(self, combo):
         """Cambio en ordenamiento - aplicar automáticamente"""
+        print("Ordenamiento cambiado")
+        if self.search_results:
+            self.apply_filters_and_sorting()
+        else:
+            print("No hay resultados para ordenar")
+
+    def on_publisher_filter_changed(self, combo):
+        """Filtro de editorial cambió"""
         if self.search_results:
             self.apply_filters_and_sorting()
 
-    def on_apply_filters_clicked(self, button):
-        """Aplicar filtros de fecha"""
+    def on_year_filter_changed(self, spin_button):
+        """Filtro de año cambió"""
         if self.search_results:
             self.apply_filters_and_sorting()
+
+    def on_reset_filters_clicked(self, button):
+        """Resetear todos los filtros para mostrar todo"""
+        # Resetear filtros de año a valores amplios
+        self.year_from_spin.set_value(1900)
+        self.year_to_spin.set_value(2030)
+
+        # Resetear filtro de editorial a "Todas las editoriales"
+        self.publisher_combo.set_active(0)
+
+        # Los filtros se aplicarán automáticamente por los callbacks
 
     def apply_filters_and_sorting(self):
-        """Aplicar filtros por fecha y ordenamiento a los resultados"""
+        """Aplicar filtros por fecha, editorial y ordenamiento a los resultados"""
         if not self.search_results:
+            print("No hay resultados para filtrar")
             return
+        print("Aplicando filtros y ordenamiento...")
 
-        # Filtrar por año
+        # Obtener valores de filtros
         year_from = int(self.year_from_spin.get_value())
         year_to = int(self.year_to_spin.get_value())
+        selected_publisher_id = self.publisher_combo.get_active_id()
 
         filtered_volumes = []
         for volume in self.search_results:
+            # Filtrar por año
+            print(f"Volumen: {volume.get('name')} - Año inicio: {volume.get('start_year')}")
             volume_year = volume.get('start_year')
+            year_passes = True
+
             if volume_year and isinstance(volume_year, (int, str)):
                 try:
                     year = int(str(volume_year))
-                    if year_from <= year <= year_to:
-                        filtered_volumes.append(volume)
+                    if not (year_from <= year <= year_to):
+                        year_passes = False
                 except (ValueError, TypeError):
                     # Si no se puede convertir el año, incluir el volumen
-                    filtered_volumes.append(volume)
-            else:
-                # Si no tiene año, incluir el volumen
+                    pass
+            # Si no tiene año, incluir el volumen (year_passes permanece True)
+
+            # Filtrar por editorial
+            publisher_passes = True
+            if selected_publisher_id and selected_publisher_id != "":  # No es "Todas las editoriales"
+                publisher = volume.get('publisher')
+                if publisher:
+                    publisher_id = str(publisher.get('id', ''))
+                    publisher_name = publisher.get('name', '')
+                    # Comparar tanto por ID como por nombre para flexibilidad
+                    if selected_publisher_id != publisher_id and selected_publisher_id != publisher_name:
+                        publisher_passes = False
+                else:
+                    publisher_passes = False
+
+            # Solo incluir si pasa todos los filtros
+            if year_passes and publisher_passes:
                 filtered_volumes.append(volume)
 
         # Ordenar resultados
         sort_option = self.sort_combo.get_active_id()
         if sort_option == "date_desc":
-            filtered_volumes.sort(key=lambda x: x.get('start_year') or 0, reverse=True)
+            filtered_volumes.sort(key=lambda x: self._safe_int(x.get('start_year'), 0), reverse=True)
         elif sort_option == "date_asc":
-            filtered_volumes.sort(key=lambda x: x.get('start_year') or 0)
+            filtered_volumes.sort(key=lambda x: self._safe_int(x.get('start_year'), 0))
         elif sort_option == "name_asc":
             filtered_volumes.sort(key=lambda x: (x.get('name') or '').lower())
         elif sort_option == "name_desc":
             filtered_volumes.sort(key=lambda x: (x.get('name') or '').lower(), reverse=True)
         elif sort_option == "count_desc":
-            filtered_volumes.sort(key=lambda x: x.get('count_of_issues') or 0, reverse=True)
+            filtered_volumes.sort(key=lambda x: self._safe_int(x.get('count_of_issues'), 0), reverse=True)
         elif sort_option == "count_asc":
-            filtered_volumes.sort(key=lambda x: x.get('count_of_issues') or 0)
+            filtered_volumes.sort(key=lambda x: self._safe_int(x.get('count_of_issues'), 0))
         elif sort_option == "publisher_asc":
             filtered_volumes.sort(key=lambda x: (x.get('publisher', {}).get('name') or '').lower())
 
         self.filtered_results = filtered_volumes
+
+        # Actualizar label informativo de filtros
+        publisher_name = self.publisher_combo.get_active_text()
+        filter_info = f"Año: {year_from}-{year_to}"
+        if publisher_name and publisher_name != "Todas las editoriales":
+            filter_info += f" | Editorial: {publisher_name}"
+        filter_info += f" | {len(filtered_volumes)}/{len(self.search_results)} resultados"
+        self.filter_info_label.set_text(filter_info)
+
 
         # Actualizar la visualización
         self.update_results_display()

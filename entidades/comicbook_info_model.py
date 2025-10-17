@@ -20,6 +20,7 @@ class ComicbookInfo(Base):
     url_sitio_web = Column(String, default='')
     orden_clasificacion = Column(Float, nullable=False, default=0)
     fue_actualizado_api = Column(Boolean, nullable=False, default=False)
+    comicvine_id = Column(Integer, nullable=False, default=0)
 
     volume = relationship("Volume", back_populates="comicbookinfos") 
 

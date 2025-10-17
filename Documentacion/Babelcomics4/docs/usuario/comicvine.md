@@ -135,7 +135,7 @@ def update_volume_from_comicvine(volume):
     return volume_data, issues
 ```
 
-#### 2. Creación de Issues Faltantes
+#### 2. Creación/Actualización de Issues
 ```python
 for issue_data in issues:
     # Verificar si el issue ya existe
@@ -144,35 +144,80 @@ for issue_data in issues:
         numero=issue_data['issue_number']
     ).first()
 
-    if not existing:
+    if existing:
+        # Actualizar issue existente con datos de ComicVine
+        existing.comicvine_id = issue_data['id']
+        existing.url_api_detalle = issue_data['api_detail_url']
+        existing.url_sitio_web = issue_data['site_detail_url']
+        if not existing.titulo:
+            existing.titulo = issue_data['name']
+        if not existing.resumen:
+            existing.resumen = issue_data['description']
+    else:
         # Crear nuevo issue
         new_issue = ComicbookInfo(
             titulo=issue_data['name'],
             numero=issue_data['issue_number'],
             fecha_tapa=parse_date(issue_data['cover_date']),
             resumen=issue_data['description'],
-            id_comicvine=issue_data['id']
+            comicvine_id=issue_data['id'],
+            url_api_detalle=issue_data['api_detail_url'],
+            url_sitio_web=issue_data['site_detail_url'],
+            id_volume=volume.id_volume
         )
         session.add(new_issue)
 ```
 
-#### 3. Descarga Concurrente de Imágenes
+#### 3. Descarga de Múltiples Portadas
 ```python
+def create_issue_cover_records(issue, issue_data):
+    """Crear registros de portadas para un issue (principal + associated_images)"""
+
+    covers_created = 0
+
+    # 1. Portada principal desde el campo 'image'
+    main_image = issue_data.get('image', {})
+    if main_image and main_image.get('medium_url'):
+        main_cover = ComicbookInfoCover(
+            id_comicbook_info=issue.id_comicbook_info,
+            url_imagen=main_image['medium_url'],
+            tipo_portada='principal'
+        )
+        session.add(main_cover)
+        covers_created += 1
+
+    # 2. Portadas variantes desde 'associated_images'
+    associated_images = issue_data.get('associated_images', [])
+    for idx, img in enumerate(associated_images):
+        if img.get('medium_url'):
+            variant_cover = ComicbookInfoCover(
+                id_comicbook_info=issue.id_comicbook_info,
+                url_imagen=img['medium_url'],
+                tipo_portada=f'variant_{idx + 1}'
+            )
+            session.add(variant_cover)
+            covers_created += 1
+
+    return covers_created
+
 def download_covers_in_background(issues, callback):
-    """Descargar portadas en segundo plano"""
+    """Descargar todas las portadas en segundo plano"""
 
     def download_worker():
         with ThreadPoolExecutor(max_workers=5) as executor:
             futures = []
 
             for issue in issues:
-                if issue.portadas and issue.portadas[0].url_imagen:
-                    future = executor.submit(
-                        download_single_cover,
-                        issue.portadas[0].url_imagen,
-                        issue.id_comicbook_info
-                    )
-                    futures.append(future)
+                # Descargar todas las portadas del issue
+                for cover in issue.portadas:
+                    if cover.url_imagen:
+                        future = executor.submit(
+                            download_single_cover,
+                            cover.url_imagen,
+                            issue.id_comicbook_info,
+                            cover.tipo_portada
+                        )
+                        futures.append(future)
 
             # Esperar a que terminen todas las descargas
             for future in futures:
@@ -190,18 +235,39 @@ def download_covers_in_background(issues, callback):
 ### Estructura de Directorios
 ```
 data/thumbnails/
-├── volumes/                    # Portadas de volúmenes
-│   ├── 12345.jpg              # volume_id.jpg
+├── volumes/                      # Portadas de volúmenes
+│   ├── 12345.jpg                # volume_id.jpg
 │   └── 67890.jpg
-├── comicbookinfo_issues/       # Portadas de issues
-│   ├── Superman_12345/         # volumen_id_comicvine
-│   │   ├── issue_001.jpg       # issue_id.jpg
-│   │   ├── issue_002.jpg
+├── comicbook_info/              # Portadas de issues (ACTUALIZADO)
+│   ├── Superman_12345/          # volumen_nombre_id
+│   │   ├── cover_main.jpg       # Portada principal
+│   │   ├── cover_variant_1.jpg  # Portada variante 1
+│   │   ├── cover_variant_2.jpg  # Portada variante 2
 │   │   └── ...
 │   └── Batman_67890/
-└── comics/                     # Thumbnails de archivos
-    ├── 1.jpg                   # comic_id.jpg
+│       ├── cover_main.jpg
+│       └── cover_variant_1.jpg
+├── comicinfo/                   # Thumbnails para carrusel
+│   ├── issue_111701.jpg         # issue_id.jpg (cache)
+│   └── issue_114181.jpg
+└── comics/                      # Thumbnails de archivos
+    ├── 1.jpg                    # comic_id.jpg
     └── 2.jpg
+```
+
+### 🆕 Nuevas Funcionalidades
+
+#### Múltiples Portadas por Issue
+- **Portada Principal**: Del campo `image` de ComicVine
+- **Portadas Variantes**: Del campo `associated_images`
+- **Carrusel de Portadas**: Navegación entre portadas en la UI
+- **Búsqueda Robusta**: Encuentra archivos con patrones alternativos
+
+#### Navegación Mejorada
+```
+Volume Details → ComicbookInfo Details → Physical Comics View
+     ↑               ↑ (Carousel)           ↑
+   Metadata      Multiple Covers      Archivos Físicos
 ```
 
 ### Generación de Rutas

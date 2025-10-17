@@ -9,6 +9,7 @@ import sys
 import tempfile
 import zipfile
 import shutil
+import subprocess
 from pathlib import Path
 from typing import List, Tuple, Optional
 
@@ -155,7 +156,7 @@ class ComicExtractor:
     def _extract_rar(self, rar_file: str, temp_dir: str) -> List[str]:
         """Extraer archivo RAR/CBR"""
         if not RAR_SUPPORT:
-            return []
+            return self._extract_rar_system_command(rar_file, temp_dir)
 
         extracted = []
         try:
@@ -168,8 +169,60 @@ class ComicExtractor:
                         extracted.append(extracted_path)
             return extracted
         except Exception as e:
-            print(f"Error extrayendo RAR {rar_file}: {e}")
-            return []
+            print(f"Error extrayendo RAR con rarfile {rar_file}: {e}")
+            print("🔄 Intentando extracción con comando del sistema...")
+            return self._extract_rar_system_command(rar_file, temp_dir)
+
+    def _extract_rar_system_command(self, rar_file: str, temp_dir: str) -> List[str]:
+        """Extraer archivo RAR usando comandos del sistema"""
+        extracted = []
+
+        # Lista de comandos RAR a intentar
+        rar_commands = ['unrar', 'rar', '7z']
+
+        for cmd in rar_commands:
+            try:
+                # Verificar si el comando existe
+                subprocess.run([cmd, '--help'], capture_output=True, check=False, timeout=5)
+
+                print(f"🔧 Intentando extracción RAR con: {cmd}")
+
+                if cmd == '7z':
+                    # Comando 7z - solo extraer archivos de imagen
+                    result = subprocess.run([
+                        '7z', 'x', '-y', f'-o{temp_dir}', rar_file,
+                        '*.jpg', '*.jpeg', '*.png', '*.gif', '*.bmp', '*.webp'
+                    ], capture_output=True, text=True, timeout=300)
+                else:
+                    # Comandos unrar/rar - solo extraer archivos de imagen
+                    result = subprocess.run([
+                        cmd, 'x', '-y', '-o+', rar_file, temp_dir + '/',
+                        '*.jpg', '*.jpeg', '*.png', '*.gif', '*.bmp', '*.webp'
+                    ], capture_output=True, text=True, timeout=300)
+
+                if result.returncode == 0:
+                    print(f"✅ Extracción RAR exitosa con {cmd}")
+
+                    # Buscar archivos extraídos
+                    for root, dirs, files in os.walk(temp_dir):
+                        for file in files:
+                            file_path = os.path.join(root, file)
+                            if not file.startswith('.'):  # Ignorar archivos ocultos
+                                extracted.append(file_path)
+
+                    return extracted
+                else:
+                    print(f"❌ Error con {cmd}: {result.stderr}")
+
+            except subprocess.TimeoutExpired:
+                print(f"⏰ Timeout con comando {cmd}")
+            except FileNotFoundError:
+                print(f"⚠️ Comando {cmd} no encontrado")
+            except Exception as e:
+                print(f"❌ Error con comando {cmd}: {e}")
+
+        print("❌ No se pudo extraer el archivo RAR con ningún método")
+        return []
 
     def _extract_7z(self, seven_z_file: str, temp_dir: str) -> List[str]:
         """Extraer archivo 7z/CB7"""

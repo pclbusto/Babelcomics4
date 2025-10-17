@@ -898,6 +898,156 @@ class InternationalizationManager:
             return False
 ```
 
+## 🆕 Nuevas Funcionalidades de UI
+
+### Multiselección y Context Menu Unificado
+
+#### Implementación de Multiselección
+```python
+class SelectableCard(Gtk.Box):
+    """Card base con soporte de multiselección"""
+
+    def __init__(self, item, selection_manager):
+        super().__init__()
+        self.item = item
+        self.selection_manager = selection_manager
+        self.setup_selection_handling()
+
+    def setup_selection_handling(self):
+        """Configurar manejo de selección"""
+        # Ctrl+A para seleccionar todo
+        self.add_shortcut(Gtk.Shortcut.new(
+            Gtk.ShortcutTrigger.parse_string("<Control>a"),
+            Gtk.CallbackAction.new(self.select_all)
+        ))
+
+        # Context menu unificado
+        self.setup_context_menu()
+
+    def select_all(self, widget, args):
+        """Seleccionar todos los elementos visibles"""
+        self.selection_manager.select_all()
+        return True
+```
+
+#### Context Menu Inteligente
+```python
+def create_context_menu(self, selected_items):
+    """Crear menú contextual adaptado al número de elementos"""
+
+    item_count = len(selected_items)
+    menu = Gio.Menu()
+
+    if item_count == 1:
+        # Menú para elemento individual
+        menu.append("Abrir", "app.open_comic")
+        menu.append("Ver detalles", "app.show_details")
+
+    # Acciones para 1 o múltiples elementos
+    trash_label = f"Enviar {item_count} elemento(s) a papelera"
+    catalog_label = f"Catalogar {item_count} elemento(s)"
+
+    menu.append(trash_label, "app.move_to_trash")
+    menu.append(catalog_label, "app.catalog_items")
+
+    return menu
+```
+
+### Carrusel de Portadas Múltiples
+
+#### Implementación con Adw.Carousel
+```python
+def create_covers_carousel(comicbook_info):
+    """Crear carrusel para múltiples portadas"""
+
+    carousel = Adw.Carousel()
+    carousel.set_size_request(200, 280)
+    carousel.set_allow_mouse_drag(True)
+    carousel.set_allow_scroll_wheel(True)
+
+    # Agregar cada portada
+    for cover in comicbook_info.portadas:
+        cover_image = Gtk.Picture()
+        cover_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+
+        # Carga robusta de imagen
+        load_cover_image_robust(cover_image, cover)
+        carousel.append(cover_image)
+
+    # Indicador de páginas
+    if len(comicbook_info.portadas) > 1:
+        dots = Adw.CarouselIndicatorDots()
+        dots.set_carousel(carousel)
+        return create_carousel_container(carousel, dots)
+
+    return carousel
+
+def load_cover_image_robust(image_widget, cover):
+    """Carga robusta con patrones de búsqueda"""
+
+    patterns = [
+        f"data/thumbnails/comicbook_info/*/{cover.filename}",
+        f"data/thumbnails/comicbook_info/*/{cover.base_name}_variant_*.{cover.extension}",
+        f"data/thumbnails/comicbook_info/*/{cover.base_name}.{cover.extension}"
+    ]
+
+    for pattern in patterns:
+        files = glob.glob(pattern)
+        if files:
+            image_widget.set_filename(files[0])
+            return
+
+    # Fallback a placeholder
+    image_widget.set_filename("images/Comic_sin_caratula.png")
+```
+
+### Navegación Mejorada
+
+#### Flujo de Navegación Anidada
+```python
+def setup_navigation_flow(main_window):
+    """Configurar navegación entre páginas relacionadas"""
+
+    # Volume Details → ComicbookInfo Details → Physical Comics
+    navigation_view = main_window.get_navigation_view()
+
+    # Handlers de navegación
+    def navigate_to_comicbook_info(comic_info):
+        detail_page = create_comicbook_info_detail_page(comic_info)
+        navigation_view.push(detail_page)
+
+    def navigate_to_physical_comics(comic_info):
+        physical_page = create_physical_comics_page(comic_info)
+        navigation_view.push(physical_page)
+
+    return {
+        'to_comicbook_info': navigate_to_comicbook_info,
+        'to_physical_comics': navigate_to_physical_comics
+    }
+```
+
+### Mejoras de Rendimiento
+
+#### Carga Asíncrona de Thumbnails
+```python
+async def load_thumbnails_async(self, items):
+    """Cargar thumbnails de forma asíncrona"""
+
+    tasks = []
+    for item in items:
+        task = asyncio.create_task(self.load_single_thumbnail(item))
+        tasks.append(task)
+
+    # Procesar en lotes
+    batch_size = 10
+    for i in range(0, len(tasks), batch_size):
+        batch = tasks[i:i + batch_size]
+        await asyncio.gather(*batch, return_exceptions=True)
+
+        # Actualizar UI cada lote
+        GLib.idle_add(self.update_progress, i + batch_size, len(tasks))
+```
+
 ---
 
 **¿Quieres conocer más sobre el desarrollo?** 👉 [Modelos de Datos](../desarrollo/modelos.md)

@@ -383,6 +383,40 @@ class ConfigWindow(Adw.PreferencesWindow):
 
         interface_group.add(self.items_per_batch_row)
 
+        # Configuración del lector de comics
+        # Scroll threshold
+        self.scroll_threshold_row = Adw.SpinRow()
+        self.scroll_threshold_row.set_title("Sensibilidad de scroll")
+        self.scroll_threshold_row.set_subtitle("Umbral para cambiar página con scroll (menor = más sensible)")
+
+        # Cargar valor desde BD
+        current_threshold = 1.0
+        if self.config:
+            current_threshold = self.config.scroll_threshold
+
+        threshold_adjustment = Gtk.Adjustment(value=current_threshold, lower=0.1, upper=5.0, step_increment=0.1)
+        self.scroll_threshold_row.set_adjustment(threshold_adjustment)
+        self.scroll_threshold_row.set_digits(1)
+        self.scroll_threshold_row.connect("changed", self.on_scroll_threshold_changed)
+
+        interface_group.add(self.scroll_threshold_row)
+
+        # Scroll cooldown
+        self.scroll_cooldown_row = Adw.SpinRow()
+        self.scroll_cooldown_row.set_title("Cooldown de scroll")
+        self.scroll_cooldown_row.set_subtitle("Milisegundos de espera entre cambios de página")
+
+        # Cargar valor desde BD
+        current_cooldown = 100
+        if self.config:
+            current_cooldown = self.config.scroll_cooldown
+
+        cooldown_adjustment = Gtk.Adjustment(value=current_cooldown, lower=50, upper=1000, step_increment=50)
+        self.scroll_cooldown_row.set_adjustment(cooldown_adjustment)
+        self.scroll_cooldown_row.connect("changed", self.on_scroll_cooldown_changed)
+
+        interface_group.add(self.scroll_cooldown_row)
+
         page.add(interface_group)
 
     def setup_database_group(self, page):
@@ -633,6 +667,22 @@ class ConfigWindow(Adw.PreferencesWindow):
             return
 
         self.config.limpieza_automatica = switch_row.get_active()
+        self.save_config()
+
+    def on_scroll_threshold_changed(self, spin_row):
+        """Callback cuando cambia el threshold de scroll"""
+        if not self.config:
+            return
+
+        self.config.scroll_threshold = spin_row.get_value()
+        self.save_config()
+
+    def on_scroll_cooldown_changed(self, spin_row):
+        """Callback cuando cambia el cooldown de scroll"""
+        if not self.config:
+            return
+
+        self.config.scroll_cooldown = int(spin_row.get_value())
         self.save_config()
 
     def save_config(self):

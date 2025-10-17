@@ -20,7 +20,7 @@ def create_about_window(parent_window=None):
     # No necesita set_transient_for/set_modal
 
     # Configuración básica
-    about.set_application_name("babelcomics4")
+    about.set_application_name("Babelcomics4")
 
     # Configurar icono de la aplicación
     icono_usado = None
@@ -41,7 +41,7 @@ def create_about_window(parent_window=None):
     # Si no funciona el local, intentar iconos del sistema
     if not icono_usado:
         iconos_prueba = [
-            "babelcomics4",            # Tu icono instalado
+            "Babelcomics4",            # Tu icono instalado
             "accessories-text-editor",  # Editor de texto
             "applications-graphics",    # Aplicaciones gráficas
             "folder-documents",         # Documentos

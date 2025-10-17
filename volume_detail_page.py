@@ -723,11 +723,274 @@ def on_issue_clicked(gesture, n_press, x, y, comic_info, physical_count, main_wi
     if n_press == 2:  # Doble click
         print(f"Doble click en issue: {comic_info.titulo} #{comic_info.numero} ({physical_count} físicos)")
 
-        if physical_count > 0:
-            # Navegar a vista de físicos
-            main_window.navigate_to_physical_comics(comic_info)
+        # Siempre mostrar detalle de ComicbookInfo (con covers de ComicVine)
+        show_comicbook_info_detail(comic_info, physical_count, main_window)
+
+        # Opcional: Si hay físicos, también permitir navegar a ellos
+        # if physical_count > 0:
+        #     main_window.navigate_to_physical_comics(comic_info)
+
+
+def show_comicbook_info_detail(comic_info, physical_count, main_window):
+    """Mostrar página de detalle de ComicbookInfo con carrusel de covers"""
+    try:
+        # Crear página de detalle
+        detail_page = create_comicbook_info_detail_page(comic_info, physical_count, main_window.session, main_window)
+
+        # Agregar a la pila de navegación
+        if hasattr(main_window, 'navigation_view') and main_window.navigation_view:
+            main_window.navigation_view.push(detail_page)
         else:
-            print(f"No hay cómics físicos para este issue")
+            print("Error: No se encontró navigation_view en main_window")
+
+    except Exception as e:
+        print(f"Error mostrando detalle de ComicbookInfo: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+def create_comicbook_info_detail_page(comic_info, physical_count, session, main_window):
+    """Crear página de detalle para ComicbookInfo"""
+    # Crear la página de navegación
+    page = Adw.NavigationPage()
+    page.set_title(f"{comic_info.titulo} #{comic_info.numero}")
+
+    # Contenedor principal con scroll
+    scrolled = Gtk.ScrolledWindow()
+    scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+    scrolled.set_vexpand(True)
+
+    main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+    main_box.set_margin_start(20)
+    main_box.set_margin_end(20)
+    main_box.set_margin_top(20)
+    main_box.set_margin_bottom(20)
+
+    # Header con covers carousel
+    header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
+    header_box.set_margin_bottom(20)
+
+    # Carrusel de covers
+    covers_carousel = create_comicbook_info_covers_carousel(comic_info)
+    header_box.append(covers_carousel)
+
+    # Información del comic
+    info_box = create_comicbook_info_content(comic_info, physical_count, session, main_window)
+    header_box.append(info_box)
+
+    main_box.append(header_box)
+    scrolled.set_child(main_box)
+    page.set_child(scrolled)
+
+    return page
+
+
+def create_comicbook_info_covers_carousel(comic_info):
+    """Crear carrusel de covers para ComicbookInfo"""
+    try:
+        # Contenedor del carrusel
+        carousel_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+
+        # Obtener covers
+        covers = list(comic_info.portadas) if comic_info.portadas else []
+
+        if len(covers) > 1:
+            # Carrusel para múltiples covers
+            carousel = Adw.Carousel()
+            carousel.set_size_request(200, 280)
+            carousel.set_allow_mouse_drag(True)
+            carousel.set_allow_scroll_wheel(True)
+
+            # Agregar cada cover
+            for i, cover in enumerate(covers):
+                cover_image = Gtk.Picture()
+                cover_image.set_can_shrink(True)
+                cover_image.set_keep_aspect_ratio(True)
+                cover_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+                cover_image.set_size_request(200, 280)
+
+                # Cargar imagen de la cover
+                load_comicbook_cover_image(cover_image, cover)
+                carousel.append(cover_image)
+
+            # Indicador de páginas
+            dots = Adw.CarouselIndicatorDots()
+            dots.set_carousel(carousel)
+
+            # Label con cantidad
+            cover_count_label = Gtk.Label()
+            cover_count_label.set_markup(f"<b>{len(covers)} covers</b>")
+            cover_count_label.add_css_class("title-4")
+            cover_count_label.set_halign(Gtk.Align.CENTER)
+
+            carousel_container.append(carousel)
+            carousel_container.append(dots)
+            carousel_container.append(cover_count_label)
+
+        elif len(covers) == 1:
+            # Una sola cover
+            single_image = Gtk.Picture()
+            single_image.set_can_shrink(True)
+            single_image.set_keep_aspect_ratio(True)
+            single_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+            single_image.set_size_request(200, 280)
+
+            load_comicbook_cover_image(single_image, covers[0])
+            carousel_container.append(single_image)
+
+        else:
+            # Sin covers - placeholder
+            placeholder = Gtk.Label()
+            placeholder.set_markup("<i>Sin covers disponibles</i>")
+            placeholder.add_css_class("dim-label")
+            placeholder.set_size_request(200, 280)
+            placeholder.set_valign(Gtk.Align.CENTER)
+            carousel_container.append(placeholder)
+
+        return carousel_container
+
+    except Exception as e:
+        print(f"Error creando carrusel de ComicbookInfo: {e}")
+        return Gtk.Box()
+
+
+def load_comicbook_cover_image(image_widget, cover):
+    """Cargar imagen de cover de ComicbookInfo"""
+    try:
+        print(f"🖼️ DEBUG: Intentando cargar cover ID {cover.id_cover}")
+        print(f"🖼️ DEBUG: URL imagen: {cover.url_imagen}")
+
+        # Primero, intentar búsqueda manual antes de usar obtener_ruta_local()
+        found_path = None
+
+        if cover.url_imagen:
+            # Intentar generar ruta desde URL
+            filename = cover.url_imagen.split('/')[-1]
+            base_name = filename.rsplit('.', 1)[0]  # Sin extensión
+            extension = filename.rsplit('.', 1)[1] if '.' in filename else 'jpg'
+
+            # Buscar archivo principal y variantes
+            possible_patterns = [
+                f"data/thumbnails/comicbook_info/*/{filename}",  # Nombre exacto
+                f"data/thumbnails/comicbook_info/*/{base_name}_variant_*.{extension}",  # Variantes
+                f"data/thumbnails/comicbook_info/*/{base_name}.{extension}",  # Sin variant
+            ]
+
+            print(f"🖼️ DEBUG: Buscando variantes de: {filename}")
+
+            # Buscar archivo en directorios de covers
+            import glob
+            for pattern in possible_patterns:
+                found_files = glob.glob(pattern)
+                if found_files:
+                    found_path = found_files[0]  # Tomar el primero encontrado
+                    print(f"🖼️ DEBUG: ✅ Encontrado variante: {found_path}")
+                    break
+
+        # Si no encontramos variante, usar método del modelo
+        if not found_path:
+            cover_path = cover.obtener_ruta_local()
+            print(f"🖼️ DEBUG: Ruta local del modelo: {cover_path}")
+
+            # Solo usar si no es el placeholder
+            if cover_path and not cover_path.endswith("Comic_sin_caratula.png"):
+                found_path = cover_path
+
+        # Cargar imagen si encontramos alguna
+        if found_path and os.path.exists(found_path):
+            print(f"🖼️ DEBUG: ✅ Cargando: {found_path}")
+            image_widget.set_filename(found_path)
+        else:
+            # Placeholder si no se encuentra la imagen
+            print(f"🖼️ DEBUG: ❌ No se encontró archivo, usando placeholder")
+            placeholder_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 200, 280)
+            placeholder_pixbuf.fill(0x3584E4FF)  # Azul
+            image_widget.set_pixbuf(placeholder_pixbuf)
+
+    except Exception as e:
+        print(f"❌ Error cargando cover: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+def create_comicbook_info_content(comic_info, physical_count, session, main_window):
+    """Crear contenido de información de ComicbookInfo"""
+    info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
+    info_box.set_hexpand(True)
+
+    # Título
+    title_label = Gtk.Label()
+    title_label.set_markup(f"<span size='xx-large' weight='bold'>{comic_info.titulo or 'Sin título'}</span>")
+    title_label.set_halign(Gtk.Align.START)
+    title_label.set_wrap(True)
+    info_box.append(title_label)
+
+    # Número
+    if comic_info.numero:
+        number_label = Gtk.Label()
+        number_label.set_markup(f"<span size='large'>Número: <b>#{comic_info.numero}</b></span>")
+        number_label.set_halign(Gtk.Align.START)
+        info_box.append(number_label)
+
+    # Fecha
+    if comic_info.fecha_tapa:
+        date_label = Gtk.Label()
+        date_label.set_markup(f"<span size='large'>Año: <b>{comic_info.fecha_tapa}</b></span>")
+        date_label.set_halign(Gtk.Align.START)
+        info_box.append(date_label)
+
+    # Comics físicos
+    physical_label = Gtk.Label()
+    if physical_count > 0:
+        physical_label.set_markup(f"<span size='large'>Comics físicos: <b>{physical_count}</b></span>")
+        physical_label.add_css_class("success")
+    else:
+        physical_label.set_markup(f"<span size='large'>Comics físicos: <b>0</b></span>")
+        physical_label.add_css_class("warning")
+    physical_label.set_halign(Gtk.Align.START)
+    info_box.append(physical_label)
+
+    # ComicVine ID si existe
+    if hasattr(comic_info, 'comicvine_id') and comic_info.comicvine_id:
+        cv_label = Gtk.Label()
+        cv_label.set_markup(f"<span size='small'>ComicVine ID: {comic_info.comicvine_id}</span>")
+        cv_label.add_css_class("dim-label")
+        cv_label.set_halign(Gtk.Align.START)
+        info_box.append(cv_label)
+
+    # URLs de ComicVine si existen
+    if hasattr(comic_info, 'url_sitio_web') and comic_info.url_sitio_web:
+        url_label = Gtk.Label()
+        url_label.set_markup(f"<span size='small'><a href='{comic_info.url_sitio_web}'>Ver en ComicVine</a></span>")
+        url_label.set_halign(Gtk.Align.START)
+        info_box.append(url_label)
+
+    # Resumen si existe
+    if comic_info.resumen:
+        summary_frame = Adw.PreferencesGroup()
+        summary_frame.set_title("Resumen")
+
+        summary_label = Gtk.Label()
+        summary_label.set_text(comic_info.resumen[:500] + "..." if len(comic_info.resumen) > 500 else comic_info.resumen)
+        summary_label.set_wrap(True)
+        summary_label.set_halign(Gtk.Align.START)
+        summary_label.set_valign(Gtk.Align.START)
+
+        summary_frame.add(summary_label)
+        info_box.append(summary_frame)
+
+    # Botón para ver físicos si los hay
+    if physical_count > 0:
+        view_physicals_button = Gtk.Button.new_with_label(f"Ver {physical_count} comic(s) físico(s)")
+        view_physicals_button.add_css_class("suggested-action")
+        view_physicals_button.set_halign(Gtk.Align.START)
+
+        # Conectar botón para navegar a físicos
+        view_physicals_button.connect("clicked", lambda btn: main_window.navigate_to_physical_comics(comic_info))
+
+        info_box.append(view_physicals_button)
+
+    return info_box
 
 
 def update_volume_from_comicvine(volume, session, main_window, tab_view):
@@ -863,8 +1126,9 @@ def perform_comicvine_update(volume, session, main_window, tab_view):
         message = f"Metadata actualizada: {new_issues_count} nuevos, {updated_issues_count} actualizados{cover_msg}"
         show_update_success(main_window, message)
 
-        # Refrescar la pestaña de issues
-        GLib.idle_add(refresh_issues_tab, tab_view, volume, session, main_window.thumbnail_generator, main_window)
+        # Refrescar la pestaña de issues (si existe tab_view)
+        if tab_view:
+            GLib.idle_add(refresh_issues_tab, tab_view, volume, session, main_window.thumbnail_generator, main_window)
 
         # Descargar portadas en hilo separado para no bloquear UI
         print(f"DEBUG: Iniciando hilo de descarga para {len(detailed_issues)} issues")
@@ -902,8 +1166,18 @@ def update_existing_issue(existing_issue, issue_data, session):
         except (ValueError, TypeError):
             pass
 
-    # Los issues se identifican por número dentro del volumen
-    # El ID de ComicVine se maneja a nivel de volumen
+    # Actualizar ComicVine ID y URLs siempre (para corregir datos desactualizados)
+    if issue_data.get('id'):
+        existing_issue.comicvine_id = issue_data['id']
+        print(f"🔄 DEBUG: Actualizando ComicVine ID para issue #{existing_issue.numero}: {issue_data['id']}")
+
+    if issue_data.get('api_detail_url'):
+        existing_issue.url_api_detalle = issue_data['api_detail_url']
+        print(f"🔄 DEBUG: Actualizando API URL para issue #{existing_issue.numero}")
+
+    if issue_data.get('site_detail_url'):
+        existing_issue.url_sitio_web = issue_data['site_detail_url']
+        print(f"🔄 DEBUG: Actualizando site URL para issue #{existing_issue.numero}")
 
 
 def create_new_issue(volume, issue_data, session):
@@ -914,7 +1188,6 @@ def create_new_issue(volume, issue_data, session):
         new_issue.numero = str(issue_data.get('issue_number', ''))
         new_issue.titulo = issue_data.get('name', '')
         new_issue.resumen = clean_html_text(issue_data.get('description', ''))
-        # Los issues se identifican por su número dentro del volumen
 
         # Fecha de portada
         if issue_data.get('cover_date'):
@@ -924,6 +1197,13 @@ def create_new_issue(volume, issue_data, session):
                     new_issue.fecha_tapa = int(fecha_str[:4])
             except (ValueError, TypeError):
                 pass
+
+        # Guardar ComicVine ID y URLs
+        new_issue.comicvine_id = issue_data.get('id', 0)
+        new_issue.url_api_detalle = issue_data.get('api_detail_url', '')
+        new_issue.url_sitio_web = issue_data.get('site_detail_url', '')
+
+        print(f"➕ DEBUG: Nuevo issue #{new_issue.numero} con ComicVine ID: {new_issue.comicvine_id}")
 
         session.add(new_issue)
 
@@ -1142,6 +1422,7 @@ def download_covers_in_background(volume, session, comicvine_client, detailed_is
 
         # Descargar con pool de hilos (máximo 5 concurrentes)
         downloaded_count = 0
+        last_progress_shown = 0  # Evitar toasts duplicados
         with ThreadPoolExecutor(max_workers=5) as executor:
             # Enviar tareas al pool
             future_to_issue = {}
@@ -1157,8 +1438,9 @@ def download_covers_in_background(volume, session, comicvine_client, detailed_is
                     if success:
                         downloaded_count += 1
 
-                    # Actualizar progreso cada 3 descargas
-                    if downloaded_count % 3 == 0:
+                    # Actualizar progreso cada 3 descargas (evitar duplicados)
+                    if downloaded_count % 3 == 0 and downloaded_count > last_progress_shown:
+                        last_progress_shown = downloaded_count
                         progress_msg = f"Descargadas {downloaded_count}/{total_downloads} portadas..."
                         GLib.idle_add(show_update_progress, main_window, progress_msg)
 
@@ -1223,15 +1505,26 @@ def collect_missing_covers(volume, session, comicvine_client, issues_to_download
             except Exception as e:
                 print(f"Error obteniendo issues de ComicVine: {e}")
 
+        # Obtener números de issue ya agregados para evitar duplicados
+        existing_issue_numbers = set()
+        for issue_type, issue_data, existing_issue in issues_to_download:
+            issue_number = str(issue_data.get('issue_number', ''))
+            existing_issue_numbers.add(issue_number)
+
         for issue in all_missing:
             if volume.id_comicvine and issue.numero in comicvine_issues:
-                try:
-                    # Obtener datos del issue desde ComicVine usando el número
-                    cv_issue = comicvine_issues[issue.numero]
-                    if cv_issue and cv_issue.get('image'):
-                        issues_to_download.append(('existing', cv_issue, issue))
-                except Exception as e:
-                    print(f"Error obteniendo detalles para issue #{issue.numero}: {e}")
+                # Verificar si ya está en la lista de descarga
+                if issue.numero not in existing_issue_numbers:
+                    try:
+                        # Obtener datos del issue desde ComicVine usando el número
+                        cv_issue = comicvine_issues[issue.numero]
+                        if cv_issue and cv_issue.get('image'):
+                            issues_to_download.append(('existing', cv_issue, issue))
+                            print(f"DEBUG: Agregado issue existente #{issue.numero} para descarga")
+                    except Exception as e:
+                        print(f"Error obteniendo detalles para issue #{issue.numero}: {e}")
+                else:
+                    print(f"DEBUG: Issue #{issue.numero} ya está en lista de descarga, omitiendo duplicado")
 
         return len(all_missing)
 

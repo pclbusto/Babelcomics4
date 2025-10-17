@@ -9,7 +9,58 @@ class VolumeRepository(BaseRepository):
         return super().obtener_total(modelo or Volume)
 
     def obtener_pagina(self, pagina, tamanio, orden="nombre", direccion="asc", columnas=None):
-        return super().obtener_pagina(Volume, pagina, tamanio, orden, direccion, columnas)
+        """Obtener página de volúmenes con filtros avanzados"""
+        # Usar columnas si están definidas, sino el modelo completo
+        if columnas:
+            query = self.session.query(*[getattr(Volume, col) for col in columnas])
+        else:
+            query = self.session.query(Volume)
+
+        # Aplicar filtros avanzados
+        for campo, valor in self.filtros.items():
+            if campo == 'name_multiple_terms':
+                # Filtro especial para múltiples términos (AND)
+                for term in valor:
+                    print(f"🔗 Filtrando volumen por término (AND): {term}")
+                    query = query.filter(Volume.nombre.ilike(f"%{term}%"))
+            elif campo == 'name_exclude_terms':
+                # Filtro especial para exclusión de términos (NOT)
+                for term in valor:
+                    print(f"🚫 Excluyendo término en volumen: {term}")
+                    query = query.filter(~Volume.nombre.ilike(f"%{term}%"))
+            elif campo == 'name_año_numero':
+                # Filtro especial para búsquedas con años/números
+                for numero in valor:
+                    print(f"📅 Filtrando volumen por año/número: {numero}")
+                    query = query.filter(Volume.nombre.ilike(f"%{numero}%"))
+            elif campo == 'year_range':
+                # Filtro de rango de años
+                min_year, max_year = valor
+                print(f"📅 Filtrando volumen por rango de años: {min_year}-{max_year}")
+                query = query.filter(Volume.anio_inicio.between(min_year, max_year))
+            elif campo == 'count_range':
+                # Filtro de rango de cantidad de números
+                min_count, max_count = valor
+                print(f"📊 Filtrando volumen por rango de números: {min_count}-{max_count}")
+                query = query.filter(Volume.cantidad_numeros.between(min_count, max_count))
+            elif campo == 'publisher_name':
+                # Filtro por nombre de editorial (requiere join)
+                from entidades.publisher_model import Publisher
+                print(f"🏢 Filtrando volumen por editorial: {valor}")
+                query = query.join(Publisher, Volume.id_publisher == Publisher.id_publisher).filter(
+                    Publisher.nombre.ilike(f"%{valor}%")
+                )
+            elif hasattr(Volume, campo):
+                # Filtro normal
+                query = query.filter(getattr(Volume, campo).ilike(f"%{valor}%"))
+
+        # Aplicar orden
+        if hasattr(Volume, orden):
+            campo_orden = getattr(Volume, orden)
+            campo_orden = campo_orden.desc() if direccion == "desc" else campo_orden.asc()
+            query = query.order_by(campo_orden)
+
+        return query.offset(pagina * tamanio).limit(tamanio).all()
 
     def pagina_siguiente(self, pagina_actual, tamanio):
         print("Llamando a pagina_siguiente en VolumeRepository")
@@ -259,6 +310,10 @@ class VolumeRepository(BaseRepository):
         """Procesar issues del volumen - crear nuevos y actualizar existentes"""
         from entidades.comicbook_info_model import ComicbookInfo
 
+        print(f"🔍 DEBUG: Iniciando _process_volume_issues para volumen {volume.nombre}")
+        print(f"🔍 DEBUG: Volume ID: {volume.id_volume}")
+        print(f"🔍 DEBUG: Issues recibidos: {len(detailed_issues)}")
+
         new_issues_count = 0
         updated_issues_count = 0
 
@@ -268,7 +323,13 @@ class VolumeRepository(BaseRepository):
                     progress_callback(f"Procesando issues... {i+1}/{len(detailed_issues)}")
 
                 issue_number = issue_data.get('issue_number')
+                issue_id = issue_data.get('id')
+                issue_name = issue_data.get('name', 'Sin título')
+
+                print(f"🔍 DEBUG Issue {i+1}: #{issue_number} - {issue_name} (CV ID: {issue_id})")
+
                 if not issue_number:
+                    print(f"⚠️ Issue sin número, saltando: {issue_data}")
                     continue
 
                 # Buscar si ya existe este issue
@@ -278,17 +339,22 @@ class VolumeRepository(BaseRepository):
                 ).first()
 
                 if existing_issue:
+                    print(f"✏️ Actualizando issue existente: #{issue_number}")
                     # Actualizar issue existente
                     self._update_existing_issue(existing_issue, issue_data)
                     updated_issues_count += 1
                 else:
+                    print(f"➕ Creando nuevo issue: #{issue_number}")
                     # Crear nuevo issue
                     self._create_new_issue(volume, issue_data)
                     new_issues_count += 1
 
             except Exception as e:
-                print(f"Error procesando issue {issue_data.get('issue_number', 'N/A')}: {e}")
+                print(f"❌ Error procesando issue {issue_data.get('issue_number', 'N/A')}: {e}")
+                import traceback
+                traceback.print_exc()
 
+        print(f"✅ Proceso completado: {new_issues_count} nuevos, {updated_issues_count} actualizados")
         return new_issues_count, updated_issues_count
 
     def _update_existing_issue(self, existing_issue, issue_data):
@@ -308,13 +374,37 @@ class VolumeRepository(BaseRepository):
             except (ValueError, TypeError):
                 pass
 
-        # Actualizar ID de ComicVine si no lo tiene
-        if issue_data.get('id') and not existing_issue.id_comicvine:
-            existing_issue.id_comicvine = issue_data['id']
+        # Actualizar ComicVine ID y URLs siempre (para corregir datos desactualizados)
+        if issue_data.get('id'):
+            existing_issue.comicvine_id = issue_data['id']
+            print(f"🔄 DEBUG: Actualizando ComicVine ID para issue #{existing_issue.numero}: {issue_data['id']}")
+
+        if issue_data.get('api_detail_url'):
+            existing_issue.url_api_detalle = issue_data['api_detail_url']
+            print(f"🔄 DEBUG: Actualizando API URL para issue #{existing_issue.numero}")
+
+        if issue_data.get('site_detail_url'):
+            existing_issue.url_sitio_web = issue_data['site_detail_url']
+            print(f"🔄 DEBUG: Actualizando site URL para issue #{existing_issue.numero}")
+
+        # Actualizar covers - siempre verificar si hay nuevas associated_images
+        print(f"📸 DEBUG: Issue #{existing_issue.numero} tiene {len(existing_issue.portadas)} covers existentes")
+
+        # Verificar si hay associated_images que no tengamos
+        associated_images = issue_data.get('associated_images', [])
+        if associated_images:
+            print(f"📸 Issue #{existing_issue.numero} tiene {len(associated_images)} associated_images disponibles, agregando si no existen...")
+            self._create_issue_cover_records(existing_issue, issue_data)
+        elif not existing_issue.portadas:
+            print(f"📸 Issue #{existing_issue.numero} sin covers, agregando cover principal desde ComicVine...")
+            self._create_issue_cover_records(existing_issue, issue_data)
 
     def _create_new_issue(self, volume, issue_data):
         """Crear un nuevo issue desde datos de ComicVine"""
         from entidades.comicbook_info_model import ComicbookInfo
+
+        print(f"🆕 DEBUG: Creando issue para volumen ID {volume.id_volume}")
+        print(f"🆕 DEBUG: Issue data: {issue_data.get('issue_number', 'N/A')} - {issue_data.get('name', 'N/A')}")
 
         # Procesar fecha de tapa
         fecha_tapa = None
@@ -332,10 +422,109 @@ class VolumeRepository(BaseRepository):
             resumen=self._clean_html_text(issue_data.get('description', '')),
             fecha_tapa=fecha_tapa,
             id_volume=volume.id_volume,
-            id_comicvine=issue_data.get('id')
+            comicvine_id=issue_data.get('id', 0),
+            url_api_detalle=issue_data.get('api_detail_url', ''),
+            url_sitio_web=issue_data.get('site_detail_url', '')
         )
 
+        print(f"🆕 DEBUG: Issue creado - Numero: {new_issue.numero}, Titulo: {new_issue.titulo}, Volume ID: {new_issue.id_volume}")
+        print(f"🆕 DEBUG: ComicVine ID: {new_issue.comicvine_id}")
+
         self.session.add(new_issue)
+        self.session.flush()  # Para obtener el ID del issue recién creado
+
+        print(f"🆕 DEBUG: Issue ID después de flush: {new_issue.id_comicbook_info}")
+
+        # Crear registros de portadas si hay imágenes disponibles
+        self._create_issue_cover_records(new_issue, issue_data)
+
+        print(f"🆕 DEBUG: Issue agregado a la sesión")
+
+    def _create_issue_cover_records(self, issue, issue_data):
+        """Crear registros de portadas para un issue (principal + associated_images)"""
+        from entidades.comicbook_info_cover_model import ComicbookInfoCover
+
+        print(f"📸 DEBUG: Iniciando _create_issue_cover_records para issue #{issue.numero}")
+        print(f"📸 DEBUG: Issue ID: {issue.id_comicbook_info}")
+        print(f"📸 DEBUG: issue_data keys: {list(issue_data.keys())}")
+
+        covers_created = 0
+
+        # Obtener URLs de covers existentes para evitar duplicados
+        existing_cover_urls = {cover.url_imagen for cover in issue.portadas}
+        print(f"📸 DEBUG: URLs de covers existentes: {existing_cover_urls}")
+
+        # 1. Crear cover principal si existe y no está ya guardada
+        print(f"📸 DEBUG: Revisando image principal: {issue_data.get('image', {})}")
+        if issue_data.get('image') and issue_data['image'].get('medium_url'):
+            main_cover_url = issue_data['image']['medium_url']
+            print(f"📸 DEBUG: Image principal encontrada: {main_cover_url}")
+
+            if main_cover_url not in existing_cover_urls:
+                try:
+                    cover_record = ComicbookInfoCover(
+                        id_comicbook_info=issue.id_comicbook_info,
+                        url_imagen=main_cover_url
+                    )
+                    self.session.add(cover_record)
+                    covers_created += 1
+                    print(f"📸 Cover principal creada para issue #{issue.numero}: {main_cover_url}")
+                except Exception as e:
+                    print(f"❌ Error creando cover principal para issue #{issue.numero}: {e}")
+            else:
+                print(f"📸 Cover principal ya existe para issue #{issue.numero}: {main_cover_url}")
+
+        # 2. Crear covers adicionales de associated_images
+        associated_images = issue_data.get('associated_images', [])
+        print(f"📸 DEBUG: Associated images encontradas: {len(associated_images)}")
+        if associated_images:
+            print(f"📸 DEBUG: Associated images data: {associated_images}")
+            print(f"📸 Procesando {len(associated_images)} associated_images para issue #{issue.numero}")
+
+            for i, img_data in enumerate(associated_images):
+                try:
+                    # Usar original_url si está disponible, sino buscar otras URLs
+                    img_url = img_data.get('original_url')
+                    if not img_url:
+                        # Buscar otras posibles URLs en associated_images
+                        for url_key in ['medium_url', 'super_url', 'screen_url']:
+                            if img_data.get(url_key):
+                                img_url = img_data[url_key]
+                                break
+
+                    if img_url:
+                        if img_url not in existing_cover_urls:
+                            cover_record = ComicbookInfoCover(
+                                id_comicbook_info=issue.id_comicbook_info,
+                                url_imagen=img_url
+                            )
+                            self.session.add(cover_record)
+                            existing_cover_urls.add(img_url)  # Agregar a la lista para evitar duplicados en esta sesión
+                            covers_created += 1
+                            print(f"📸 Associated image {i+1} creada para issue #{issue.numero}: {img_url}")
+                        else:
+                            print(f"📸 Associated image {i+1} ya existe para issue #{issue.numero}: {img_url}")
+                    else:
+                        print(f"⚠️ Associated image {i+1} sin URL válida para issue #{issue.numero}")
+
+                except Exception as e:
+                    print(f"❌ Error creando associated image {i+1} para issue #{issue.numero}: {e}")
+
+        print(f"📸 Total covers creadas para issue #{issue.numero}: {covers_created}")
+
+    def _create_issue_cover_record(self, issue, cover_url):
+        """Crear registro de portada para un issue (método legacy)"""
+        from entidades.comicbook_info_cover_model import ComicbookInfoCover
+
+        try:
+            cover_record = ComicbookInfoCover(
+                id_comicbook_info=issue.id_comicbook_info,
+                url_imagen=cover_url
+            )
+            self.session.add(cover_record)
+            print(f"📸 Cover record creado para issue #{issue.numero}: {cover_url}")
+        except Exception as e:
+            print(f"❌ Error creando cover record para issue #{issue.numero}: {e}")
 
     def _download_volume_and_issues_covers(self, volume, volume_details, detailed_issues, progress_callback=None):
         """Descargar covers del volumen y de los issues"""
@@ -377,26 +566,71 @@ class VolumeRepository(BaseRepository):
     def _download_issues_covers_background(self, volume, detailed_issues, progress_callback=None):
         """Descargar covers de issues en background thread"""
         from helpers.image_downloader import download_image
+        import os
 
         covers_downloaded = 0
         total_issues = len(detailed_issues)
 
         for i, issue_data in enumerate(detailed_issues):
             try:
+                issue_number = issue_data.get('issue_number', 'unknown')
+
+                # Crear carpeta específica para este volumen según ComicbookInfoCover
+                clean_volume_name = "".join([c if c.isalnum() or c.isspace() else "" for c in volume.nombre]).strip()
+                covers_folder = os.path.join(
+                    "data", "thumbnails", "comicbook_info",
+                    f"{clean_volume_name}_{volume.id_volume}"
+                )
+
+                issue_covers_downloaded = 0
+
+                # 1. Descargar cover principal
                 if issue_data.get('image') and issue_data['image'].get('medium_url'):
-                    issue_number = issue_data.get('issue_number', 'unknown')
                     cover_url = issue_data['image']['medium_url']
 
-                    # Crear nombre de archivo basado en volumen e issue
-                    filename = f"{volume.id_volume}_{issue_number}.jpg"
-                    cover_path = download_image(cover_url, "data/thumbnails/issues", filename)
+                    # Usar el nombre de archivo original de la URL
+                    filename = cover_url.split('/')[-1]
+                    if not filename.endswith(('.jpg', '.jpeg', '.png')):
+                        filename = f"issue_{issue_number}.jpg"
 
+                    cover_path = download_image(cover_url, covers_folder, filename)
                     if cover_path:
-                        covers_downloaded += 1
+                        issue_covers_downloaded += 1
 
-                    # Reportar progreso cada 5 covers
-                    if progress_callback and i % 5 == 0:
-                        progress_callback(f"Covers descargados: {covers_downloaded}/{i+1} issues procesados")
+                # 2. Descargar associated_images
+                associated_images = issue_data.get('associated_images', [])
+                if associated_images:
+                    print(f"📸 Descargando {len(associated_images)} associated_images para issue #{issue_number}")
+
+                    for j, img_data in enumerate(associated_images):
+                        img_url = img_data.get('original_url')
+                        if not img_url:
+                            # Buscar otras URLs disponibles
+                            for url_key in ['medium_url', 'super_url', 'screen_url']:
+                                if img_data.get(url_key):
+                                    img_url = img_data[url_key]
+                                    break
+
+                        if img_url:
+                            # Generar nombre único para associated image
+                            filename = img_url.split('/')[-1]
+                            if not filename.endswith(('.jpg', '.jpeg', '.png')):
+                                filename = f"issue_{issue_number}_variant_{j+1}.jpg"
+                            else:
+                                # Agregar sufijo para diferenciarlo de la cover principal
+                                name, ext = filename.rsplit('.', 1)
+                                filename = f"{name}_variant_{j+1}.{ext}"
+
+                            variant_path = download_image(img_url, covers_folder, filename)
+                            if variant_path:
+                                issue_covers_downloaded += 1
+                                print(f"📸 Associated image {j+1} descargada: {filename}")
+
+                covers_downloaded += issue_covers_downloaded
+
+                # Reportar progreso cada 5 covers
+                if progress_callback and i % 5 == 0:
+                    progress_callback(f"Covers descargados: {covers_downloaded}/{i+1} issues procesados")
 
             except Exception as e:
                 print(f"Error descargando cover del issue {issue_data.get('issue_number', 'N/A')}: {e}")
@@ -417,3 +651,25 @@ class VolumeRepository(BaseRepository):
         clean_text = clean_text.replace('&quot;', '"').replace('&#39;', "'")
 
         return clean_text.strip()
+
+    def filtrar_multiple_name_terms(self, terms):
+        """
+        Filtrar volúmenes que contengan TODOS los términos en el nombre (AND).
+        """
+        if terms:
+            self.filtros['name_multiple_terms'] = terms
+
+    def filtrar_name_exclude_terms(self, exclude_terms):
+        """
+        Filtrar volúmenes que NO contengan ninguno de los términos en el nombre (NOT).
+        """
+        if exclude_terms:
+            self.filtros['name_exclude_terms'] = exclude_terms
+
+    def filtrar_año_o_numero(self, valor):
+        """
+        Filtrar volúmenes por año en el nombre.
+        """
+        if 'name_año_numero' not in self.filtros:
+            self.filtros['name_año_numero'] = []
+        self.filtros['name_año_numero'].append(str(valor))

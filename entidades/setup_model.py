@@ -28,6 +28,10 @@ class Setup(Base):
     cache_thumbnails = Column(Boolean, nullable=False, default=True)
     limpieza_automatica = Column(Boolean, nullable=False, default=True)
 
+    # Configuración del lector de comics
+    scroll_threshold = Column(Float, nullable=False, default=1.0)
+    scroll_cooldown = Column(Integer, nullable=False, default=100)
+
     # Relación con directorios
     directorios = relationship("SetupDirectorio", back_populates="setup", cascade="all, delete-orphan")
 

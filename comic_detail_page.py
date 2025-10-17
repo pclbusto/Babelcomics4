@@ -55,14 +55,14 @@ def create_comic_detail_content(comic, session, thumbnail_generator, main_window
     tab_container.set_vexpand(True)
 
     # Crear pestañas
-    create_info_tab(tab_view, comic, session, thumbnail_generator)
+    create_info_tab(tab_view, comic, session, thumbnail_generator, main_window)
     create_pages_tab(tab_view, comic, session, thumbnail_generator, main_window)
 
     scrolled.set_child(tab_container)
     return scrolled
 
 
-def create_info_tab(tab_view, comic, session, thumbnail_generator):
+def create_info_tab(tab_view, comic, session, thumbnail_generator, main_window):
     """Crear pestaña de información del cómic"""
     info_scroll = Gtk.ScrolledWindow()
     info_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -74,7 +74,7 @@ def create_info_tab(tab_view, comic, session, thumbnail_generator):
     info_box.set_margin_bottom(20)
 
     # Header section con imagen y datos básicos
-    create_comic_header_section(info_box, comic, session, thumbnail_generator)
+    create_comic_header_section(info_box, comic, session, thumbnail_generator, main_window)
 
     # Información detallada
     create_comic_info_section(info_box, comic)
@@ -130,28 +130,16 @@ def create_pages_tab(tab_view, comic, session, thumbnail_generator, main_window)
     GLib.idle_add(load_comic_pages_auto, comic, session, thumbnail_generator, main_window, pages_flow_box)
 
 
-def create_comic_header_section(parent, comic, session, thumbnail_generator):
+def create_comic_header_section(parent, comic, session, thumbnail_generator, main_window):
     """Crear sección de cabecera con imagen y datos básicos"""
     header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
     header_box.set_margin_bottom(20)
     header_box.set_halign(Gtk.Align.FILL)
     header_box.set_hexpand(True)
 
-    # Contenedor de imagen
-    image_container = Gtk.Box()
-    image_container.set_size_request(200, 280)
-
-    # Imagen del cómic
-    comic_image = Gtk.Picture()
-    comic_image.set_can_shrink(True)
-    comic_image.set_keep_aspect_ratio(True)
-    comic_image.set_content_fit(Gtk.ContentFit.CONTAIN)
-    comic_image.add_css_class("comic-detail-image")
-
-    # Cargar imagen del cómic
-    load_comic_image(comic_image, comic)
-
-    image_container.append(comic_image)
+    # Contenedor de imagen con carrusel para múltiples covers
+    image_container = create_covers_carousel(comic, session)
+    image_container.set_size_request(120, 160)
 
     # Información básica
     info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
@@ -169,13 +157,110 @@ def create_comic_header_section(parent, comic, session, thumbnail_generator):
     # Información básica en grid
     info_grid = create_comic_info_grid(comic, session)
 
+    # Botones de acción
+    action_box = create_comic_action_buttons(comic, main_window)
+
     info_box.append(title_label)
     info_box.append(info_grid)
+    info_box.append(action_box)
 
     header_box.append(image_container)
     header_box.append(info_box)
 
     parent.append(header_box)
+
+
+def create_comic_action_buttons(comic, main_window):
+    """Crear botones de acción para el comic"""
+    action_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+    action_box.set_margin_top(15)
+    action_box.set_halign(Gtk.Align.START)
+
+    # Botón Leer Comic
+    read_button = Gtk.Button()
+    read_button.set_label("📖 Leer Comic")
+    read_button.add_css_class("suggested-action")
+    read_button.set_tooltip_text("Abrir con el lector integrado")
+
+    def on_read_comic(button):
+        try:
+            # Verificar si el lector está disponible
+            try:
+                from comic_reader import open_comic_with_reader
+
+                # Verificar que el archivo existe
+                if not os.path.exists(comic.path):
+                    if hasattr(main_window, 'show_toast'):
+                        main_window.show_toast("Archivo de comic no encontrado", "error")
+                    return
+
+                # Obtener nombre del comic para el título
+                comic_title = os.path.basename(comic.path)
+
+                # Abrir el lector con configuración de scroll
+                scroll_threshold = None
+                scroll_cooldown = None
+                if hasattr(main_window, 'config'):
+                    scroll_threshold = main_window.config.scroll_threshold
+                    scroll_cooldown = main_window.config.scroll_cooldown
+
+                reader = open_comic_with_reader(
+                    comic.path,
+                    comic_title,
+                    main_window,
+                    scroll_threshold=scroll_threshold,
+                    scroll_cooldown=scroll_cooldown
+                )
+
+                if reader:
+                    if hasattr(main_window, 'show_toast'):
+                        main_window.show_toast("Abriendo lector de comics...", "info")
+                else:
+                    if hasattr(main_window, 'show_toast'):
+                        main_window.show_toast("Error abriendo lector de comics", "error")
+
+            except ImportError:
+                if hasattr(main_window, 'show_toast'):
+                    main_window.show_toast("Lector de comics no disponible", "error")
+
+        except Exception as e:
+            print(f"Error abriendo lector: {e}")
+            if hasattr(main_window, 'show_toast'):
+                main_window.show_toast(f"Error abriendo lector: {e}", "error")
+
+    read_button.connect("clicked", on_read_comic)
+    action_box.append(read_button)
+
+    # Botón Abrir Carpeta
+    folder_button = Gtk.Button()
+    folder_button.set_label("📁 Abrir Carpeta")
+    folder_button.set_tooltip_text("Mostrar archivo en el explorador")
+
+    def on_open_folder(button):
+        try:
+            import subprocess
+            import sys
+            folder_path = os.path.dirname(comic.path)
+
+            if sys.platform == "linux":
+                subprocess.run(["xdg-open", folder_path])
+            elif sys.platform == "darwin":
+                subprocess.run(["open", folder_path])
+            elif sys.platform == "win32":
+                subprocess.run(["explorer", folder_path])
+
+            if hasattr(main_window, 'show_toast'):
+                main_window.show_toast("Carpeta abierta", "info")
+
+        except Exception as e:
+            print(f"Error abriendo carpeta: {e}")
+            if hasattr(main_window, 'show_toast'):
+                main_window.show_toast(f"Error abriendo carpeta: {e}", "error")
+
+    folder_button.connect("clicked", on_open_folder)
+    action_box.append(folder_button)
+
+    return action_box
 
 
 def create_comic_info_grid(comic, session):
@@ -250,6 +335,121 @@ def create_comic_info_section(parent, comic):
         parent.append(info_frame)
 
 
+def create_covers_carousel(comic, session):
+    """Crear carrusel de covers para el comic"""
+    try:
+        # Contenedor principal del carrusel
+        carousel_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+
+        # Obtener covers de ComicbookInfo si existe
+        covers = []
+        if comic.id_comicbook_info:
+            try:
+                from entidades.comicbook_info_model import ComicbookInfo
+                comicbook_info = session.query(ComicbookInfo).get(comic.id_comicbook_info)
+                if comicbook_info and comicbook_info.portadas:
+                    covers = list(comicbook_info.portadas)
+            except Exception as e:
+                print(f"Error obteniendo covers de ComicbookInfo: {e}")
+
+        # Si no hay covers de ComicbookInfo, usar la cover del comic
+        if not covers:
+            covers = [None]  # Placeholder para cover principal del comic
+
+        # Crear carrusel solo si hay múltiples covers
+        if len(covers) > 1:
+            # AdwCarousel para múltiples covers
+            carousel = Adw.Carousel()
+            carousel.set_size_request(120, 160)
+            carousel.set_allow_mouse_drag(True)
+            carousel.set_allow_scroll_wheel(True)
+
+            # Agregar cada cover al carrusel
+            for i, cover in enumerate(covers):
+                cover_image = Gtk.Picture()
+                cover_image.set_can_shrink(True)
+                cover_image.set_keep_aspect_ratio(True)
+                cover_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+                cover_image.set_size_request(120, 160)
+                cover_image.add_css_class("comic-detail-image")
+
+                # Cargar imagen de la cover
+                load_cover_image(cover_image, cover, comic)
+
+                carousel.append(cover_image)
+
+            # Indicador de páginas (dots)
+            dots = Adw.CarouselIndicatorDots()
+            dots.set_carousel(carousel)
+
+            # Label con cantidad de covers
+            cover_count_label = Gtk.Label()
+            cover_count_label.set_text(f"{len(covers)} covers")
+            cover_count_label.add_css_class("dim-label")
+            cover_count_label.add_css_class("caption")
+            cover_count_label.set_halign(Gtk.Align.CENTER)
+
+            carousel_container.append(carousel)
+            carousel_container.append(dots)
+            carousel_container.append(cover_count_label)
+
+        else:
+            # Solo una cover: mostrar imagen simple
+            single_image = Gtk.Picture()
+            single_image.set_can_shrink(True)
+            single_image.set_keep_aspect_ratio(True)
+            single_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+            single_image.set_size_request(120, 160)
+            single_image.add_css_class("comic-detail-image")
+
+            # Cargar la única cover disponible
+            cover = covers[0] if covers else None
+            load_cover_image(single_image, cover, comic)
+
+            carousel_container.append(single_image)
+
+        return carousel_container
+
+    except Exception as e:
+        print(f"Error creando carrusel de covers: {e}")
+        # Fallback: crear imagen simple
+        return create_simple_cover_image(comic)
+
+def create_simple_cover_image(comic):
+    """Crear imagen simple como fallback"""
+    image_container = Gtk.Box()
+    comic_image = Gtk.Picture()
+    comic_image.set_can_shrink(True)
+    comic_image.set_keep_aspect_ratio(True)
+    comic_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+    comic_image.set_size_request(120, 160)
+    comic_image.add_css_class("comic-detail-image")
+
+    load_comic_image(comic_image, comic)
+    image_container.append(comic_image)
+    return image_container
+
+def load_cover_image(cover_image, cover, comic):
+    """Cargar imagen de cover (de ComicbookInfo o del comic)"""
+    try:
+        if cover is not None:
+            # Es una cover de ComicbookInfo, usar ruta local
+            cover_path = cover.obtener_ruta_local()
+            if cover_path and os.path.exists(cover_path):
+                if not cover_path.endswith("Comic_sin_caratula.png"):
+                    cover_image.set_filename(cover_path)
+                else:
+                    set_comic_placeholder_image(cover_image)
+            else:
+                set_comic_placeholder_image(cover_image)
+        else:
+            # Usar cover del comic (fallback)
+            load_comic_image(cover_image, comic)
+
+    except Exception as e:
+        print(f"Error cargando cover: {e}")
+        set_comic_placeholder_image(cover_image)
+
 def load_comic_image(comic_image, comic):
     """Cargar imagen del cómic"""
     try:
@@ -269,7 +469,7 @@ def load_comic_image(comic_image, comic):
 def set_comic_placeholder_image(comic_image):
     """Configurar imagen placeholder para cómic"""
     try:
-        pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 200, 280)
+        pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 100, 140)
         pixbuf.fill(0x3584E4FF)  # Azul para cómics
         texture = Gdk.Texture.new_for_pixbuf(pixbuf)
         comic_image.set_paintable(texture)

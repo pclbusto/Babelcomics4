@@ -27,6 +27,7 @@ try:
     from repositories.comicbook_repository_gtk4 import ComicbookRepository
     from repositories.volume_repository import VolumeRepository
     from repositories.publisher_repository import PublisherRepository
+    from repositories.setup_repository import SetupRepository
     
     # Importar ComicbookInfo si está disponible
     try:
@@ -82,6 +83,15 @@ try:
 except ImportError as e:
     print(f"Error importando página de detalle de cómic: {e}")
     COMIC_DETAIL_AVAILABLE = False
+
+# Importar lector de comics
+try:
+    from comic_reader import open_comic_with_reader
+    print("Lector de comics importado correctamente")
+    COMIC_READER_AVAILABLE = True
+except ImportError as e:
+    print(f"Error importando lector de comics: {e}")
+    COMIC_READER_AVAILABLE = False
 
 
 class ComicManagerWindow(Adw.ApplicationWindow):
@@ -151,6 +161,10 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             self.comic_repository = ComicbookRepository(self.session)
             self.volume_repository = VolumeRepository(self.session)
             self.publisher_repository = PublisherRepository(self.session)
+            self.setup_repository = SetupRepository(self.session)
+
+            # Cargar configuración
+            self.config = self.setup_repository.obtener_o_crear_configuracion()
             
             print(f"Base de datos inicializada: {db_path}")
             
@@ -192,6 +206,25 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         regenerate_cover_action = Gio.SimpleAction.new("regenerate_cover", GLib.VariantType.new("s"))
         regenerate_cover_action.connect("activate", self.on_regenerate_cover_action)
         self.add_action(regenerate_cover_action)
+
+        # Acción para abrir lector de comics
+        read_comic_action = Gio.SimpleAction.new("read_comic", GLib.VariantType.new("s"))
+        read_comic_action.connect("activate", self.on_read_comic_action)
+        self.add_action(read_comic_action)
+
+        # Acción para actualizar volumen desde ComicVine
+        update_volume_action = Gio.SimpleAction.new("update_volume", GLib.VariantType.new("s"))
+        update_volume_action.connect("activate", self.on_update_volume_action)
+        self.add_action(update_volume_action)
+
+        # Acciones para multiselección
+        catalog_selected_action = Gio.SimpleAction.new("catalog_selected", None)
+        catalog_selected_action.connect("activate", lambda action, param: self.on_catalog_selected(None))
+        self.add_action(catalog_selected_action)
+
+        trash_selected_action = Gio.SimpleAction.new("trash_selected", None)
+        trash_selected_action.connect("activate", lambda action, param: self.on_trash_selected(None))
+        self.add_action(trash_selected_action)
         
     def setup_keyboard_shortcuts(self):
         """Configurar atajos de teclado"""
@@ -210,10 +243,79 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         delete.set_trigger(Gtk.ShortcutTrigger.parse_string("Delete"))
         delete.set_action(Gtk.CallbackAction.new(self.on_delete_pressed))
         
+        # Ctrl+M para alternar modo multiselección
+        toggle_multiselect = Gtk.Shortcut()
+        toggle_multiselect.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>m"))
+        toggle_multiselect.set_action(Gtk.CallbackAction.new(self.on_toggle_multiselect))
+
+        # Shift+Ctrl+C para abrir catalogación
+        open_cataloging = Gtk.Shortcut()
+        open_cataloging.set_trigger(Gtk.ShortcutTrigger.parse_string("<Shift><Control>c"))
+        open_cataloging.set_action(Gtk.CallbackAction.new(self.on_open_cataloging_shortcut))
+
+        # F5 para refresh/actualizar
+        refresh = Gtk.Shortcut()
+        refresh.set_trigger(Gtk.ShortcutTrigger.parse_string("F5"))
+        refresh.set_action(Gtk.CallbackAction.new(self.on_refresh_shortcut))
+
+        # Ctrl+F para enfocar búsqueda
+        focus_search = Gtk.Shortcut()
+        focus_search.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>f"))
+        focus_search.set_action(Gtk.CallbackAction.new(self.on_focus_search_shortcut))
+
+        # F1 para mostrar ayuda de shortcuts
+        show_help = Gtk.Shortcut()
+        show_help.set_trigger(Gtk.ShortcutTrigger.parse_string("F1"))
+        show_help.set_action(Gtk.CallbackAction.new(self.on_show_shortcuts_help))
+
+        # Ctrl+D para abrir ComicVine
+        open_comicvine = Gtk.Shortcut()
+        open_comicvine.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>d"))
+        open_comicvine.set_action(Gtk.CallbackAction.new(self.on_open_comicvine_shortcut))
+
+        # Shift+Ctrl+F para filtros avanzados
+        open_filters = Gtk.Shortcut()
+        open_filters.set_trigger(Gtk.ShortcutTrigger.parse_string("<Shift><Control>f"))
+        open_filters.set_action(Gtk.CallbackAction.new(self.on_open_filters_shortcut))
+
+        # Números 1-4 para cambiar vistas
+        view1 = Gtk.Shortcut()
+        view1.set_trigger(Gtk.ShortcutTrigger.parse_string("1"))
+        view1.set_action(Gtk.CallbackAction.new(lambda w, a: self.on_switch_view_shortcut("comics")))
+
+        view2 = Gtk.Shortcut()
+        view2.set_trigger(Gtk.ShortcutTrigger.parse_string("2"))
+        view2.set_action(Gtk.CallbackAction.new(lambda w, a: self.on_switch_view_shortcut("volumes")))
+
+        view3 = Gtk.Shortcut()
+        view3.set_trigger(Gtk.ShortcutTrigger.parse_string("3"))
+        view3.set_action(Gtk.CallbackAction.new(lambda w, a: self.on_switch_view_shortcut("publishers")))
+
+        view4 = Gtk.Shortcut()
+        view4.set_trigger(Gtk.ShortcutTrigger.parse_string("4"))
+        view4.set_action(Gtk.CallbackAction.new(lambda w, a: self.on_switch_view_shortcut("arcs")))
+
+        # Space para toggle selección en modo multiselección (TEMPORALMENTE DESHABILITADO)
+        # toggle_selection = Gtk.Shortcut()
+        # toggle_selection.set_trigger(Gtk.ShortcutTrigger.parse_string("space"))
+        # toggle_selection.set_action(Gtk.CallbackAction.new(self.on_space_toggle_selection))
+
         controller = Gtk.ShortcutController()
         controller.add_shortcut(select_all)
         controller.add_shortcut(escape)
         controller.add_shortcut(delete)
+        controller.add_shortcut(toggle_multiselect)
+        controller.add_shortcut(open_cataloging)
+        controller.add_shortcut(refresh)
+        controller.add_shortcut(focus_search)
+        controller.add_shortcut(show_help)
+        controller.add_shortcut(open_comicvine)
+        controller.add_shortcut(open_filters)
+        controller.add_shortcut(view1)
+        controller.add_shortcut(view2)
+        controller.add_shortcut(view3)
+        controller.add_shortcut(view4)
+        # controller.add_shortcut(toggle_selection)  # TEMPORALMENTE DESHABILITADO
         
         self.add_controller(controller)
             
@@ -265,7 +367,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Botón de selección múltiple
         self.selection_button = Gtk.ToggleButton()
         self.selection_button.set_icon_name("object-select-symbolic")
-        self.selection_button.set_tooltip_text("Modo selección")
+        self.selection_button.set_tooltip_text("Modo selección (Ctrl+M)")
         self.selection_button.connect("toggled", self.on_selection_mode_toggled)
         header.pack_start(self.selection_button)
 
@@ -285,7 +387,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         if CATALOGING_AVAILABLE:
             catalog_button = Gtk.Button()
             catalog_button.set_icon_name("view-grid-symbolic")
-            catalog_button.set_tooltip_text("Catalogar seleccionados")
+            catalog_button.set_tooltip_text("Catalogar seleccionados (Shift+Ctrl+C)")
             catalog_button.connect("clicked", self.on_catalog_selected)
             self.action_box.append(catalog_button)
 
@@ -730,30 +832,8 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Confirmar movimiento a papelera"""
         if response == "confirm":
             selected_items = self.selection_manager.get_selected_items()
-            moved_count = 0
-            
-            for item_id in selected_items:
-                try:
-                    if self.current_view == "comics":
-                        comic = self.session.query(Comicbook).get(item_id)
-                        if comic:
-                            comic.en_papelera = True
-                            moved_count += 1
-                            
-                    # Agregar lógica para otros tipos si es necesario
-                    
-                except Exception as e:
-                    print(f"Error moviendo item {item_id} a papelera: {e}")
-                    
-            if moved_count > 0:
-                self.session.commit()
-                self.show_toast(f"{moved_count} items movidos a papelera", "success")
-                # Actualizar vista
-                self.clear_content()
-                self.load_items_batch()
-            else:
-                self.show_toast("No se pudieron mover items a papelera", "error")
-                
+            self.move_items_to_trash(list(selected_items))
+
         # Salir del modo selección
         self.selection_button.set_active(False)
         
@@ -761,21 +841,40 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Mostrar popover de acciones para un item"""
         popover = Gtk.PopoverMenu()
         popover.set_parent(card_widget)
-        
+
+        # Verificar si hay multiselección activa
+        has_multiselection = self.selection_manager.selection_mode and self.selection_manager.get_selection_count() > 0
+        selected_count = self.selection_manager.get_selection_count()
+
         # Crear menú
         menu = Gio.Menu()
-        
-        if item_type == "comics" and CATALOGING_AVAILABLE:
-            menu.append("Catalogar", f"win.catalog_item('{item_id}')")
 
-        if item_type == "comics":
-            menu.append("Regenerar Portada", f"win.regenerate_cover('{item_id}')")
+        if has_multiselection:
+            # Menú para multiselección
+            if item_type == "comics" and CATALOGING_AVAILABLE:
+                menu.append(f"Catalogar {selected_count} comics", "win.catalog_selected")
 
-        menu.append("Mover a papelera", f"win.trash_item('{item_id}')")
-        menu.append("Ver detalles", f"win.show_details('{item_id}')")
-        
+            menu.append(f"Mover {selected_count} items a papelera", "win.trash_selected")
+
+        else:
+            # Menú para item individual
+            if item_type == "comics" and COMIC_READER_AVAILABLE:
+                menu.append("Leer Comic", f"win.read_comic('{item_id}')")
+
+            if item_type == "comics" and CATALOGING_AVAILABLE:
+                menu.append("Catalogar", f"win.catalog_item('{item_id}')")
+
+            if item_type == "comics":
+                menu.append("Regenerar Portada", f"win.regenerate_cover('{item_id}')")
+
+            if item_type == "volumes":
+                menu.append("Actualizar desde ComicVine", f"win.update_volume('{item_id}')")
+
+            menu.append("Mover a papelera", f"win.trash_item('{item_id}')")
+            menu.append("Ver detalles", f"win.show_details('{item_id}')")
+
         popover.set_menu_model(menu)
-        
+
         # Posicionar el popover
         rect = Gdk.Rectangle()
         rect.x = int(x)
@@ -783,7 +882,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         rect.width = 1
         rect.height = 1
         popover.set_pointing_to(rect)
-        
+
         popover.popup()
         
     def on_catalog_item_action(self, action, parameter):
@@ -807,7 +906,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         item_id = parameter.get_string()
         try:
             item_id_int = int(item_id)
-            self.move_single_item_to_trash(item_id_int)
+            self.move_items_to_trash(item_id_int)
         except ValueError:
             self.show_toast("ID de item inválido", "error")
             
@@ -825,6 +924,45 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             self.regenerate_comic_cover(item_id_int)
         except ValueError:
             self.show_toast("ID de item inválido", "error")
+
+    def on_read_comic_action(self, action, parameter):
+        """Abrir comic con el lector integrado"""
+        if not COMIC_READER_AVAILABLE:
+            self.show_toast("Lector de comics no disponible", "error")
+            return
+
+        item_id = parameter.get_string()
+        try:
+            item_id_int = int(item_id)
+            self.open_comic_reader(item_id_int)
+        except ValueError:
+            self.show_toast("ID de item inválido", "error")
+
+    def on_update_volume_action(self, action, parameter):
+        """Actualizar volumen desde ComicVine"""
+        item_id = parameter.get_string()
+        try:
+            item_id_int = int(item_id)
+
+            # Obtener el volumen desde la base de datos
+            from entidades.volume_model import Volume
+            volume = self.session.query(Volume).filter(Volume.id_volume == item_id_int).first()
+
+            if not volume:
+                self.show_toast("Volumen no encontrado", "error")
+                return
+
+            # Importar la función de actualización
+            from volume_detail_page import update_volume_from_comicvine
+
+            # Llamar a la función de actualización (sin tab_view ya que es desde el menú contextual)
+            update_volume_from_comicvine(volume, self.session, self, None)
+
+        except ValueError:
+            self.show_toast("ID de volumen inválido", "error")
+        except Exception as e:
+            print(f"Error actualizando volumen: {e}")
+            self.show_toast(f"Error actualizando volumen: {str(e)}", "error")
 
     def on_show_about_action(self, action, parameter):
         """Mostrar diálogo Acerca de (acción)"""
@@ -847,24 +985,42 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             print(f"Error importando ventana de configuración: {e}")
             self.show_toast("Error cargando configuración", "error")
         
-    def move_single_item_to_trash(self, item_id):
-        """Mover un solo item a la papelera"""
+    def move_items_to_trash(self, item_ids):
+        """Mover items a papelera (acepta lista o ID único)"""
+        # Si es un solo ID, convertir a lista
+        if isinstance(item_ids, int):
+            item_ids = [item_ids]
+
+        if not item_ids:
+            self.show_toast("No hay items para mover", "warning")
+            return
+
+        moved_count = 0
+
         try:
-            if self.current_view == "comics":
-                comic = self.session.query(Comicbook).get(item_id)
-                if comic:
-                    comic.en_papelera = True
-                    self.session.commit()
+            for item_id in item_ids:
+                if self.current_view == "comics":
+                    comic = self.session.query(Comicbook).get(item_id)
+                    if comic:
+                        comic.en_papelera = True
+                        moved_count += 1
+                # Agregar lógica para otros tipos de items si es necesario
+
+            if moved_count > 0:
+                self.session.commit()
+                if moved_count == 1:
                     self.show_toast("Comic movido a papelera", "success")
-                    # Refrescar vista
-                    self.clear_content()
-                    self.load_items_batch()
                 else:
-                    self.show_toast("Comic no encontrado", "error")
-            # Agregar lógica para otros tipos de items si es necesario
-            
+                    self.show_toast(f"{moved_count} items movidos a papelera", "success")
+
+                # Refrescar vista
+                self.clear_content()
+                self.load_items_batch()
+            else:
+                self.show_toast("No se encontraron items válidos", "error")
+
         except Exception as e:
-            print(f"Error moviendo item a papelera: {e}")
+            print(f"Error moviendo items a papelera: {e}")
             self.show_toast(f"Error: {e}", "error")
 
     def regenerate_comic_cover(self, comic_id):
@@ -923,6 +1079,53 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             traceback.print_exc()
             self.show_toast(f"Error regenerando portada: {e}", "error")
 
+    def open_comic_reader(self, comic_id):
+        """Abrir comic con el lector integrado"""
+        try:
+            print(f"\n=== ABRIENDO LECTOR PARA COMIC {comic_id} ===")
+
+            # Obtener el comic de la base de datos
+            comic = self.session.query(Comicbook).get(comic_id)
+            if not comic:
+                self.show_toast("Comic no encontrado", "error")
+                return
+
+            print(f"Comic encontrado: {comic.nombre_archivo}")
+            print(f"Ruta del archivo: {comic.path}")
+
+            # Verificar que el archivo existe
+            if not os.path.exists(comic.path):
+                self.show_toast("Archivo de comic no encontrado", "error")
+                return
+
+            print(f"Archivo existe: ✓")
+
+            # Obtener nombre del comic para el título
+            comic_title = os.path.basename(comic.path)
+
+            # Abrir el lector
+            print(f"Abriendo lector para: {comic_title}")
+            reader = open_comic_with_reader(
+                comic.path,
+                comic_title,
+                self,
+                scroll_threshold=self.config.scroll_threshold,
+                scroll_cooldown=self.config.scroll_cooldown
+            )
+
+            if reader:
+                self.show_toast("Abriendo lector de comics...", "info")
+                print(f"✓ Lector abierto exitosamente")
+            else:
+                self.show_toast("Error abriendo lector de comics", "error")
+                print(f"✗ Error abriendo lector")
+
+        except Exception as e:
+            print(f"Error abriendo lector: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_toast(f"Error abriendo lector: {e}", "error")
+
     def on_select_all(self, widget, args):
         """Seleccionar todos los items en modo selección"""
         if self.selection_manager.selection_mode:
@@ -944,7 +1147,137 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             self.on_trash_selected(None)
             return True
         return False
-        
+
+    def on_toggle_multiselect(self, widget, args):
+        """Alternar modo multiselección con Ctrl+M"""
+        current_state = self.selection_button.get_active()
+        self.selection_button.set_active(not current_state)
+
+        if not current_state:
+            self.show_toast("Modo multiselección activado", "info")
+        else:
+            self.show_toast("Modo multiselección desactivado", "info")
+
+        return True
+
+    def on_open_cataloging_shortcut(self, widget, args):
+        """Abrir catalogación con Ctrl+Shift+C"""
+        # Solo funciona si estamos en vista de comics
+        if self.current_view != "comics":
+            self.show_toast("La catalogación solo está disponible para comics", "warning")
+            return True
+
+        # Si hay selección múltiple activa, catalogar los seleccionados
+        if self.selection_manager.selection_mode:
+            selected_items = self.selection_manager.get_selected_items()
+            if selected_items:
+                comic_ids = [int(item_id) for item_id in selected_items]
+                self.show_toast(f"Abriendo catalogación para {len(comic_ids)} comics", "info")
+                self.open_cataloging_window(comic_ids)
+            else:
+                self.show_toast("No hay comics seleccionados para catalogar", "warning")
+        else:
+            # Si no hay selección múltiple, activarla primero
+            self.selection_button.set_active(True)
+            self.show_toast("Activa la multiselección y selecciona comics para catalogar", "info")
+
+        return True
+
+    def on_refresh_shortcut(self, widget, args):
+        """Actualizar contenido con F5"""
+        self.on_refresh_clicked(None)
+        self.show_toast("Contenido actualizado", "info")
+        return True
+
+    def on_focus_search_shortcut(self, widget, args):
+        """Enfocar campo de búsqueda con Ctrl+F"""
+        self.search_entry.grab_focus()
+        return True
+
+    def on_show_shortcuts_help(self, widget, args):
+        """Mostrar ventana de ayuda de shortcuts con F1"""
+        try:
+            from shortcuts_help_window import create_shortcuts_help_window
+            help_window = create_shortcuts_help_window(self)
+            help_window.present()
+        except ImportError as e:
+            print(f"Error importando ventana de ayuda: {e}")
+            self.show_toast("Error abriendo ayuda de shortcuts", "error")
+        return True
+
+    def on_open_comicvine_shortcut(self, widget, args):
+        """Abrir ComicVine con Ctrl+D"""
+        try:
+            from comicvine_download_window import ComicVineDownloadWindow
+            comicvine_window = ComicVineDownloadWindow(self, self.session)
+            comicvine_window.present()
+            self.show_toast("Ventana ComicVine abierta", "info")
+        except ImportError as e:
+            print(f"Error importando ComicVine: {e}")
+            self.show_toast("Error abriendo ComicVine", "error")
+        return True
+
+    def on_open_filters_shortcut(self, widget, args):
+        """Abrir filtros avanzados con Ctrl+Shift+F"""
+        try:
+            from filter_dialog import AdvancedFilterDialog
+            filter_dialog = AdvancedFilterDialog(self, self.current_view)
+            filter_dialog.connect('filters-applied', self.on_filters_applied)
+            filter_dialog.present()
+            self.show_toast("Filtros avanzados abiertos", "info")
+        except ImportError as e:
+            print(f"Error importando filtros: {e}")
+            self.show_toast("Error abriendo filtros avanzados", "error")
+        return True
+
+    def on_space_toggle_selection(self, widget, args):
+        """Toggle selección del item actual con Espacio (solo en modo multiselección)"""
+        # Solo funciona en modo multiselección
+        if not self.selection_manager.selection_mode:
+            return False
+
+        # Obtener el widget con foco o el primer widget visible
+        focused_widget = self.get_focused_selectable_card()
+        if focused_widget and hasattr(focused_widget, 'item_id'):
+            # Toggle la selección del item
+            if self.selection_manager.is_selected(focused_widget.item_id):
+                self.selection_manager.deselect_item(focused_widget.item_id)
+                self.show_toast("Item deseleccionado", "info")
+            else:
+                self.selection_manager.select_item(focused_widget.item_id)
+                self.show_toast("Item seleccionado", "info")
+            return True
+        else:
+            self.show_toast("No hay item activo para seleccionar", "warning")
+            return False
+
+    def get_focused_selectable_card(self):
+        """Obtener el SelectableCard que tiene el foco o está destacado"""
+        # Buscar en el flow_box el primer card visible o con foco
+        if hasattr(self, 'flow_box'):
+            child = self.flow_box.get_first_child()
+            while child:
+                if hasattr(child, 'get_child'):
+                    selectable_card = child.get_child()
+                    if hasattr(selectable_card, 'item_id'):
+                        # Retornar el primero por ahora
+                        # En el futuro se podría implementar navegación con flechas
+                        return selectable_card
+                child = child.get_next_sibling()
+        return None
+
+    def on_switch_view_shortcut(self, view_name):
+        """Cambiar vista con números 1-4"""
+        if hasattr(self, 'nav_rows') and view_name in self.nav_rows:
+            button = self.nav_rows[view_name]
+            if button.get_sensitive():
+                # Simular click del botón de navegación
+                self.on_navigation_button_clicked(button, view_name)
+                self.show_toast(f"Vista cambiada a {view_name.title()}", "info")
+            else:
+                self.show_toast(f"Vista {view_name.title()} no disponible", "warning")
+        return True
+
     def open_cataloging_window(self, comic_ids):
         try:
             from cataloging_window_improved import create_improved_cataloging_window
@@ -988,11 +1321,12 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             # Aplicar filtro de búsqueda usando estado de la vista actual
             search_text = self.search_states["volumes"]["text"]
             if search_text:
-                self.volume_repository.filtrar(nombre=search_text)
-                
+                # Soporte para búsquedas avanzadas con "+" y "-"
+                self.apply_advanced_volume_search(search_text)
+
             # Aplicar filtros avanzados
             self.apply_volume_filters()
-            
+
             volumes = self.volume_repository.obtener_pagina(0, 1000, "nombre", "asc")
             print(f"Obtenidos {len(volumes)} volúmenes")
             return volumes
@@ -1020,23 +1354,65 @@ class ComicManagerWindow(Adw.ApplicationWindow):
     def apply_advanced_comic_search(self, search_text):
         """Aplicar búsqueda avanzada para comics con soporte para operadores"""
         try:
-            # Si contiene "+", es una búsqueda con múltiples términos
-            if "+" in search_text:
-                terms = [term.strip() for term in search_text.split("+") if term.strip()]
-                print(f"🔍 Búsqueda avanzada con términos: {terms}")
+            # Si contiene "+" o "-", es una búsqueda con operadores
+            if "+" in search_text or "-" in search_text:
+                print(f"🔍 Búsqueda avanzada con operadores: {search_text}")
 
-                # Aplicar cada término como filtro AND
-                for term in terms:
-                    # Si el término es numérico, buscar en año o número
-                    if term.isdigit():
-                        # Intentar filtrar por año o número de issue
-                        year = int(term)
-                        self.comic_repository.filtrar_año_o_numero(year)
-                        print(f"  - Filtrando por año/número: {year}")
+                # Separar términos por operadores
+                include_terms = []
+                exclude_terms = []
+
+                # Primero dividir por "+" para obtener segmentos
+                plus_segments = search_text.split("+")
+
+                for segment in plus_segments:
+                    segment = segment.strip()
+                    if not segment:
+                        continue
+
+                    # Si el segmento contiene "-", dividirlo
+                    if "-" in segment:
+                        # Dividir por "-" y procesar
+                        minus_parts = segment.split("-")
+                        # El primer elemento es inclusión, el resto son exclusiones
+                        if minus_parts[0].strip():
+                            include_terms.append(minus_parts[0].strip())
+
+                        for exclude_part in minus_parts[1:]:
+                            if exclude_part.strip():
+                                exclude_terms.append(exclude_part.strip())
                     else:
-                        # Buscar en path (nombre del archivo)
-                        self.comic_repository.filtrar(path=term)
-                        print(f"  - Filtrando por texto: {term}")
+                        # Término simple de inclusión
+                        include_terms.append(segment)
+
+                print(f"  📥 Términos a incluir: {include_terms}")
+                print(f"  📤 Términos a excluir: {exclude_terms}")
+
+                # Separar términos numéricos y de texto para inclusión
+                numeric_include = [int(term) for term in include_terms if term.isdigit()]
+                text_include = [term for term in include_terms if not term.isdigit()]
+
+                # Separar términos numéricos y de texto para exclusión
+                numeric_exclude = [int(term) for term in exclude_terms if term.isdigit()]
+                text_exclude = [term for term in exclude_terms if not term.isdigit()]
+
+                # Aplicar filtros de inclusión
+                for year in numeric_include:
+                    self.comic_repository.filtrar_año_o_numero(year)
+                    print(f"  ✅ Incluyendo año/número: {year}")
+
+                if text_include:
+                    self.comic_repository.filtrar_multiple_path_terms(text_include)
+                    print(f"  ✅ Incluyendo términos (AND): {text_include}")
+
+                # Aplicar filtros de exclusión
+                if text_exclude:
+                    self.comic_repository.filtrar_path_exclude_terms(text_exclude)
+                    print(f"  ❌ Excluyendo términos: {text_exclude}")
+
+                # Para números en exclusión, usar filtro especial si es necesario
+                # (por ahora solo manejamos texto en exclusión)
+
             else:
                 # Búsqueda simple
                 self.comic_repository.filtrar(path=search_text)
@@ -1046,6 +1422,74 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             print(f"Error en búsqueda avanzada: {e}")
             # Fallback a búsqueda simple
             self.comic_repository.filtrar(path=search_text)
+
+    def apply_advanced_volume_search(self, search_text):
+        """Aplicar búsqueda avanzada para volúmenes con soporte para operadores"""
+        try:
+            # Si contiene "+" o "-", es una búsqueda con operadores
+            if "+" in search_text or "-" in search_text:
+                print(f"🔍 Búsqueda avanzada de volúmenes con operadores: {search_text}")
+
+                # Separar términos por operadores
+                include_terms = []
+                exclude_terms = []
+
+                # Primero dividir por "+" para obtener segmentos
+                plus_segments = search_text.split("+")
+
+                for segment in plus_segments:
+                    segment = segment.strip()
+                    if not segment:
+                        continue
+
+                    # Si el segmento contiene "-", dividirlo
+                    if "-" in segment:
+                        # Dividir por "-" y procesar
+                        minus_parts = segment.split("-")
+                        # El primer elemento es inclusión, el resto son exclusiones
+                        if minus_parts[0].strip():
+                            include_terms.append(minus_parts[0].strip())
+
+                        for exclude_part in minus_parts[1:]:
+                            if exclude_part.strip():
+                                exclude_terms.append(exclude_part.strip())
+                    else:
+                        # Término simple de inclusión
+                        include_terms.append(segment)
+
+                print(f"  📥 Términos a incluir en volúmenes: {include_terms}")
+                print(f"  📤 Términos a excluir en volúmenes: {exclude_terms}")
+
+                # Separar términos numéricos y de texto para inclusión
+                numeric_include = [int(term) for term in include_terms if term.isdigit()]
+                text_include = [term for term in include_terms if not term.isdigit()]
+
+                # Separar términos numéricos y de texto para exclusión
+                text_exclude = [term for term in exclude_terms if not term.isdigit()]
+
+                # Aplicar filtros de inclusión
+                for year in numeric_include:
+                    self.volume_repository.filtrar_año_o_numero(year)
+                    print(f"  ✅ Incluyendo año/número en volumen: {year}")
+
+                if text_include:
+                    self.volume_repository.filtrar_multiple_name_terms(text_include)
+                    print(f"  ✅ Incluyendo términos en volumen (AND): {text_include}")
+
+                # Aplicar filtros de exclusión
+                if text_exclude:
+                    self.volume_repository.filtrar_name_exclude_terms(text_exclude)
+                    print(f"  ❌ Excluyendo términos en volumen: {text_exclude}")
+
+            else:
+                # Búsqueda simple
+                self.volume_repository.filtrar(nombre=search_text)
+                print(f"🔍 Búsqueda simple de volumen: {search_text}")
+
+        except Exception as e:
+            print(f"Error en búsqueda avanzada de volúmenes: {e}")
+            # Fallback a búsqueda simple
+            self.volume_repository.filtrar(nombre=search_text)
 
     def apply_comic_filters(self):
         """Aplicar filtros para comics"""
@@ -1078,13 +1522,30 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         
     def apply_volume_filters(self):
         """Aplicar filtros para volúmenes"""
+        print(f"🔍 Aplicando filtros de volúmenes. Filtros actuales: {self.current_filters}")
+
         if 'year_range' in self.current_filters:
             min_year, max_year = self.current_filters['year_range']
-            # Implementar filtro de año en el repositorio si es necesario
-            
+            print(f"📅 Aplicando filtro de rango de años: {min_year}-{max_year}")
+            self.volume_repository.filtros['year_range'] = (min_year, max_year)
+
         if 'count_range' in self.current_filters:
             min_count, max_count = self.current_filters['count_range']
-            # Implementar filtro de cantidad de números
+            print(f"📊 Aplicando filtro de cantidad de números: {min_count}-{max_count}")
+            self.volume_repository.filtros['count_range'] = (min_count, max_count)
+
+        if 'completion' in self.current_filters:
+            completion_level = self.current_filters['completion']
+            print(f"✅ Aplicando filtro de completitud: nivel {completion_level}")
+            # This filter would need special handling based on completion percentage
+            # For now, we'll log it but not implement the complex logic
+
+        if 'publisher_name' in self.current_filters:
+            publisher_filter = self.current_filters['publisher_name']
+            print(f"🏢 Aplicando filtro de editorial: {publisher_filter}")
+            self.volume_repository.filtros['publisher_name'] = publisher_filter
+
+        print(f"✅ Filtros finales aplicados al repositorio de volúmenes: {self.volume_repository.filtros}")
             
     def show_empty_message(self):
         """Mostrar mensaje cuando no hay items"""
@@ -1219,6 +1680,19 @@ class ComicManagerWindow(Adw.ApplicationWindow):
                 self.filter_button.set_tooltip_text("Filtros avanzados")
         except Exception as e:
             print(f"Error actualizando estado del botón de filtros: {e}")
+
+    def on_filters_applied(self, dialog, filters):
+        """Callback cuando se aplican filtros desde el diálogo"""
+        self.apply_advanced_filters(filters)
+        # Recargar contenido con los nuevos filtros
+        self.clear_content()
+        GLib.idle_add(self.load_items_batch)
+        # Mostrar notificación
+        filter_count = len(filters)
+        if filter_count > 0:
+            self.show_toast(f"✅ {filter_count} filtros aplicados", "info")
+        else:
+            self.show_toast("Filtros limpiados", "info")
 
     def show_toast(self, message, toast_type="info"):
         """Mostrar notificación toast"""
@@ -1475,7 +1949,7 @@ class ComicManagerApp(Adw.Application):
     """Aplicación principal"""
     
     def __init__(self):
-        super().__init__(application_id="babelcomics4")
+        super().__init__(application_id="Babelcomics4")
         
     def do_activate(self):
         """Activar aplicación"""
