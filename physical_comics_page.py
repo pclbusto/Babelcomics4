@@ -180,11 +180,36 @@ def on_physical_comic_clicked(gesture, n_press, x, y, physical_comic):
     """Manejar click en un cómic físico"""
     if n_press == 2:  # Doble click
         print(f"Doble click en físico: {physical_comic.nombre_archivo}")
-        # Intentar abrir con la aplicación predeterminada
+        # Abrir con el lector interno de Babelcomics4
         try:
-            import subprocess
-            subprocess.run(['xdg-open', physical_comic.path], check=True)
+            from comic_reader import open_comic_with_reader
+
+            # Verificar que el archivo existe
+            if os.path.exists(physical_comic.path):
+                comic_title = physical_comic.nombre_archivo or f"Comic #{physical_comic.id_comicbook}"
+                reader = open_comic_with_reader(
+                    comic_path=physical_comic.path,
+                    comic_title=comic_title,
+                    parent_window=None  # Permitir que el lector sea independiente
+                )
+                if reader:
+                    print(f"✅ Lector abierto para: {comic_title}")
+                else:
+                    print(f"❌ Error abriendo lector para: {comic_title}")
+            else:
+                print(f"❌ Archivo no encontrado: {physical_comic.path}")
+
+        except ImportError as e:
+            print(f"❌ Error importando comic_reader: {e}")
+            # Fallback al lector del sistema si no se puede usar el interno
+            try:
+                import subprocess
+                subprocess.run(['xdg-open', physical_comic.path], check=True)
+                print("📖 Fallback: usando lector del sistema")
+            except Exception as fallback_e:
+                print(f"❌ Error con fallback del sistema: {fallback_e}")
         except Exception as e:
-            print(f"Error abriendo archivo: {e}")
+            print(f"❌ Error abriendo con lector interno: {e}")
+
     elif n_press == 1:  # Click simple
         print(f"Click en: {physical_comic.nombre_archivo} (Calidad: {physical_comic.calidad})")

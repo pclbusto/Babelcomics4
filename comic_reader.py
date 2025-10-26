@@ -106,6 +106,7 @@ class ComicReader(Adw.ApplicationWindow):
         self.current_page = 0
         self.zoom_level = 1.0
         self.fit_mode = "width"  # "width", "height", "original", "page"
+        self.interpolation_mode = "nearest"  # "nearest", "bilinear", "hyper"
         self.loading = False
         self.temp_dir = None
 
@@ -260,12 +261,12 @@ class ComicReader(Adw.ApplicationWindow):
         zoom_out_button.connect("clicked", self.on_zoom_out)
         zoom_box.append(zoom_out_button)
 
-        # Zoom 100%
-        zoom_100_button = Gtk.Button()
-        zoom_100_button.set_label("100%")
-        zoom_100_button.set_tooltip_text("Zoom 100%")
-        zoom_100_button.connect("clicked", self.on_zoom_100)
-        zoom_box.append(zoom_100_button)
+        # Zoom 100% (indicador actual)
+        self.zoom_indicator_button = Gtk.Button()
+        self.zoom_indicator_button.set_label("100%")
+        self.zoom_indicator_button.set_tooltip_text("Resetear a zoom 100%")
+        self.zoom_indicator_button.connect("clicked", self.on_zoom_100)
+        zoom_box.append(self.zoom_indicator_button)
 
         # Zoom in
         zoom_in_button = Gtk.Button()
@@ -340,6 +341,39 @@ class ComicReader(Adw.ApplicationWindow):
         menu_separator = Gtk.Separator()
         menu_box.append(menu_separator)
 
+        # Sección de calidad de imagen
+        quality_label = Gtk.Label(label="Calidad de imagen")
+        quality_label.add_css_class("heading")
+        quality_label.set_halign(Gtk.Align.START)
+        menu_box.append(quality_label)
+
+        # Opciones de interpolación
+        interp_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+
+        # Nítido (Nearest)
+        sharp_button = Gtk.Button()
+        sharp_button.set_label("Nítido (recomendado para cómics)")
+        sharp_button.connect("clicked", lambda btn: self.set_interpolation_mode("nearest"))
+        interp_box.append(sharp_button)
+
+        # Suavizado (Bilinear)
+        smooth_button = Gtk.Button()
+        smooth_button.set_label("Suavizado")
+        smooth_button.connect("clicked", lambda btn: self.set_interpolation_mode("bilinear"))
+        interp_box.append(smooth_button)
+
+        # Alta calidad (Hyper)
+        quality_button = Gtk.Button()
+        quality_button.set_label("Alta calidad (más lento)")
+        quality_button.connect("clicked", lambda btn: self.set_interpolation_mode("hyper"))
+        interp_box.append(quality_button)
+
+        menu_box.append(interp_box)
+
+        # Separador
+        menu_separator2 = Gtk.Separator()
+        menu_box.append(menu_separator2)
+
         # Botón pantalla completa en el menú
         fullscreen_button = Gtk.Button()
         fullscreen_button.set_label("Pantalla completa (F11)")
@@ -358,14 +392,22 @@ class ComicReader(Adw.ApplicationWindow):
         self.scrolled_window = Gtk.ScrolledWindow()
         self.scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scrolled_window.set_vexpand(True)
+        self.scrolled_window.set_hexpand(True)
+        # Permitir contenido más grande que la ventana
+        self.scrolled_window.set_propagate_natural_width(False)
+        self.scrolled_window.set_propagate_natural_height(False)
 
         # Volver a usar Gtk.Picture que es más estable para mostrar imágenes
         self.comic_image = Gtk.Picture()
-        self.comic_image.set_can_shrink(True)
+        self.comic_image.set_can_shrink(False)  # PERMITIR CRECER más allá del contenedor
         self.comic_image.set_keep_aspect_ratio(True)
-        self.comic_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+        self.comic_image.set_content_fit(Gtk.ContentFit.FILL)  # Sin restricciones de tamaño
         self.comic_image.set_halign(Gtk.Align.CENTER)
         self.comic_image.set_valign(Gtk.Align.CENTER)
+
+        # Configurar tamaño mínimo pero sin máximo
+        self.comic_image.set_size_request(200, 300)  # Mínimo
+        # NO establecer tamaño máximo para permitir zoom completo
 
         # Variables para la imagen actual
         self.current_pixbuf = None
@@ -385,6 +427,12 @@ class ComicReader(Adw.ApplicationWindow):
         # Control de scroll para navegación (valores configurables en constructor)
         self.scroll_accumulator = 0.0  # Acumulador de scroll
         self.last_scroll_time = 0  # Timestamp del último scroll
+
+        # Scroll inteligente para cambio de página
+        self.page_change_accumulator = 0.0  # Scroll acumulado en el borde
+        self.page_change_threshold = 3.0  # Scroll necesario para cambiar página
+        self.at_bottom = False  # ¿Estamos en el fondo de la página?
+        self.at_top = False     # ¿Estamos en el inicio de la página?
 
         # Conectar eventos de mouse para navegación
         self.setup_mouse_events()
@@ -412,7 +460,7 @@ class ComicReader(Adw.ApplicationWindow):
 
         self.image_area.append(self.loading_box)
 
-        # Configurar tamaño mínimo para asegurar visibilidad
+        # Tamaño mínimo inicial - se puede cambiar dinámicamente
         self.comic_image.set_size_request(200, 300)
 
     def create_thumbnail_sidebar(self):
@@ -782,19 +830,30 @@ class ComicReader(Adw.ApplicationWindow):
 
                 print(f"Extrayendo páginas de: {self.comic_path}")
 
-                # Estimar espacio requerido basado en el tamaño del comic
-                try:
-                    comic_size_mb = os.path.getsize(self.comic_path) // (1024 * 1024)
-                    # Espacio requerido: 2-3x el tamaño del comic para descompresión
-                    required_space = max(500, comic_size_mb * 3)
-                    print(f"Comic: {comic_size_mb} MB, requiere ~{required_space} MB de espacio temporal")
-                except:
-                    required_space = 500  # Fallback
+                # Limpiar caches antiguos antes de empezar
+                self.cleanup_old_comic_caches()
 
-                # Encontrar directorio temporal con espacio suficiente
-                temp_base_dir = find_temp_directory_with_space(required_mb=required_space)
-                self.temp_dir = tempfile.mkdtemp(prefix="babelcomics_reader_", dir=temp_base_dir)
-                print(f"Directorio temporal: {self.temp_dir}")
+                # Crear directorio cache basado en el comic
+                cache_dir = self.get_or_create_comic_cache_dir()
+                if not cache_dir:
+                    GLib.idle_add(self.on_extraction_error, "No se pudo crear directorio de cache")
+                    return
+
+                # Actualizar timestamp del directorio actual (touch)
+                self.touch_cache_directory(cache_dir)
+
+                # Verificar si ya está en cache y es válido
+                if self.is_cache_valid(cache_dir):
+                    print(f"✅ Usando cache existente: {cache_dir}")
+                    cached_pages = self.load_cached_pages(cache_dir)
+                    if cached_pages:
+                        GLib.idle_add(self.on_extraction_complete, cached_pages)
+                        return
+                    else:
+                        print("⚠️ Cache corrupto, re-extrayendo...")
+
+                print(f"📦 Extrayendo a directorio cache: {cache_dir}")
+                self.temp_dir = cache_dir
 
                 # Callbacks para progreso
                 def progress_callback(progress):
@@ -859,6 +918,13 @@ class ComicReader(Adw.ApplicationWindow):
 
         # Habilitar controles
         self.update_navigation_buttons()
+
+        # Guardar información de cache para validación futura
+        if hasattr(self, 'temp_dir') and self.temp_dir:
+            self.save_cache_info(self.temp_dir)
+
+        # Actualizar indicador de zoom inicial
+        self.update_zoom_indicator()
 
         self.show_toast(f"Comic cargado: {page_count} páginas", "success")
 
@@ -927,7 +993,8 @@ class ComicReader(Adw.ApplicationWindow):
         page_path = self.pages[page_number]
         self.current_page_path = page_path
 
-        print(f"Mostrando página {page_number + 1}: {page_path}")
+        print(f"📄 Mostrando página {page_number + 1}: {page_path}")
+        print(f"🎛️ Estado actual - Modo: {self.fit_mode}, Zoom: {self.zoom_level}")
 
         try:
             # Verificar que el archivo existe
@@ -936,33 +1003,38 @@ class ComicReader(Adw.ApplicationWindow):
                 self.show_toast(f"Página {page_number + 1} no encontrada", "error")
                 return
 
-            # Intentar usar cache primero para carga rápida
-            if page_number in self.preload_cache:
-                print(f"⚡ Carga rápida desde cache para página {page_number + 1}")
-                cached_data = self.preload_cache[page_number]
-                self.comic_image.set_pixbuf(cached_data['pixbuf'])
-                self.original_pixbuf = cached_data['pixbuf']
-            else:
-                # Carga normal desde archivo
-                print(f"📂 Carga normal desde archivo para página {page_number + 1}")
+            # Primero cargar el pixbuf para tener control total
+            print(f"📂 Cargando página {page_number + 1}")
+            try:
+                self.original_pixbuf = GdkPixbuf.Pixbuf.new_from_file(page_path)
+                orig_w = self.original_pixbuf.get_width()
+                orig_h = self.original_pixbuf.get_height()
+                file_size_mb = os.path.getsize(page_path) / (1024 * 1024)
+                print(f"🖼️ Imagen cargada: {orig_w}x{orig_h} píxeles ({file_size_mb:.1f} MB)")
+                print(f"📁 Archivo: {os.path.basename(page_path)}")
+
+                # Aplicar configuración inmediatamente CON control total
+                self.apply_current_view_settings()
+
+            except Exception as e:
+                print(f"Error cargando pixbuf: {e}")
+                self.original_pixbuf = None
+                # Fallback a método anterior si falla
+                print(f"🔄 Fallback: usando set_filename")
                 self.comic_image.set_filename(page_path)
-
-                # Guardar pixbuf para operaciones de zoom
-                try:
-                    self.original_pixbuf = GdkPixbuf.Pixbuf.new_from_file(page_path)
-                    print(f"Pixbuf cargado: {self.original_pixbuf.get_width()}x{self.original_pixbuf.get_height()}")
-                except Exception as e:
-                    print(f"Error cargando pixbuf: {e}")
-                    self.original_pixbuf = None
-
-            # Configurar tamaño de la imagen según el modo actual
-            self.configure_image_size()
+                self.configure_image_size()
 
             # Actualizar interfaz
             self.update_page_label()
             self.update_navigation_buttons()
             # Actualizar selección en sidebar de thumbnails
             self.update_thumbnail_selection()
+
+            # RESETEAR posición de scroll al inicio de la nueva página (con delay)
+            GLib.idle_add(self.reset_scroll_position)
+
+            # Resetear acumulador de scroll inteligente
+            self.page_change_accumulator = 0.0
 
             # Iniciar precarga de páginas adyacentes para transiciones rápidas
             self.start_preload_adjacent_pages()
@@ -978,8 +1050,11 @@ class ComicReader(Adw.ApplicationWindow):
     def apply_current_view_settings(self):
         """Aplicar configuración actual de zoom y ajuste"""
         if not self.original_pixbuf or not self.current_page_path:
-            print("No hay imagen original o ruta disponible")
+            print("❌ No hay imagen original o ruta disponible")
             return
+
+        print(f"🔧 APLICANDO configuración: Modo={self.fit_mode}, Zoom={self.zoom_level}")
+        print(f"📄 Página actual: {os.path.basename(self.current_page_path)}")
 
         try:
             # Obtener dimensiones de la ventana
@@ -1000,22 +1075,53 @@ class ComicReader(Adw.ApplicationWindow):
 
             print(f"Imagen original: {orig_width}x{orig_height}, Modo: {self.fit_mode}, Zoom: {self.zoom_level}")
 
-            # Calcular nuevo tamaño según el modo
-            new_width, new_height = self.calculate_size_for_mode(
-                orig_width, orig_height, widget_width, widget_height
-            )
-
-            # Aplicar zoom adicional
-            new_width = int(new_width * self.zoom_level)
-            new_height = int(new_height * self.zoom_level)
+            # Si zoom es diferente de 1.0 O modo es "original", usarlo directamente
+            if abs(self.zoom_level - 1.0) > 0.01 or self.fit_mode == "original":
+                # Zoom manual o tamaño original: usar tamaño original * zoom
+                new_width = int(orig_width * self.zoom_level)
+                new_height = int(orig_height * self.zoom_level)
+                if self.fit_mode == "original" and abs(self.zoom_level - 1.0) < 0.01:
+                    print(f"📏 Tamaño original: {orig_width}x{orig_height} (sin escalar)")
+                else:
+                    print(f"🔍 Zoom manual: {orig_width}x{orig_height} → {new_width}x{new_height} (factor: {self.zoom_level})")
+            else:
+                # Otros modos de ajuste automático
+                new_width, new_height = self.calculate_size_for_mode(
+                    orig_width, orig_height, widget_width, widget_height
+                )
+                print(f"📐 Ajuste automático: {orig_width}x{orig_height} → {new_width}x{new_height} (modo: {self.fit_mode})")
 
             print(f"Nuevo tamaño calculado: {new_width}x{new_height}")
+
+            # Configurar Picture según el modo
+            if abs(self.zoom_level - 1.0) > 0.01 or self.fit_mode == "original":
+                # Zoom manual O tamaño original: sin restricciones
+                self.comic_image.set_content_fit(Gtk.ContentFit.FILL)
+                self.comic_image.set_can_shrink(False)  # NO reducir tamaño
+                # Quitar restricciones de tamaño para permitir tamaño real
+                self.comic_image.set_size_request(-1, -1)  # Sin restricciones
+
+                if self.fit_mode == "original" and abs(self.zoom_level - 1.0) < 0.01:
+                    print(f"📏 Tamaño original: FILL + can_shrink=False + sin restricciones")
+                else:
+                    print(f"🔓 Zoom manual: FILL + can_shrink=False + sin restricciones (zoom: {self.zoom_level})")
+            else:
+                # Otros ajustes automáticos: permitir reducción
+                self.comic_image.set_can_shrink(True)  # Permitir reducir para ajustes
+                if self.fit_mode == "width":
+                    self.comic_image.set_content_fit(Gtk.ContentFit.SCALE_DOWN)
+                elif self.fit_mode == "height":
+                    self.comic_image.set_content_fit(Gtk.ContentFit.SCALE_DOWN)
+                elif self.fit_mode == "page":
+                    self.comic_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+                print(f"📐 Ajuste automático: {self.fit_mode} + can_shrink=True")
 
             # Si necesitamos redimensionar
             if new_width != orig_width or new_height != orig_height:
                 try:
+                    interp_type = self.get_interpolation_type()
                     scaled_pixbuf = self.original_pixbuf.scale_simple(
-                        new_width, new_height, GdkPixbuf.InterpType.BILINEAR
+                        new_width, new_height, interp_type
                     )
                     texture = Gdk.Texture.new_for_pixbuf(scaled_pixbuf)
                     self.comic_image.set_paintable(texture)
@@ -1087,8 +1193,9 @@ class ComicReader(Adw.ApplicationWindow):
 
             print(f"Aplicando zoom {self.zoom_level}: {orig_width}x{orig_height} -> {new_width}x{new_height}")
 
+            interp_type = self.get_interpolation_type()
             scaled_pixbuf = self.original_pixbuf.scale_simple(
-                new_width, new_height, GdkPixbuf.InterpType.BILINEAR
+                new_width, new_height, interp_type
             )
 
             texture = Gdk.Texture.new_for_pixbuf(scaled_pixbuf)
@@ -1127,7 +1234,10 @@ class ComicReader(Adw.ApplicationWindow):
         print(f"Modo de ajuste cambiado a: {mode}")
 
         # Aplicar inmediatamente si tenemos una imagen cargada
-        if self.current_page_path:
+        if self.current_page_path and self.original_pixbuf:
+            self.apply_current_view_settings()
+        elif self.current_page_path:
+            # Fallback si no tenemos original_pixbuf aún
             self.configure_image_size()
 
         self.show_toast(f"Ajuste: {mode}", "info")
@@ -1261,27 +1371,57 @@ class ComicReader(Adw.ApplicationWindow):
 
     def on_zoom_in(self, *args):
         """Acercar zoom"""
+        old_zoom = self.zoom_level
         self.zoom_level = min(self.zoom_level * 1.25, 5.0)
+        print(f"🔍 ZOOM IN: {old_zoom:.2f} → {self.zoom_level:.2f}")
         self.apply_zoom()
 
     def on_zoom_out(self, *args):
         """Alejar zoom"""
+        old_zoom = self.zoom_level
         self.zoom_level = max(self.zoom_level / 1.25, 0.1)
+        print(f"🔍 ZOOM OUT: {old_zoom:.2f} → {self.zoom_level:.2f}")
         self.apply_zoom()
 
     def on_zoom_100(self, *args):
         """Zoom 100%"""
+        old_zoom = self.zoom_level
         self.zoom_level = 1.0
+        print(f"🔍 ZOOM 100%: {old_zoom:.2f} → {self.zoom_level:.2f}")
         self.apply_zoom()
 
     def apply_zoom(self):
         """Aplicar nivel de zoom actual"""
         # Aplicar inmediatamente si tenemos una imagen cargada
-        if self.current_page_path:
+        if self.current_page_path and self.original_pixbuf:
+            self.apply_current_view_settings()
+        elif self.current_page_path:
+            # Fallback si no tenemos original_pixbuf aún
             self.configure_image_size()
 
         print(f"Zoom aplicado: {self.zoom_level:.2f}")
-        self.show_toast(f"Zoom: {int(self.zoom_level * 100)}%", "info")
+
+        # Actualizar indicador de zoom en la UI
+        self.update_zoom_indicator()
+
+        # Calcular zoom real vs zoom solicitado
+        actual_zoom_percent = int(self.zoom_level * 100)
+
+        # Si hay imagen, calcular el zoom efectivo
+        if self.original_pixbuf and self.current_pixbuf:
+            orig_width = self.original_pixbuf.get_width()
+            current_width = self.current_pixbuf.get_width()
+            effective_zoom = (current_width / orig_width) if orig_width > 0 else 1.0
+            effective_percent = int(effective_zoom * 100)
+
+            if abs(effective_percent - actual_zoom_percent) > 5:
+                self.show_toast(f"Zoom: {actual_zoom_percent}% (efectivo: {effective_percent}%)", "info")
+            else:
+                self.show_toast(f"Zoom: {actual_zoom_percent}%", "info")
+
+            print(f"🔍 Zoom solicitado: {actual_zoom_percent}%, efectivo: {effective_percent}%")
+        else:
+            self.show_toast(f"Zoom: {actual_zoom_percent}%", "info")
 
     def on_image_clicked(self, gesture, n_press, x, y):
         """Manejar click en imagen para navegación"""
@@ -1298,7 +1438,7 @@ class ComicReader(Adw.ApplicationWindow):
             # Click centro - no hacer nada
 
     def on_image_scroll(self, controller, dx, dy):
-        """Manejar scroll con threshold y cooldown para navegación controlada"""
+        """Manejar scroll inteligente: normal + acumulación en bordes"""
         # Obtener el estado de las teclas modificadoras
         modifiers = controller.get_current_event_state()
 
@@ -1310,53 +1450,81 @@ class ComicReader(Adw.ApplicationWindow):
                 self.on_zoom_in()
             return True
 
-        # Scroll normal: navegación entre páginas con control de sensibilidad
+        # Scroll inteligente: permitir scroll normal + cambio de página en bordes
         else:
-            return self._handle_navigation_scroll(dy)
+            return self._handle_smart_scroll(dy)
 
-    def _handle_navigation_scroll(self, dy):
-        """Manejar scroll de navegación con acumulación y cooldown"""
-        current_time = time.time() * 1000  # Convertir a milisegundos
+    def _handle_smart_scroll(self, dy):
+        """Scroll inteligente: normal en página, acumulación en bordes"""
+        # Primero, obtener información del scroll actual
+        v_adjustment = self.scrolled_window.get_vadjustment()
+        if not v_adjustment:
+            return False  # No hay scroll disponible
 
-        # Verificar cooldown
-        if current_time - self.last_scroll_time < self.scroll_cooldown:
-            return True  # Ignorar scroll durante cooldown
+        current_value = v_adjustment.get_value()
+        lower = v_adjustment.get_lower()
+        upper = v_adjustment.get_upper()
+        page_size = v_adjustment.get_page_size()
 
-        # Acumular scroll
-        self.scroll_accumulator += dy
+        # Calcular posiciones de borde
+        max_scroll = upper - page_size
+        tolerance = 5  # Píxeles de tolerancia
 
-        # Debug info (puedes comentar estas líneas después de probar)
-        print(f"Scroll: dy={dy:.3f}, acumulado={self.scroll_accumulator:.3f}, threshold=±{self.scroll_threshold}")
+        # Detectar si estamos en los bordes
+        self.at_top = current_value <= (lower + tolerance)
+        self.at_bottom = current_value >= (max_scroll - tolerance)
 
-        # Verificar si se alcanzó el threshold para ir a página siguiente
-        if self.scroll_accumulator >= self.scroll_threshold:
-            if self.current_page < len(self.pages) - 1:
-                print(f"→ Página siguiente (acumulado: {self.scroll_accumulator:.3f})")
-                self.go_to_page(self.current_page + 1)
-                self.scroll_accumulator = 0.0  # Reset acumulador
-                self.last_scroll_time = current_time
+        # Debug información
+        if abs(dy) > 0.1:  # Solo mostrar si hay scroll real
+            print(f"📜 Scroll: dy={dy:.2f}, pos={current_value:.0f}/{max_scroll:.0f}, top={self.at_top}, bottom={self.at_bottom}")
+
+        # SCROLL HACIA ABAJO
+        if dy > 0:
+            if self.at_bottom:
+                # Estamos en el fondo: acumular para cambio de página
+                self.page_change_accumulator += dy
+                print(f"🔄 Acumulando en fondo: {self.page_change_accumulator:.2f}/{self.page_change_threshold}")
+
+                if self.page_change_accumulator >= self.page_change_threshold:
+                    # Suficiente acumulación: ir a página siguiente
+                    if self.current_page < len(self.pages) - 1:
+                        print(f"➡️ Página siguiente por acumulación")
+                        self.go_to_page(self.current_page + 1)
+                        self.page_change_accumulator = 0.0
+                    else:
+                        print("🚫 Ya en última página")
+                        self.page_change_accumulator = 0.0
+
+                return True  # Consumir el evento
             else:
-                print("🚫 Ya en última página")
-                self.scroll_accumulator = 0.0  # Reset para evitar acumulación infinita
+                # No estamos en el fondo: resetear acumulador y permitir scroll normal
+                self.page_change_accumulator = 0.0
+                return False  # Permitir scroll normal
 
-        # Verificar si se alcanzó el threshold para ir a página anterior
-        elif self.scroll_accumulator <= -self.scroll_threshold:
-            if self.current_page > 0:
-                print(f"← Página anterior (acumulado: {self.scroll_accumulator:.3f})")
-                self.go_to_page(self.current_page - 1)
-                self.scroll_accumulator = 0.0  # Reset acumulador
-                self.last_scroll_time = current_time
+        # SCROLL HACIA ARRIBA
+        elif dy < 0:
+            if self.at_top:
+                # Estamos en el inicio: acumular para página anterior
+                self.page_change_accumulator += abs(dy)  # Usar valor absoluto
+                print(f"🔄 Acumulando en inicio: {self.page_change_accumulator:.2f}/{self.page_change_threshold}")
+
+                if self.page_change_accumulator >= self.page_change_threshold:
+                    # Suficiente acumulación: ir a página anterior
+                    if self.current_page > 0:
+                        print(f"⬅️ Página anterior por acumulación")
+                        self.go_to_page(self.current_page - 1)
+                        self.page_change_accumulator = 0.0
+                    else:
+                        print("🚫 Ya en primera página")
+                        self.page_change_accumulator = 0.0
+
+                return True  # Consumir el evento
             else:
-                print("🚫 Ya en primera página")
-                self.scroll_accumulator = 0.0  # Reset para evitar acumulación infinita
+                # No estamos en el inicio: resetear acumulador y permitir scroll normal
+                self.page_change_accumulator = 0.0
+                return False  # Permitir scroll normal
 
-        # Decay del acumulador si no hay scroll por un tiempo
-        if current_time - self.last_scroll_time > 500:  # 500ms sin scroll
-            self.scroll_accumulator *= 0.8  # Reducir gradualmente
-            if abs(self.scroll_accumulator) < 0.1:
-                self.scroll_accumulator = 0.0
-
-        return True
+        return False  # Permitir scroll normal por defecto
 
     def adjust_scroll_sensitivity(self, direction):
         """Ajustar sensibilidad del scroll"""
@@ -1482,14 +1650,343 @@ class ComicReader(Adw.ApplicationWindow):
         if hasattr(self, 'thumbnail_futures'):
             self.thumbnail_futures.clear()
 
-        # Limpiar archivos temporales
+        # NO limpiar archivos temporales de cache (para reutilizar)
+        # Solo limpiar si es directorio temporal aleatorio (no cache)
         if self.temp_dir and Path(self.temp_dir).exists():
             try:
-                import shutil
-                shutil.rmtree(self.temp_dir)
-                print(f"Directorio temporal limpiado: {self.temp_dir}")
+                # Solo limpiar si es directorio temporal aleatorio (babelcomics_reader_XXXXXX)
+                dir_name = os.path.basename(self.temp_dir)
+                if dir_name.startswith("babelcomics_reader_") and len(dir_name) > 25:
+                    # Es directorio temporal aleatorio, limpiar
+                    import shutil
+                    shutil.rmtree(self.temp_dir)
+                    print(f"🗑️ Directorio temporal limpiado: {self.temp_dir}")
+                else:
+                    # Es directorio cache, mantener para reutilizar
+                    print(f"💾 Directorio cache mantenido: {self.temp_dir}")
             except Exception as e:
-                print(f"Error limpiando directorio temporal: {e}")
+                print(f"Error procesando directorio temporal: {e}")
+
+    def get_or_create_comic_cache_dir(self):
+        """Crear directorio de cache basado en el comic"""
+        try:
+            import hashlib
+
+            # Crear nombre limpio del comic
+            comic_name = Path(self.comic_path).stem
+            # Limpiar caracteres especiales
+            clean_name = "".join(c for c in comic_name if c.isalnum() or c in (' ', '-', '_')).strip()
+            clean_name = clean_name.replace(' ', '_')[:50]  # Limitar longitud
+
+            # Crear hash del path completo para unicidad
+            path_hash = hashlib.md5(self.comic_path.encode()).hexdigest()[:8]
+
+            # Nombre final: nombrecomic_hash8chars
+            cache_folder_name = f"{clean_name}_{path_hash}"
+
+            # Encontrar directorio base con espacio suficiente
+            try:
+                comic_size_mb = os.path.getsize(self.comic_path) // (1024 * 1024)
+                required_space = max(500, comic_size_mb * 3)
+            except:
+                required_space = 500
+
+            temp_base_dir = find_temp_directory_with_space(required_mb=required_space)
+            cache_dir = os.path.join(temp_base_dir, cache_folder_name)
+
+            print(f"📁 Directorio cache: {cache_dir}")
+
+            # Crear directorio si no existe
+            os.makedirs(cache_dir, exist_ok=True)
+
+            return cache_dir
+
+        except Exception as e:
+            print(f"Error creando directorio cache: {e}")
+            return None
+
+    def is_cache_valid(self, cache_dir):
+        """Verificar si el cache es válido (archivo no cambió)"""
+        try:
+            cache_info_file = os.path.join(cache_dir, ".babelcomics_cache_info")
+
+            if not os.path.exists(cache_info_file):
+                return False
+
+            # Leer información del cache
+            with open(cache_info_file, 'r') as f:
+                cache_info = f.read().strip().split('\n')
+                if len(cache_info) < 2:
+                    return False
+
+                cached_path = cache_info[0]
+                cached_mtime = float(cache_info[1])
+
+            # Verificar que el archivo no cambió
+            if cached_path != self.comic_path:
+                return False
+
+            current_mtime = os.path.getmtime(self.comic_path)
+
+            # Cache válido si el archivo no cambió
+            is_valid = abs(current_mtime - cached_mtime) < 1.0  # Tolerancia de 1 segundo
+
+            if is_valid:
+                print(f"✅ Cache válido para: {os.path.basename(self.comic_path)}")
+            else:
+                print(f"❌ Cache inválido (archivo modificado): {os.path.basename(self.comic_path)}")
+
+            return is_valid
+
+        except Exception as e:
+            print(f"Error verificando cache: {e}")
+            return False
+
+    def load_cached_pages(self, cache_dir):
+        """Cargar páginas desde cache existente"""
+        try:
+            # Buscar archivos de imagen en el cache
+            image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')
+            cached_pages = []
+
+            for filename in os.listdir(cache_dir):
+                if filename.lower().endswith(image_extensions):
+                    page_path = os.path.join(cache_dir, filename)
+                    if os.path.exists(page_path):
+                        cached_pages.append(page_path)
+
+            # Ordenar páginas naturalmente
+            cached_pages.sort(key=lambda x: self.natural_sort_key(os.path.basename(x)))
+
+            if cached_pages:
+                print(f"📚 Cargadas {len(cached_pages)} páginas desde cache")
+                return cached_pages
+            else:
+                print("❌ No se encontraron páginas en cache")
+                return None
+
+        except Exception as e:
+            print(f"Error cargando cache: {e}")
+            return None
+
+    def natural_sort_key(self, text):
+        """Clave para ordenamiento natural (1, 2, 10 en lugar de 1, 10, 2)"""
+        import re
+        return [int(x) if x.isdigit() else x.lower() for x in re.split(r'(\d+)', text)]
+
+    def save_cache_info(self, cache_dir):
+        """Guardar información del cache para validación futura"""
+        try:
+            cache_info_file = os.path.join(cache_dir, ".babelcomics_cache_info")
+            current_mtime = os.path.getmtime(self.comic_path)
+
+            with open(cache_info_file, 'w') as f:
+                f.write(f"{self.comic_path}\n")
+                f.write(f"{current_mtime}\n")
+
+            print(f"💾 Info de cache guardada: {cache_info_file}")
+
+        except Exception as e:
+            print(f"Error guardando info de cache: {e}")
+
+    def cleanup_old_comic_caches(self):
+        """Limpiar caches de cómics antiguos (>1 hora) de todos los directorios temporales"""
+        try:
+            import time
+            current_time = time.time()
+            max_age_hours = 1
+            max_age_seconds = max_age_hours * 3600
+
+            # Lista de directorios temporales a revisar
+            temp_dirs_to_check = [
+                "/tmp/claude",
+                "/tmp",
+                os.path.expanduser("~/tmp"),
+                os.path.expanduser("~/.cache/babelcomics"),
+                "/var/tmp"
+            ]
+
+            total_cleaned = 0
+            total_kept = 0
+
+            for temp_base_dir in temp_dirs_to_check:
+                if not os.path.exists(temp_base_dir):
+                    continue
+
+                try:
+                    print(f"🔍 Revisando: {temp_base_dir}")
+
+                    for item in os.listdir(temp_base_dir):
+                        item_path = os.path.join(temp_base_dir, item)
+
+                        # Solo procesar directorios que son caches de cómics
+                        if not os.path.isdir(item_path):
+                            continue
+
+                        # Identificar directorios de cache (tienen _ y no son aleatorios largos)
+                        is_comic_cache = (
+                            "_" in item and
+                            not (item.startswith("babelcomics_reader_") and len(item) > 25) and
+                            not item.startswith(".")  # Evitar directorios ocultos del sistema
+                        )
+
+                        if is_comic_cache:
+                            try:
+                                # Obtener tiempo de modificación del directorio
+                                dir_mtime = os.path.getmtime(item_path)
+                                age_seconds = current_time - dir_mtime
+                                age_hours = age_seconds / 3600
+
+                                if age_seconds > max_age_seconds:
+                                    # Cache viejo, eliminar
+                                    import shutil
+                                    shutil.rmtree(item_path, ignore_errors=True)
+                                    print(f"🗑️ Cache eliminado (edad: {age_hours:.1f}h): {item}")
+                                    total_cleaned += 1
+                                else:
+                                    # Cache reciente, mantener
+                                    print(f"💾 Cache mantenido (edad: {age_hours:.1f}h): {item}")
+                                    total_kept += 1
+
+                            except Exception as e:
+                                print(f"⚠️ Error procesando {item}: {e}")
+
+                except Exception as e:
+                    print(f"⚠️ Error accediendo a {temp_base_dir}: {e}")
+
+            if total_cleaned > 0 or total_kept > 0:
+                print(f"📊 Limpieza completada: {total_cleaned} eliminados, {total_kept} mantenidos")
+
+        except Exception as e:
+            print(f"❌ Error en limpieza de caches: {e}")
+
+    def touch_cache_directory(self, cache_dir):
+        """Actualizar timestamp del directorio (touch) para marcar como usado recientemente"""
+        try:
+            import time
+            current_time = time.time()
+
+            # Actualizar tiempo de modificación del directorio
+            os.utime(cache_dir, (current_time, current_time))
+
+            print(f"👆 Timestamp actualizado: {os.path.basename(cache_dir)}")
+
+        except Exception as e:
+            print(f"⚠️ Error actualizando timestamp: {e}")
+
+    def get_interpolation_type(self):
+        """Obtener tipo de interpolación según configuración"""
+        if self.interpolation_mode == "nearest":
+            return GdkPixbuf.InterpType.NEAREST
+        elif self.interpolation_mode == "bilinear":
+            return GdkPixbuf.InterpType.BILINEAR
+        elif self.interpolation_mode == "hyper":
+            return GdkPixbuf.InterpType.HYPER
+        else:
+            # Fallback por defecto para cómics
+            return GdkPixbuf.InterpType.NEAREST
+
+    def set_interpolation_mode(self, mode):
+        """Cambiar modo de interpolación de imagen"""
+        old_mode = self.interpolation_mode
+        self.interpolation_mode = mode
+
+        print(f"🎨 Interpolación cambiada: {old_mode} → {mode}")
+
+        # Verificar si necesitamos escalar para ver la diferencia
+        if self.original_pixbuf:
+            orig_width = self.original_pixbuf.get_width()
+            orig_height = self.original_pixbuf.get_height()
+
+            widget_width = self.scrolled_window.get_allocated_width()
+            widget_height = self.scrolled_window.get_allocated_height()
+
+            print(f"🖼️ DEBUG - Imagen original: {orig_width}x{orig_height}")
+            print(f"🖼️ DEBUG - Área ventana: {widget_width}x{widget_height}")
+            print(f"🖼️ DEBUG - Modo ajuste: {self.fit_mode}")
+            print(f"🖼️ DEBUG - Zoom actual: {self.zoom_level}")
+
+            # Verificar si se está escalando
+            if widget_width > 1 and widget_height > 1:
+                new_width, new_height = self.calculate_size_for_mode(
+                    orig_width, orig_height, widget_width, widget_height
+                )
+                new_width = int(new_width * self.zoom_level)
+                new_height = int(new_height * self.zoom_level)
+
+                is_scaling = (new_width != orig_width or new_height != orig_height)
+                scale_factor = new_width / orig_width if orig_width > 0 else 1.0
+
+                print(f"🖼️ DEBUG - Tamaño final: {new_width}x{new_height}")
+                print(f"🖼️ DEBUG - ¿Se está escalando?: {is_scaling}")
+                print(f"🖼️ DEBUG - Factor escala: {scale_factor:.2f}")
+
+                if not is_scaling:
+                    self.show_toast("⚠️ Sin escalado - no se verá diferencia", "info")
+                    print("⚠️ La imagen NO se está escalando, la interpolación no tendrá efecto visible")
+                elif abs(scale_factor - 1.0) < 0.1:
+                    self.show_toast("⚠️ Escalado mínimo - diferencia sutil", "info")
+                    print(f"⚠️ Escalado muy pequeño ({scale_factor:.2f}x), diferencia puede ser sutil")
+                else:
+                    print(f"✅ Escalado significativo ({scale_factor:.2f}x), diferencia debería ser visible")
+
+        # Aplicar inmediatamente si tenemos una imagen cargada
+        if self.current_page_path and self.original_pixbuf:
+            self.apply_current_view_settings()
+        elif self.current_page_path:
+            # Fallback si no tenemos original_pixbuf aún
+            self.configure_image_size()
+
+        # Mensajes descriptivos
+        mode_names = {
+            "nearest": "Nítido",
+            "bilinear": "Suavizado",
+            "hyper": "Alta calidad"
+        }
+        mode_name = mode_names.get(mode, mode)
+        self.show_toast(f"Calidad: {mode_name}", "info")
+
+    def update_zoom_indicator(self):
+        """Actualizar el indicador de zoom en la UI"""
+        try:
+            if hasattr(self, 'zoom_indicator_button'):
+                zoom_percent = int(self.zoom_level * 100)
+                self.zoom_indicator_button.set_label(f"{zoom_percent}%")
+                print(f"🔄 Indicador UI actualizado: {zoom_percent}%")
+        except Exception as e:
+            print(f"Error actualizando indicador de zoom: {e}")
+
+    def reset_scroll_position(self):
+        """Resetear posición de scroll al inicio de la página"""
+        try:
+            # Obtener los adjustments del ScrolledWindow
+            h_adjustment = self.scrolled_window.get_hadjustment()
+            v_adjustment = self.scrolled_window.get_vadjustment()
+
+            if h_adjustment and v_adjustment:
+                # Obtener valores actuales para debug
+                old_h = h_adjustment.get_value()
+                old_v = v_adjustment.get_value()
+
+                # Ir al inicio (0, 0)
+                h_adjustment.set_value(0)
+                v_adjustment.set_value(0)
+
+                print(f"📜 Scroll reseteado: ({old_h:.0f}, {old_v:.0f}) → (0, 0)")
+            else:
+                print(f"⚠️ No se pudieron obtener adjustments del scroll")
+                # Fallback: intentar con scroll_to si está disponible
+                try:
+                    # Algunas versiones de GTK tienen métodos alternativos
+                    self.scrolled_window.emit("scroll-child", Gtk.ScrollType.START, False)
+                    print(f"📜 Scroll reseteado usando scroll-child")
+                except:
+                    print(f"❌ No se pudo resetear scroll con ningún método")
+
+        except Exception as e:
+            print(f"Error reseteando scroll: {e}")
+
+        return False  # No repetir el idle_add
 
     def show_toast(self, message, toast_type="info"):
         """Mostrar notificación toast"""

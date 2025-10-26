@@ -755,6 +755,39 @@ def create_comicbook_info_detail_page(comic_info, physical_count, session, main_
     page = Adw.NavigationPage()
     page.set_title(f"{comic_info.titulo} #{comic_info.numero}")
 
+    # Contenedor principal
+    main_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+
+    # Header con botón de volver
+    header_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+    header_bar.set_margin_start(20)
+    header_bar.set_margin_end(20)
+    header_bar.set_margin_top(12)
+    header_bar.set_margin_bottom(12)
+    header_bar.add_css_class("toolbar")
+
+    # Spacer para empujar el botón hacia la derecha
+    spacer = Gtk.Box()
+    spacer.set_hexpand(True)
+    header_bar.append(spacer)
+
+    # Botón de volver
+    back_button = Gtk.Button()
+    back_button.set_icon_name("go-previous-symbolic")
+    back_button.set_tooltip_text("Volver")
+    back_button.add_css_class("circular")
+
+    def on_back_clicked(button):
+        """Manejar click en botón volver"""
+        if hasattr(main_window, 'navigation_view') and main_window.navigation_view:
+            if main_window.navigation_view.get_navigation_stack().get_n_items() > 1:
+                main_window.navigation_view.pop()
+
+    back_button.connect('clicked', on_back_clicked)
+    header_bar.append(back_button)
+
+    main_container.append(header_bar)
+
     # Contenedor principal con scroll
     scrolled = Gtk.ScrolledWindow()
     scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -780,7 +813,35 @@ def create_comicbook_info_detail_page(comic_info, physical_count, session, main_
 
     main_box.append(header_box)
     scrolled.set_child(main_box)
-    page.set_child(scrolled)
+    main_container.append(scrolled)
+
+    # Agregar controlador de eventos de teclado para manejar ESC
+    key_controller = Gtk.EventControllerKey()
+
+    def on_key_pressed(controller, keyval, keycode, state):
+        """Manejar eventos de teclado"""
+        if keyval == Gdk.KEY_Escape:
+            # ESC presionado: ir hacia atrás en la navegación
+            if hasattr(main_window, 'navigation_view') and main_window.navigation_view:
+                if main_window.navigation_view.get_navigation_stack().get_n_items() > 1:
+                    main_window.navigation_view.pop()
+                    return True
+        return False
+
+    key_controller.connect('key-pressed', on_key_pressed)
+    page.add_controller(key_controller)
+
+    # Hacer la página capaz de recibir el foco para eventos de teclado
+    page.set_can_focus(True)
+    page.set_focusable(True)
+
+    # Enfocar la página cuando se muestre
+    def on_page_shown(widget):
+        widget.grab_focus()
+
+    page.connect('show', on_page_shown)
+
+    page.set_child(main_container)
 
     return page
 
