@@ -19,6 +19,7 @@ class Comicbook(Base):
     id_comicbook_info = Column(String, nullable=False, default='')
     calidad = Column(Integer, nullable=False, default=0)
     en_papelera = Column(Boolean, nullable=False, default=False)
+    embedding = Column(String, nullable=True)  # JSON string of the cover embedding vector
 
     detalles = relationship("Comicbook_Detail", back_populates="comicbook", cascade="all, delete-orphan")
 

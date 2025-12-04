@@ -133,9 +133,25 @@ class VolumeSearchCard(Gtk.Box):
             import requests
             from io import BytesIO
 
+            # Headers completos de Chrome para evitar bloqueos 403 Forbidden
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9,es;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Referer': 'https://comicvine.gamespot.com/',
+                'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"Linux"',
+                'sec-fetch-dest': 'image',
+                'sec-fetch-mode': 'no-cors',
+                'sec-fetch-site': 'same-origin',
+                'DNT': '1',
+                'Connection': 'keep-alive',
+            }
 
-            # Descargar imagen
-            response = requests.get(image_url, timeout=10)
+            # Descargar imagen con headers correctos
+            response = requests.get(image_url, headers=headers, timeout=30)
             response.raise_for_status()
 
             # Crear pixbuf desde bytes
@@ -204,8 +220,147 @@ class VolumeSearchCard(Gtk.Box):
 GObject.signal_new('selection-changed', VolumeSearchCard, GObject.SignalFlags.RUN_FIRST, None, (bool,))
 
 
+class PublisherSearchCard(Gtk.Box):
+    """Card para mostrar una editorial en los resultados de búsqueda"""
+
+    def __init__(self, publisher_data, is_downloaded=False):
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        self.publisher_data = publisher_data
+        self.is_downloaded = is_downloaded
+        self.selected = False
+
+        self.set_size_request(200, 280)
+        self.add_css_class("card")
+        self.set_margin_top(8)
+        self.set_margin_bottom(8)
+        self.set_margin_start(8)
+        self.set_margin_end(8)
+
+        self.create_ui()
+
+    def create_ui(self):
+        """Crear la interfaz del card"""
+
+        # Logo de la editorial
+        self.logo_image = Gtk.Picture()
+        self.logo_image.set_size_request(150, 150)
+        self.logo_image.set_can_shrink(True)
+        self.logo_image.set_keep_aspect_ratio(True)
+        self.logo_image.set_content_fit(Gtk.ContentFit.CONTAIN)
+
+        # Cargar logo si está disponible
+        self.load_logo()
+
+        self.append(self.logo_image)
+
+        # Información de la editorial
+        info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+
+        # Nombre
+        title_label = Gtk.Label(label=self.publisher_data.get('name', 'Sin nombre'))
+        title_label.set_wrap(True)
+        title_label.set_lines(2)
+        title_label.set_ellipsize(Pango.EllipsizeMode.END)
+        title_label.add_css_class("title-4")
+        title_label.set_halign(Gtk.Align.START)
+        info_box.append(title_label)
+
+        # Información adicional
+        aliases = self.publisher_data.get('aliases')
+        if aliases:
+            aliases_text = aliases if isinstance(aliases, str) else aliases[0] if isinstance(aliases, list) and aliases else ""
+            if aliases_text:
+                aliases_label = Gtk.Label(label=f"aka: {aliases_text}")
+                aliases_label.set_wrap(True)
+                aliases_label.set_lines(1)
+                aliases_label.set_ellipsize(Pango.EllipsizeMode.END)
+                aliases_label.add_css_class("caption")
+                aliases_label.set_halign(Gtk.Align.START)
+                info_box.append(aliases_label)
+
+        # Controles
+        controls_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        controls_box.set_margin_top(8)
+
+        # Checkbox para selección
+        self.checkbox = Gtk.CheckButton()
+        self.checkbox.connect("toggled", self.on_checkbox_toggled)
+        controls_box.append(self.checkbox)
+
+        # Estado
+        if self.is_downloaded:
+            status_label = Gtk.Label(label="Descargada")
+            status_label.add_css_class("success")
+        else:
+            status_label = Gtk.Label(label="No descargada")
+            status_label.add_css_class("dim-label")
+
+        controls_box.append(status_label)
+        info_box.append(controls_box)
+
+        self.append(info_box)
+
+    def load_logo(self):
+        """Cargar logo de la editorial"""
+        image_data = self.publisher_data.get('image')
+        if image_data and image_data.get('small_url'):
+            image_url = image_data['small_url']
+            self.download_logo_background(image_url)
+        else:
+            self.show_placeholder()
+
+    def download_logo_background(self, image_url):
+        """Descargar logo en hilo de fondo"""
+        def worker():
+            try:
+                from helpers.image_downloader import download_image
+                image_path = download_image(image_url, temp=True)
+
+                if image_path and os.path.exists(image_path):
+                    GLib.idle_add(lambda: self.set_logo_from_file(image_path))
+                else:
+                    GLib.idle_add(self.show_placeholder)
+            except Exception as e:
+                print(f"Error descargando logo: {e}")
+                GLib.idle_add(self.show_placeholder)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def set_logo_from_file(self, image_path):
+        """Establecer logo desde archivo"""
+        try:
+            self.logo_image.set_filename(image_path)
+        except Exception as e:
+            print(f"Error cargando imagen: {e}")
+            self.show_placeholder()
+
+    def show_placeholder(self):
+        """Mostrar placeholder cuando no hay logo"""
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 150, 150)
+            pixbuf.fill(0x9A9996FF)  # Gris
+
+            texture = Gdk.Texture.new_for_pixbuf(pixbuf)
+            self.logo_image.set_paintable(texture)
+        except Exception as e:
+            print(f"Error creando placeholder: {e}")
+
+    def on_checkbox_toggled(self, checkbox):
+        """Checkbox cambiado"""
+        self.selected = checkbox.get_active()
+        self.emit('selection-changed', self.selected)
+
+    def set_selected(self, selected):
+        """Programáticamente seleccionar/deseleccionar"""
+        self.checkbox.set_active(selected)
+
+
+# Registrar señal personalizada para PublisherSearchCard
+GObject.signal_new('selection-changed', PublisherSearchCard, GObject.SignalFlags.RUN_FIRST, None, (bool,))
+
+
 class ComicVineDownloadWindow(Adw.Window):
-    """Ventana para buscar y descargar volúmenes desde ComicVine"""
+    """Ventana para buscar y descargar volúmenes y editoriales desde ComicVine"""
     def __init__(self, parent_window, session, selected_volume_callback=None):
         super().__init__()
         self.parent_window = parent_window

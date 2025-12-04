@@ -40,6 +40,7 @@ class ShortcutsHelpWindow(Gtk.ShortcutsWindow):
             ("<Control>f", "Enfocar búsqueda"),
             ("F1", "Mostrar esta ayuda"),
             ("<Control>d", "Abrir ComicVine"),
+            ("<Control>j", "Abrir Descarga de Editoriales"),
             ("<Shift><Control>f", "Filtros avanzados"),
             ("1", "Vista Comics"),
             ("2", "Vista Volúmenes"),

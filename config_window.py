@@ -154,6 +154,33 @@ class ConfigWindow(Adw.PreferencesWindow):
 
         comicvine_group.add(self.rate_limit_row)
 
+        # Carpeta de organización de cómics
+        self.organize_folder_row = Adw.ActionRow()
+        self.organize_folder_row.set_title("Carpeta de Organización")
+        self.organize_folder_row.set_subtitle("Carpeta donde se organizarán los cómics por editorial y volumen")
+
+        # Cargar valor desde BD
+        if self.config and self.config.carpeta_organizacion:
+            self.organize_folder_row.set_subtitle(self.config.carpeta_organizacion)
+
+        # Botón para seleccionar carpeta
+        select_folder_button = Gtk.Button()
+        select_folder_button.set_icon_name("folder-open-symbolic")
+        select_folder_button.set_valign(Gtk.Align.CENTER)
+        select_folder_button.set_tooltip_text("Seleccionar carpeta")
+        select_folder_button.connect("clicked", self.on_select_organize_folder)
+        self.organize_folder_row.add_suffix(select_folder_button)
+
+        # Botón para limpiar selección
+        clear_folder_button = Gtk.Button()
+        clear_folder_button.set_icon_name("edit-clear-symbolic")
+        clear_folder_button.set_valign(Gtk.Align.CENTER)
+        clear_folder_button.set_tooltip_text("Limpiar selección")
+        clear_folder_button.connect("clicked", self.on_clear_organize_folder)
+        self.organize_folder_row.add_suffix(clear_folder_button)
+
+        comicvine_group.add(self.organize_folder_row)
+
         page.add(comicvine_group)
 
     def setup_directories_group(self, page):
@@ -612,6 +639,50 @@ class ConfigWindow(Adw.PreferencesWindow):
 
         self.config.rate_limit_interval = spin_row.get_value()
         self.save_config()
+
+    def on_select_organize_folder(self, button):
+        """Abrir diálogo para seleccionar carpeta de organización"""
+        dialog = Gtk.FileDialog()
+        dialog.set_title("Seleccionar carpeta de organización")
+        dialog.select_folder(
+            parent=self,
+            cancellable=None,
+            callback=self.on_organize_folder_selected
+        )
+
+    def on_organize_folder_selected(self, dialog, result):
+        """Callback cuando se selecciona carpeta de organización"""
+        try:
+            folder = dialog.select_folder_finish(result)
+            if folder:
+                folder_path = folder.get_path()
+                abs_path = str(Path(folder_path).absolute())
+
+                # Verificar que el directorio existe
+                if Path(abs_path).exists() and Path(abs_path).is_dir():
+                    # Actualizar BD
+                    if self.config:
+                        self.config.carpeta_organizacion = abs_path
+                        self.save_config()
+
+                        # Actualizar UI
+                        self.organize_folder_row.set_subtitle(abs_path)
+                        print(f"✅ Carpeta de organización configurada: {abs_path}")
+                else:
+                    self.show_error_message(f"El directorio no existe o no es válido:\n{abs_path}")
+        except Exception as e:
+            if "cancelled" not in str(e).lower():
+                print(f"Error seleccionando carpeta de organización: {e}")
+
+    def on_clear_organize_folder(self, button):
+        """Limpiar carpeta de organización"""
+        if self.config:
+            self.config.carpeta_organizacion = ''
+            self.save_config()
+
+            # Actualizar UI
+            self.organize_folder_row.set_subtitle("Carpeta donde se organizarán los cómics por editorial y volumen")
+            print("✅ Carpeta de organización limpiada")
 
     def on_theme_changed(self, combo_row, param):
         """Callback cuando cambia el tema"""

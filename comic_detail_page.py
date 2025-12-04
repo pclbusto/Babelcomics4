@@ -188,11 +188,19 @@ def create_comic_action_buttons(comic, main_window):
             try:
                 from comic_reader import open_comic_with_reader
 
+                print(f"\n🔧 DEBUG on_read_comic:")
+                print(f"  comic.path: {comic.path}")
+                print(f"  ¿Es absoluto?: {os.path.isabs(comic.path)}")
+                print(f"  ¿Existe?: {os.path.exists(comic.path)}")
+
                 # Verificar que el archivo existe
                 if not os.path.exists(comic.path):
+                    print(f"  ❌ Archivo NO existe en: {comic.path}")
                     if hasattr(main_window, 'show_toast'):
                         main_window.show_toast("Archivo de comic no encontrado", "error")
                     return
+
+                print(f"  ✅ Archivo existe, abriendo lector...")
 
                 # Obtener nombre del comic para el título
                 comic_title = os.path.basename(comic.path)

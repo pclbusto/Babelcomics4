@@ -202,6 +202,16 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         download_volumes_action.connect("activate", self.on_download_volumes_action)
         self.add_action(download_volumes_action)
 
+        # Acción para descargar editoriales
+        download_publishers_action = Gio.SimpleAction.new("download_publishers", None)
+        download_publishers_action.connect("activate", self.on_download_publishers_action)
+        self.add_action(download_publishers_action)
+
+        # Acción para reorganizar cómics
+        reorganize_comics_action = Gio.SimpleAction.new("reorganize_comics", None)
+        reorganize_comics_action.connect("activate", self.on_reorganize_comics_action)
+        self.add_action(reorganize_comics_action)
+
         # Acción para regenerar portada
         regenerate_cover_action = Gio.SimpleAction.new("regenerate_cover", GLib.VariantType.new("s"))
         regenerate_cover_action.connect("activate", self.on_regenerate_cover_action)
@@ -217,6 +227,11 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         update_volume_action.connect("activate", self.on_update_volume_action)
         self.add_action(update_volume_action)
 
+        # Acción para reorganizar cómics de un volumen
+        reorganize_volume_action = Gio.SimpleAction.new("reorganize_volume", GLib.VariantType.new("s"))
+        reorganize_volume_action.connect("activate", self.on_reorganize_volume_action)
+        self.add_action(reorganize_volume_action)
+
         # Acciones para multiselección
         catalog_selected_action = Gio.SimpleAction.new("catalog_selected", None)
         catalog_selected_action.connect("activate", lambda action, param: self.on_catalog_selected(None))
@@ -225,6 +240,10 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         trash_selected_action = Gio.SimpleAction.new("trash_selected", None)
         trash_selected_action.connect("activate", lambda action, param: self.on_trash_selected(None))
         self.add_action(trash_selected_action)
+
+        reorganize_volumes_selected_action = Gio.SimpleAction.new("reorganize_volumes_selected", None)
+        reorganize_volumes_selected_action.connect("activate", lambda action, param: self.on_reorganize_volumes_selected(None))
+        self.add_action(reorganize_volumes_selected_action)
         
     def setup_keyboard_shortcuts(self):
         """Configurar atajos de teclado"""
@@ -273,6 +292,11 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         open_comicvine.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>d"))
         open_comicvine.set_action(Gtk.CallbackAction.new(self.on_open_comicvine_shortcut))
 
+        # Ctrl+J para abrir descarga de Editoriales
+        open_publishers = Gtk.Shortcut()
+        open_publishers.set_trigger(Gtk.ShortcutTrigger.parse_string("<Control>j"))
+        open_publishers.set_action(Gtk.CallbackAction.new(self.on_open_publishers_shortcut))
+
         # Shift+Ctrl+F para filtros avanzados
         open_filters = Gtk.Shortcut()
         open_filters.set_trigger(Gtk.ShortcutTrigger.parse_string("<Shift><Control>f"))
@@ -310,6 +334,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         controller.add_shortcut(focus_search)
         controller.add_shortcut(show_help)
         controller.add_shortcut(open_comicvine)
+        controller.add_shortcut(open_publishers)
         controller.add_shortcut(open_filters)
         controller.add_shortcut(view1)
         controller.add_shortcut(view2)
@@ -431,6 +456,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Crear menú
         menu_model = Gio.Menu()
         menu_model.append("Descargar Volúmenes", "win.download_volumes")
+        menu_model.append("Descargar Editoriales", "win.download_publishers")
         menu_model.append("Configuración", "win.show_config")
         menu_model.append("Acerca de", "win.show_about")
 
@@ -854,6 +880,9 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             if item_type == "comics" and CATALOGING_AVAILABLE:
                 menu.append(f"Catalogar {selected_count} comics", "win.catalog_selected")
 
+            if item_type == "volumes":
+                menu.append(f"Reorganizar Cómics de {selected_count} volúmenes", "win.reorganize_volumes_selected")
+
             menu.append(f"Mover {selected_count} items a papelera", "win.trash_selected")
 
         else:
@@ -869,6 +898,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
 
             if item_type == "volumes":
                 menu.append("Actualizar desde ComicVine", f"win.update_volume('{item_id}')")
+                menu.append("Reorganizar Cómics", f"win.reorganize_volume('{item_id}')")
 
             menu.append("Mover a papelera", f"win.trash_item('{item_id}')")
             menu.append("Ver detalles", f"win.show_details('{item_id}')")
@@ -975,6 +1005,109 @@ class ComicManagerWindow(Adw.ApplicationWindow):
     def on_download_volumes_action(self, action, parameter):
         """Mostrar ventana de descarga de volúmenes (acción)"""
         self.on_download_volumes_clicked(None)
+
+    def on_download_publishers_action(self, action, parameter):
+        """Mostrar ventana de descarga de editoriales (acción)"""
+        self.show_publisher_download_window()
+
+    def show_publisher_download_window(self):
+        """Mostrar ventana de descarga de editoriales"""
+        try:
+            from publisher_download_window import show_publisher_download_window
+            show_publisher_download_window(self, self.session)
+        except ImportError as e:
+            print(f"Error importando ventana de descarga de editoriales: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_toast("Error cargando ventana de descarga de editoriales", "error")
+
+    def on_reorganize_comics_action(self, action, parameter):
+        """Mostrar ventana de reorganización de cómics (acción desde menú principal)"""
+        # Esta acción ya no se usa, se mantiene por compatibilidad
+        self.show_toast("Usa el menú contextual en un volumen para reorganizar sus cómics", "info")
+
+    def on_reorganize_volume_action(self, action, parameter):
+        """Mostrar ventana de reorganización de cómics de un volumen (acción)"""
+        volume_id = int(parameter.get_string())
+        self.show_reorganize_window(volume_id)
+
+    def show_reorganize_window(self, volume_id):
+        """Mostrar ventana de reorganización de cómics de un volumen"""
+        try:
+            from comic_organizer_window import show_organizer_window
+
+            # Verificar que hay configuración
+            if not self.config:
+                self.show_toast("No se pudo cargar la configuración", "error")
+                return
+
+            # Verificar que hay carpeta configurada
+            if not self.config.carpeta_organizacion:
+                dialog = Adw.MessageDialog.new(self)
+                dialog.set_heading("Carpeta de organización no configurada")
+                dialog.set_body(
+                    "No has configurado una carpeta de organización.\n\n"
+                    "Ve a Configuración → ComicVine y configura la carpeta "
+                    "donde se organizarán los cómics."
+                )
+                dialog.add_response("cancel", "Cancelar")
+                dialog.add_response("config", "Ir a Configuración")
+                dialog.set_response_appearance("config", Adw.ResponseAppearance.SUGGESTED)
+                dialog.connect("response", self.on_reorganize_config_response)
+                dialog.present()
+                return
+
+            show_organizer_window(self, self.session, self.config, volume_id)
+        except ImportError as e:
+            print(f"Error importando ventana de reorganización: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_toast("Error cargando ventana de reorganización", "error")
+
+    def on_reorganize_volumes_selected(self, button):
+        """Reorganizar cómics de volúmenes seleccionados"""
+        # Obtener volúmenes seleccionados
+        selected_ids = list(self.selection_manager.selected_items)
+
+        if not selected_ids:
+            self.show_toast("No hay volúmenes seleccionados", "warning")
+            return
+
+        # Verificar que son volúmenes
+        if self.current_view != "volumes":
+            self.show_toast("Esta acción solo funciona con volúmenes", "warning")
+            return
+
+        # Verificar configuración
+        if not self.config or not self.config.carpeta_organizacion:
+            dialog = Adw.MessageDialog.new(self)
+            dialog.set_heading("Carpeta de organización no configurada")
+            dialog.set_body(
+                "No has configurado una carpeta de organización.\n\n"
+                "Ve a Configuración → ComicVine y configura la carpeta "
+                "donde se organizarán los cómics."
+            )
+            dialog.add_response("cancel", "Cancelar")
+            dialog.add_response("config", "Ir a Configuración")
+            dialog.set_response_appearance("config", Adw.ResponseAppearance.SUGGESTED)
+            dialog.connect("response", self.on_reorganize_config_response)
+            dialog.present()
+            return
+
+        # Abrir ventana de reorganización con múltiples volúmenes
+        try:
+            from comic_organizer_window import show_organizer_window
+            show_organizer_window(self, self.session, self.config, volume_ids=selected_ids)
+        except ImportError as e:
+            print(f"Error importando ventana de reorganización: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_toast("Error cargando ventana de reorganización", "error")
+
+    def on_reorganize_config_response(self, dialog, response):
+        """Callback cuando se responde al diálogo de configuración"""
+        if response == "config":
+            self.show_config_window()
 
     def show_config_window(self):
         """Mostrar ventana de configuración"""
@@ -1215,6 +1348,17 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         except ImportError as e:
             print(f"Error importando ComicVine: {e}")
             self.show_toast("Error abriendo ComicVine", "error")
+        return True
+
+    def on_open_publishers_shortcut(self, widget, args):
+        """Abrir descarga de Editoriales con Ctrl+J"""
+        try:
+            from publisher_download_window import show_publisher_download_window
+            show_publisher_download_window(self, self.session)
+            self.show_toast("Ventana de Editoriales abierta", "info")
+        except ImportError as e:
+            print(f"Error importando ventana de editoriales: {e}")
+            self.show_toast("Error abriendo ventana de editoriales", "error")
         return True
 
     def on_open_filters_shortcut(self, widget, args):

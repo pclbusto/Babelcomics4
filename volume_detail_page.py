@@ -21,6 +21,211 @@ except ImportError as e:
     print(f"Error importando entidades: {e}")
 
 
+# Definición de IssueCard a nivel de módulo para evitar crear GTypes dinámicamente
+class IssueCard(BaseCard):
+    """Card para mostrar issues de un volumen con contador de físicos"""
+
+    def __init__(self, comic_info, physical_count, thumbnail_generator, session, volume, main_window):
+        self.physical_count = physical_count
+        self.session = session
+        self.volume = volume
+        self.main_window = main_window
+        super().__init__(comic_info, "issue", thumbnail_generator)
+
+    def create_info_box(self):
+        """Crear información del issue"""
+        info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        info_box.set_margin_start(8)
+        info_box.set_margin_end(8)
+        info_box.set_margin_bottom(8)
+
+        # Título
+        title = self.item.titulo or f"Issue #{self.item.numero}"
+        title_label = Gtk.Label(label=title)
+        title_label.set_wrap(True)
+        title_label.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        title_label.set_width_chars(35)
+        title_label.set_max_width_chars(35)
+        title_label.set_lines(2)
+        title_label.set_ellipsize(Pango.EllipsizeMode.END)
+        title_label.set_justify(Gtk.Justification.CENTER)
+        title_label.add_css_class("heading")
+
+        # Información adicional
+        extra_info = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        extra_info.set_halign(Gtk.Align.CENTER)
+
+        # Número
+        numero_label = Gtk.Label(label=f"#{self.item.numero}")
+        numero_label.add_css_class("dim-label")
+        numero_label.add_css_class("caption")
+
+        # Contador de físicos
+        status_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        if self.physical_count > 0:
+            status_icon = Gtk.Image.new_from_icon_name("folder-documents-symbolic")
+            status_text = f"{self.physical_count} físico{'s' if self.physical_count != 1 else ''}"
+            status_box.add_css_class("success")
+        else:
+            status_icon = Gtk.Image.new_from_icon_name("folder-symbolic")
+            status_text = "Sin físicos"
+            status_box.add_css_class("dim-label")
+
+        status_icon.set_icon_size(Gtk.IconSize.INHERIT)
+        status_label = Gtk.Label(label=status_text)
+        status_label.add_css_class("caption")
+        status_box.append(status_icon)
+        status_box.append(status_label)
+
+        # Calificación si existe
+        if self.item.calificacion > 0:
+            stars = int(self.item.calificacion)
+            rating_text = "★" * stars + "☆" * (5 - stars)
+            rating_label = Gtk.Label(label=rating_text)
+            rating_label.add_css_class("caption")
+            rating_label.add_css_class("accent")
+            extra_info.append(rating_label)
+
+        extra_info.append(numero_label)
+        extra_info.append(status_box)
+
+        info_box.append(title_label)
+        info_box.append(extra_info)
+
+        return info_box
+
+    def request_thumbnail(self):
+        """Solicitar thumbnail del issue"""
+        try:
+            cover_path = self.item.obtener_portada_principal()
+            print(f"DEBUG - Issue {self.item.numero}: cover_path = {cover_path}")
+            print(f"DEBUG - Issue {self.item.numero}: exists = {os.path.exists(cover_path) if cover_path else False}")
+            if cover_path and os.path.exists(cover_path) and not cover_path.endswith("Comic_sin_caratula.png"):
+                self.thumbnail_generator.request_thumbnail(
+                    cover_path,
+                    f"issue_{self.item.id_comicbook_info}",
+                    "comicinfo",
+                    self.load_issue_thumbnail
+                )
+            else:
+                self.set_issue_placeholder()
+        except Exception as e:
+            print(f"Error cargando thumbnail de issue: {e}")
+            self.set_issue_placeholder()
+
+    def load_issue_thumbnail(self, texture_or_path):
+        """Cargar thumbnail del issue con efecto B&N si no tiene físicos"""
+        try:
+            from gi.repository import Gdk
+
+            if self.physical_count == 0:
+                # Sin físicos: convertir a escala de grises con Pillow
+                print(f"🎨 Convirtiendo a escala de grises para issue sin físicos: {self.item.numero}")
+                texture = self.convert_to_grayscale(texture_or_path)
+            else:
+                # Con físicos: cargar imagen normalmente
+                print(f"🌈 Cargando imagen en color para issue con físicos: {self.item.numero}")
+                if isinstance(texture_or_path, str):
+                    texture = Gdk.Texture.new_from_filename(texture_or_path)
+                else:
+                    texture = texture_or_path
+
+            # Cargar la imagen (ya procesada si es necesario)
+            if texture:
+                self.image.set_paintable(texture)
+            else:
+                self.set_issue_placeholder()
+
+        except Exception as e:
+            print(f"Error aplicando efecto B&N: {e}")
+            import traceback
+            traceback.print_exc()
+            # Fallback: cargar imagen original si es posible
+            try:
+                if isinstance(texture_or_path, str):
+                    texture = Gdk.Texture.new_from_filename(texture_or_path)
+                    self.image.set_paintable(texture)
+                else:
+                    self.image.set_paintable(texture_or_path)
+            except Exception as fallback_error:
+                print(f"Error en fallback: {fallback_error}")
+                self.set_issue_placeholder()
+
+    def convert_to_grayscale(self, texture_or_path):
+        """Convertir imagen a escala de grises usando Pillow directamente desde archivo"""
+        try:
+            from PIL import Image
+            from gi.repository import Gdk, GLib
+            import io
+
+            # Si recibimos una texture, necesitamos la ruta original
+            if hasattr(self, 'cover_path') and self.cover_path:
+                image_path = self.cover_path
+            elif isinstance(texture_or_path, str):
+                image_path = texture_or_path
+            else:
+                # Fallback: usar la texture original
+                print("No se pudo obtener ruta de imagen, usando texture original")
+                return texture_or_path
+
+            # Cargar imagen directamente con PIL desde archivo
+            with Image.open(image_path) as pil_image:
+                # Convertir a RGB si es necesario
+                if pil_image.mode in ('RGBA', 'LA'):
+                    # Crear fondo blanco para imágenes con transparencia
+                    background = Image.new('RGB', pil_image.size, (255, 255, 255))
+                    if pil_image.mode == 'RGBA':
+                        background.paste(pil_image, mask=pil_image.split()[3])
+                    else:
+                        background.paste(pil_image, mask=pil_image.split()[1])
+                    rgb_image = background
+                elif pil_image.mode == 'P':
+                    rgb_image = pil_image.convert('RGB')
+                else:
+                    rgb_image = pil_image.convert('RGB')
+
+                # Convertir a escala de grises
+                gray_image = rgb_image.convert('L')
+
+                # Convertir de vuelta a RGB para compatibilidad
+                final_image = gray_image.convert('RGB')
+
+                # Guardar en memoria como PNG
+                buffer = io.BytesIO()
+                final_image.save(buffer, format='PNG')
+                buffer.seek(0)
+
+                # Crear nuevo texture desde los bytes
+                gbytes = GLib.Bytes.new(buffer.getvalue())
+                gray_texture = Gdk.Texture.new_from_bytes(gbytes)
+
+                print(f"✓ Imagen convertida a escala de grises desde archivo: {image_path}")
+                return gray_texture
+
+        except Exception as e:
+            print(f"Error convirtiendo a escala de grises desde archivo: {e}")
+            import traceback
+            traceback.print_exc()
+            # En caso de error, devolver la textura original
+            if isinstance(texture_or_path, str):
+                try:
+                    return Gdk.Texture.new_from_filename(texture_or_path)
+                except:
+                    return None
+            return texture_or_path
+
+    def set_issue_placeholder(self):
+        """Placeholder específico para issues"""
+        try:
+            color = 0x33D17AFF if self.physical_count > 0 else 0x808080FF
+            pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 250, 350)
+            pixbuf.fill(color)
+            texture = Gdk.Texture.new_for_pixbuf(pixbuf)
+            self.image.set_paintable(texture)
+        except Exception as e:
+            print(f"Error creando placeholder de issue: {e}")
+
+
 def create_volume_detail_content(volume, session, thumbnail_generator, main_window):
     """Crear contenido de detalle del volumen para NavigationPage"""
 
@@ -175,6 +380,64 @@ def create_info_tab(tab_view, volume, session, thumbnail_generator):
     info_page.set_icon(Gio.ThemedIcon.new("info-outline-symbolic"))
 
 
+def update_card_cover(card, file_path, thumbnail_generator):
+    """
+    Actualizar el cover de un card cuando se descarga una nueva imagen
+
+    Args:
+        card: IssueCard a actualizar
+        file_path: Ruta del archivo descargado
+        thumbnail_generator: Generador de thumbnails
+    """
+    try:
+        import os
+        import time
+
+        # Prevenir bucles infinitos - verificar si ya estamos actualizando este card recientemente
+        current_time = time.time()
+        if hasattr(card, '_last_update_time'):
+            time_since_last_update = current_time - card._last_update_time
+            if time_since_last_update < 5.0:  # No actualizar si fue hace menos de 5 segundos
+                print(f"⏭️ DEBUG: Card actualizado recientemente (hace {time_since_last_update:.1f}s), saltando...")
+                return False
+
+        # Marcar timestamp de actualización
+        card._last_update_time = current_time
+
+        print(f"🖼️ DEBUG: Actualizando cover del card con archivo: {file_path}")
+
+        # Verificar que el archivo existe
+        if not os.path.exists(file_path):
+            print(f"⚠️ DEBUG: Archivo no existe: {file_path}")
+            return False
+
+        # Borrar cache del thumbnail si existe
+        try:
+            cache_path = f"data/thumbnails/comicinfo/issue_{card.item.id_comicbook_info}.jpg"
+            if os.path.exists(cache_path):
+                os.remove(cache_path)
+                print(f"🗑️ DEBUG: Cache borrado: {cache_path}")
+        except Exception as e:
+            print(f"⚠️ Error borrando cache: {e}")
+
+        # Solicitar nuevo thumbnail
+        thumbnail_generator.request_thumbnail(
+            file_path,
+            f"issue_{card.item.id_comicbook_info}",
+            "comicinfo",
+            card.load_issue_thumbnail
+        )
+
+        print(f"✅ DEBUG: Thumbnail solicitado para {file_path}")
+        return True
+
+    except Exception as e:
+        print(f"❌ Error actualizando cover del card: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
 def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_window):
     """Crear pestaña de issues del volumen"""
     comics_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -184,12 +447,52 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
     comics_box.set_margin_bottom(20)
     comics_box.set_vexpand(True)
 
+    # Header: título + filtro
+    header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+    header_box.set_margin_bottom(10)
+
     # Título de la sección
     comics_title = Gtk.Label(label=f"Issues de {volume.nombre}")
     comics_title.add_css_class("title-2")
     comics_title.set_halign(Gtk.Align.START)
-    comics_title.set_margin_bottom(10)
-    comics_box.append(comics_title)
+    comics_title.set_hexpand(True)
+    header_box.append(comics_title)
+
+    # Filtro con SegmentedButton
+    filter_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+    filter_box.set_halign(Gtk.Align.END)
+
+    filter_label = Gtk.Label(label="Mostrar:")
+    filter_label.add_css_class("dim-label")
+    filter_box.append(filter_label)
+
+    # SegmentedButton para filtrar
+    filter_group = Gtk.ToggleButton(label="Todos")
+    filter_group.set_active(True)
+    filter_group.add_css_class("flat")
+    filter_group.filter_type = "all"
+
+    filter_with = Gtk.ToggleButton(label="📚 Con físicos")
+    filter_with.set_group(filter_group)
+    filter_with.add_css_class("flat")
+    filter_with.filter_type = "with"
+
+    filter_without = Gtk.ToggleButton(label="📋 Sin físicos")
+    filter_without.set_group(filter_group)
+    filter_without.add_css_class("flat")
+    filter_without.add_css_class("suggested-action")  # Destacar como opción recomendada
+    filter_without.filter_type = "without"
+
+    filter_buttons_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+    filter_buttons_box.add_css_class("linked")
+    filter_buttons_box.append(filter_group)
+    filter_buttons_box.append(filter_with)
+    filter_buttons_box.append(filter_without)
+
+    filter_box.append(filter_buttons_box)
+    header_box.append(filter_box)
+
+    comics_box.append(header_box)
 
     # FlowBox para los issues
     comics_flow_box = Gtk.FlowBox()
@@ -209,10 +512,120 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
 
     comics_box.append(comics_scroll)
 
+    # Función para filtrar issues según selección
+    def apply_filter(button):
+        """Aplicar filtro de visibilidad a los issues"""
+        if not button.get_active():
+            return
+
+        filter_type = button.filter_type
+        print(f"🔍 Aplicando filtro: {filter_type}")
+
+        # Iterar sobre todos los children del FlowBox
+        child = comics_flow_box.get_first_child()
+        shown = 0
+        hidden = 0
+
+        while child:
+            # Obtener la card dentro del FlowBoxChild
+            flow_box_child = child
+            card = flow_box_child.get_child()
+
+            if card and hasattr(card, 'physical_count'):
+                # Aplicar filtro según tipo
+                if filter_type == "all":
+                    flow_box_child.set_visible(True)
+                    shown += 1
+                elif filter_type == "with":
+                    visible = card.physical_count > 0
+                    flow_box_child.set_visible(visible)
+                    if visible:
+                        shown += 1
+                    else:
+                        hidden += 1
+                elif filter_type == "without":
+                    visible = card.physical_count == 0
+                    flow_box_child.set_visible(visible)
+                    if visible:
+                        shown += 1
+                    else:
+                        hidden += 1
+
+            child = child.get_next_sibling()
+
+        print(f"  ✓ Mostrando: {shown}, Ocultando: {hidden}")
+
+    # Conectar filtros
+    filter_group.connect("toggled", apply_filter)
+    filter_with.connect("toggled", apply_filter)
+    filter_without.connect("toggled", apply_filter)
+
     # Crear pestaña
     comics_page = tab_view.append(comics_box)
     comics_page.set_title("Issues")
     comics_page.set_icon(Gio.ThemedIcon.new("view-list-symbolic"))
+
+    # Diccionario para mapear issue numbers a sus cards (para actualización rápida)
+    issue_cards_map = {}
+    comics_flow_box.issue_cards_map = issue_cards_map
+
+    # Set para rastrear qué covers ya fueron procesados (prevenir duplicados)
+    processed_covers = set()
+    comics_flow_box.processed_covers = processed_covers
+
+    # Conectar al notificador de descargas para actualizar covers en tiempo real
+    from helpers.cover_download_notifier import get_notifier
+    notifier = get_notifier()
+
+    def on_cover_downloaded(notifier, id_volume, numero_issue, file_path):
+        """Handler cuando se descarga un cover"""
+        # Solo procesar si es del volumen actual
+        if id_volume != volume.id_volume:
+            return
+
+        # Crear clave única para este cover
+        cover_key = f"{id_volume}_{numero_issue}_{file_path}"
+
+        # Verificar si ya procesamos este cover
+        if cover_key in processed_covers:
+            print(f"⏭️ DEBUG: Cover ya procesado anteriormente, saltando - Issue: #{numero_issue}")
+            return
+
+        # Marcar como procesado
+        processed_covers.add(cover_key)
+
+        print(f"🔔 DEBUG: Señal recibida - Volumen: {id_volume}, Issue: #{numero_issue}")
+
+        # Buscar el card correspondiente
+        if numero_issue in issue_cards_map:
+            card = issue_cards_map[numero_issue]
+            print(f"🔄 DEBUG: Actualizando card del issue #{numero_issue}")
+            # Actualizar la imagen del card (idle_add retorna False para que solo se ejecute una vez)
+            def do_update():
+                update_card_cover(card, file_path, thumbnail_generator)
+                return False  # Importante: False para que no se repita
+            GLib.idle_add(do_update)
+        else:
+            print(f"⚠️ DEBUG: No se encontró card para issue #{numero_issue} en el mapa")
+
+    # Conectar señal
+    signal_id = notifier.connect('cover-downloaded', on_cover_downloaded)
+
+    # Guardar signal_id para poder desconectar después si es necesario
+    comics_flow_box.cover_download_signal_id = signal_id
+    comics_flow_box.cover_notifier = notifier
+
+    # Desconectar señal cuando se destruya el widget
+    def on_flowbox_destroy(widget):
+        """Desconectar señal al destruir el widget"""
+        try:
+            if hasattr(widget, 'cover_notifier') and hasattr(widget, 'cover_download_signal_id'):
+                widget.cover_notifier.disconnect(widget.cover_download_signal_id)
+                print("🔌 DEBUG: Señal de cover downloads desconectada")
+        except Exception as e:
+            print(f"Error desconectando señal: {e}")
+
+    comics_flow_box.connect('destroy', on_flowbox_destroy)
 
     # Cargar issues
     GLib.idle_add(load_comics, volume, session, thumbnail_generator, main_window, comics_flow_box)
@@ -478,6 +891,9 @@ def load_comics(volume, session, thumbnail_generator, main_window, comics_flow_b
 
         print(f"Encontrados {len(comic_infos)} issues para el volumen {volume.nombre}")
 
+        # Obtener el mapa de cards si existe
+        issue_cards_map = getattr(comics_flow_box, 'issue_cards_map', {})
+
         # Agregar cada comic_info como card con contador de físicos
         for comic_info in comic_infos:
             try:
@@ -489,15 +905,25 @@ def load_comics(volume, session, thumbnail_generator, main_window, comics_flow_b
                     ).count()
 
                 # Crear card para metadata con contador
-                comic_card = create_issue_card(comic_info, physical_count, thumbnail_generator)
+                comic_card = create_issue_card(comic_info, physical_count, thumbnail_generator, session, volume, main_window)
 
                 # Tamaños más grandes ahora que tienen toda la pestaña
                 comic_card.set_size_request(220, 350)
+
+                # Registrar el card en el mapa para actualizaciones futuras
+                issue_cards_map[comic_info.numero] = comic_card
+                print(f"📋 DEBUG: Card registrado para issue #{comic_info.numero}")
 
                 # Hacer que sea clickeable para ver físicos de este issue
                 click_gesture = Gtk.GestureClick()
                 click_gesture.connect("pressed", on_issue_clicked, comic_info, physical_count, main_window)
                 comic_card.add_controller(click_gesture)
+
+                # Agregar menú contextual para clic derecho
+                right_click_gesture = Gtk.GestureClick()
+                right_click_gesture.set_button(3)  # Botón derecho
+                right_click_gesture.connect("pressed", on_issue_right_click, comic_card, comic_info, volume, session, main_window)
+                comic_card.add_controller(right_click_gesture)
 
                 comics_flow_box.append(comic_card)
 
@@ -514,208 +940,12 @@ def load_comics(volume, session, thumbnail_generator, main_window, comics_flow_b
     return False
 
 
-def create_issue_card(comic_info, physical_count, thumbnail_generator):
-    """Crear card para issue con contador de cómics físicos"""
-    class IssueCard(BaseCard):
-        def __init__(self, comic_info, physical_count, thumbnail_generator):
-            self.physical_count = physical_count
-            super().__init__(comic_info, "issue", thumbnail_generator)
-
-        def create_info_box(self):
-            """Crear información del issue"""
-            info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-            info_box.set_margin_start(8)
-            info_box.set_margin_end(8)
-            info_box.set_margin_bottom(8)
-
-            # Título
-            title = self.item.titulo or f"Issue #{self.item.numero}"
-            title_label = Gtk.Label(label=title)
-            title_label.set_wrap(True)
-            title_label.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
-            title_label.set_width_chars(35)
-            title_label.set_max_width_chars(35)
-            title_label.set_lines(2)
-            title_label.set_ellipsize(Pango.EllipsizeMode.END)
-            title_label.set_justify(Gtk.Justification.CENTER)
-            title_label.add_css_class("heading")
-
-            # Información adicional
-            extra_info = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-            extra_info.set_halign(Gtk.Align.CENTER)
-
-            # Número
-            numero_label = Gtk.Label(label=f"#{self.item.numero}")
-            numero_label.add_css_class("dim-label")
-            numero_label.add_css_class("caption")
-
-            # Contador de físicos
-            status_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-            if self.physical_count > 0:
-                status_icon = Gtk.Image.new_from_icon_name("folder-documents-symbolic")
-                status_text = f"{self.physical_count} físico{'s' if self.physical_count != 1 else ''}"
-                status_box.add_css_class("success")
-            else:
-                status_icon = Gtk.Image.new_from_icon_name("folder-symbolic")
-                status_text = "Sin físicos"
-                status_box.add_css_class("dim-label")
-
-            status_icon.set_icon_size(Gtk.IconSize.INHERIT)
-            status_label = Gtk.Label(label=status_text)
-            status_label.add_css_class("caption")
-            status_box.append(status_icon)
-            status_box.append(status_label)
-
-            # Calificación si existe
-            if self.item.calificacion > 0:
-                stars = int(self.item.calificacion)
-                rating_text = "★" * stars + "☆" * (5 - stars)
-                rating_label = Gtk.Label(label=rating_text)
-                rating_label.add_css_class("caption")
-                rating_label.add_css_class("accent")
-                extra_info.append(rating_label)
-
-            extra_info.append(numero_label)
-            extra_info.append(status_box)
-
-            info_box.append(title_label)
-            info_box.append(extra_info)
-
-            return info_box
-
-        def request_thumbnail(self):
-            """Solicitar thumbnail del issue"""
-            try:
-                cover_path = self.item.obtener_portada_principal()
-                print(f"DEBUG - Issue {self.item.numero}: cover_path = {cover_path}")
-                print(f"DEBUG - Issue {self.item.numero}: exists = {os.path.exists(cover_path) if cover_path else False}")
-                if cover_path and os.path.exists(cover_path) and not cover_path.endswith("Comic_sin_caratula.png"):
-                    self.thumbnail_generator.request_thumbnail(
-                        cover_path,
-                        f"issue_{self.item.id_comicbook_info}",
-                        "comicinfo",
-                        self.load_issue_thumbnail
-                    )
-                else:
-                    self.set_issue_placeholder()
-            except Exception as e:
-                print(f"Error cargando thumbnail de issue: {e}")
-                self.set_issue_placeholder()
-
-        def load_issue_thumbnail(self, texture_or_path):
-            """Cargar thumbnail del issue con efecto B&N si no tiene físicos"""
-            try:
-                from gi.repository import Gdk
-
-                if self.physical_count == 0:
-                    # Sin físicos: convertir a escala de grises con Pillow
-                    print(f"🎨 Convirtiendo a escala de grises para issue sin físicos: {self.item.numero}")
-                    texture = self.convert_to_grayscale(texture_or_path)
-                else:
-                    # Con físicos: cargar imagen normalmente
-                    print(f"🌈 Cargando imagen en color para issue con físicos: {self.item.numero}")
-                    if isinstance(texture_or_path, str):
-                        texture = Gdk.Texture.new_from_filename(texture_or_path)
-                    else:
-                        texture = texture_or_path
-
-                # Cargar la imagen (ya procesada si es necesario)
-                if texture:
-                    self.image.set_paintable(texture)
-                else:
-                    self.set_issue_placeholder()
-
-            except Exception as e:
-                print(f"Error aplicando efecto B&N: {e}")
-                import traceback
-                traceback.print_exc()
-                # Fallback: cargar imagen original si es posible
-                try:
-                    if isinstance(texture_or_path, str):
-                        texture = Gdk.Texture.new_from_filename(texture_or_path)
-                        self.image.set_paintable(texture)
-                    else:
-                        self.image.set_paintable(texture_or_path)
-                except Exception as fallback_error:
-                    print(f"Error en fallback: {fallback_error}")
-                    self.set_issue_placeholder()
-
-        def convert_to_grayscale(self, texture_or_path):
-            """Convertir imagen a escala de grises usando Pillow directamente desde archivo"""
-            try:
-                from PIL import Image
-                from gi.repository import Gdk, GLib
-                import io
-                import tempfile
-
-                # Si recibimos una texture, necesitamos la ruta original
-                if hasattr(self, 'cover_path') and self.cover_path:
-                    image_path = self.cover_path
-                elif isinstance(texture_or_path, str):
-                    image_path = texture_or_path
-                else:
-                    # Fallback: usar la texture original
-                    print("No se pudo obtener ruta de imagen, usando texture original")
-                    return texture_or_path
-
-                # Cargar imagen directamente con PIL desde archivo
-                with Image.open(image_path) as pil_image:
-                    # Convertir a RGB si es necesario
-                    if pil_image.mode in ('RGBA', 'LA'):
-                        # Crear fondo blanco para imágenes con transparencia
-                        background = Image.new('RGB', pil_image.size, (255, 255, 255))
-                        if pil_image.mode == 'RGBA':
-                            background.paste(pil_image, mask=pil_image.split()[3])
-                        else:
-                            background.paste(pil_image, mask=pil_image.split()[1])
-                        rgb_image = background
-                    elif pil_image.mode == 'P':
-                        rgb_image = pil_image.convert('RGB')
-                    else:
-                        rgb_image = pil_image.convert('RGB')
-
-                    # Convertir a escala de grises
-                    gray_image = rgb_image.convert('L')
-
-                    # Convertir de vuelta a RGB para compatibilidad
-                    final_image = gray_image.convert('RGB')
-
-                    # Guardar en memoria como PNG
-                    buffer = io.BytesIO()
-                    final_image.save(buffer, format='PNG')
-                    buffer.seek(0)
-
-                    # Crear nuevo texture desde los bytes
-                    gbytes = GLib.Bytes.new(buffer.getvalue())
-                    gray_texture = Gdk.Texture.new_from_bytes(gbytes)
-
-                    print(f"✓ Imagen convertida a escala de grises desde archivo: {image_path}")
-                    return gray_texture
-
-            except Exception as e:
-                print(f"Error convirtiendo a escala de grises desde archivo: {e}")
-                import traceback
-                traceback.print_exc()
-                # En caso de error, devolver la textura original
-                if isinstance(texture_or_path, str):
-                    try:
-                        return Gdk.Texture.new_from_filename(texture_or_path)
-                    except:
-                        return None
-                return texture_or_path
-
-        def set_issue_placeholder(self):
-            """Placeholder específico para issues"""
-            try:
-                color = 0x33D17AFF if self.physical_count > 0 else 0x808080FF
-                pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 250, 350)
-                pixbuf.fill(color)
-                texture = Gdk.Texture.new_for_pixbuf(pixbuf)
-                self.image.set_paintable(texture)
-            except Exception as e:
-                print(f"Error creando placeholder de issue: {e}")
-
-    return IssueCard(comic_info, physical_count, thumbnail_generator)
+def create_issue_card(comic_info, physical_count, thumbnail_generator, session, volume, main_window):
+    """
+    Crear card para issue con contador de cómics físicos.
+    Ahora simplemente retorna una instancia de IssueCard definida a nivel de módulo.
+    """
+    return IssueCard(comic_info, physical_count, thumbnail_generator, session, volume, main_window)
 
 
 def on_issue_clicked(gesture, n_press, x, y, comic_info, physical_count, main_window):
@@ -729,6 +959,146 @@ def on_issue_clicked(gesture, n_press, x, y, comic_info, physical_count, main_wi
         # Opcional: Si hay físicos, también permitir navegar a ellos
         # if physical_count > 0:
         #     main_window.navigate_to_physical_comics(comic_info)
+
+
+def on_issue_right_click(gesture, n_press, x, y, card_widget, comic_info, volume, session, main_window):
+    """Manejar clic derecho en un issue para mostrar menú contextual"""
+    try:
+        # Crear menú popover
+        popover = Gtk.PopoverMenu()
+        popover.set_parent(card_widget)
+
+        # Crear modelo del menú
+        menu_model = Gio.Menu()
+        menu_model.append("🔄 Redescargar portada", "issue.redownload_cover")
+
+        # Configurar menú
+        popover.set_menu_model(menu_model)
+
+        # Crear acción para redescargar
+        action_group = Gio.SimpleActionGroup()
+        redownload_action = Gio.SimpleAction.new("redownload_cover", None)
+        redownload_action.connect("activate", lambda a, p: redownload_issue_cover(comic_info, volume, session, main_window))
+        action_group.add_action(redownload_action)
+
+        # Insertar el grupo de acciones
+        card_widget.insert_action_group("issue", action_group)
+
+        # Mostrar popover en la posición del clic
+        rect = Gdk.Rectangle()
+        rect.x = x
+        rect.y = y
+        rect.width = 1
+        rect.height = 1
+        popover.set_pointing_to(rect)
+        popover.popup()
+
+    except Exception as e:
+        print(f"Error mostrando menú contextual: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+def redownload_issue_cover(comic_info, volume, session, main_window):
+    """Redescargar la portada de un issue específico desde ComicVine"""
+    try:
+        import threading
+        import os
+        from helpers.comicvine_cliente import ComicVineClient
+
+        print(f"\n{'='*80}")
+        print(f"REDESCARGANDO PORTADA PARA ISSUE #{comic_info.numero}")
+        print(f"Volume: {volume.nombre}")
+        print(f"ComicVine ID: {comic_info.comicvine_id}")
+        print(f"{'='*80}\n")
+
+        # Mostrar toast de inicio
+        toast = Adw.Toast.new("Redescargando portada...")
+        toast.set_timeout(2)
+        main_window.toast_overlay.add_toast(toast)
+
+        def download_in_thread():
+            """Descargar en hilo separado"""
+            try:
+                # Si no tenemos ComicVine ID, no podemos redescargar
+                if not comic_info.comicvine_id or comic_info.comicvine_id == 0:
+                    GLib.idle_add(show_error, "Este issue no tiene ComicVine ID")
+                    return
+
+                # Obtener datos del issue desde ComicVine API (para URL actualizada)
+                # TODO: Obtener API key de configuración
+                api_key = "7e4368b71c5a66d710a62e996a660024f6a868d4"
+                client = ComicVineClient(api_key)
+
+                print(f"Consultando ComicVine API para issue ID: {comic_info.comicvine_id}")
+                # get_issues_by_ids espera una lista y devuelve una lista
+                issues_list = client.get_issues_by_ids([comic_info.comicvine_id])
+
+                if not issues_list or len(issues_list) == 0:
+                    GLib.idle_add(show_error, "No se pudieron obtener datos del issue")
+                    return
+
+                # Tomar el primer (y único) issue de la lista
+                issue_data = issues_list[0]
+
+                # Verificar que tenga imagen
+                if not issue_data.get('image') or not issue_data['image'].get('medium_url'):
+                    GLib.idle_add(show_error, "El issue no tiene imagen disponible en ComicVine")
+                    return
+
+                image_url = issue_data['image']['medium_url']
+                print(f"URL de imagen obtenida de ComicVine: {image_url}")
+
+                # Descargar la portada con la URL actualizada desde ComicVine
+                # force_redownload=True para reescribir el archivo aunque ya exista
+                success = download_issue_cover(issue_data, volume, session, force_redownload=True)
+
+                if success:
+                    session.commit()
+
+                    # Borrar cache del thumbnail para forzar regeneración
+                    try:
+                        cache_path = f"data/thumbnails/comicinfo/issue_{comic_info.id_comicbook_info}.jpg"
+                        if os.path.exists(cache_path):
+                            os.remove(cache_path)
+                            print(f"DEBUG: Cache borrado: {cache_path}")
+                    except Exception as e:
+                        print(f"Error borrando cache: {e}")
+
+                    GLib.idle_add(show_success, "Portada redescargada exitosamente")
+                    # Ya no es necesario recargar la vista - el cover se actualiza automáticamente vía señales
+                else:
+                    GLib.idle_add(show_error, "Error descargando la portada")
+
+            except Exception as e:
+                print(f"Error en hilo de descarga: {e}")
+                import traceback
+                traceback.print_exc()
+                GLib.idle_add(show_error, f"Error: {str(e)}")
+
+        def show_error(message):
+            toast = Adw.Toast.new(message)
+            toast.set_timeout(3)
+            main_window.toast_overlay.add_toast(toast)
+
+        def show_success(message):
+            toast = Adw.Toast.new(message)
+            toast.set_timeout(2)
+            main_window.toast_overlay.add_toast(toast)
+
+        def refresh_volume_view():
+            """Refrescar la vista del volumen"""
+            if hasattr(main_window, 'navigate_to_volume_detail'):
+                main_window.navigate_to_volume_detail(volume)
+
+        # Iniciar descarga en hilo separado
+        thread = threading.Thread(target=download_in_thread, daemon=True)
+        thread.start()
+
+    except Exception as e:
+        print(f"Error redescargando portada: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def show_comicbook_info_detail(comic_info, physical_count, main_window):
@@ -1272,13 +1642,23 @@ def create_new_issue(volume, issue_data, session):
         print(f"Error creando nuevo issue: {e}")
 
 
-def download_issue_cover(issue_data, volume, session):
-    """Descargar portada del issue si no existe. Retorna True si descarga algo nuevo."""
+def download_issue_cover(issue_data, volume, session, force_redownload=False):
+    """Descargar portada del issue si no existe. Retorna True si descarga algo nuevo.
+
+    Args:
+        issue_data: Datos del issue desde ComicVine
+        volume: Objeto Volume
+        session: Sesión de base de datos
+        force_redownload: Si es True, reescribe el archivo aunque ya exista
+    """
     try:
         from helpers.image_downloader import download_image
+        from helpers.cover_download_notifier import get_notifier
         import os
 
         print(f"DEBUG: Iniciando descarga para issue {issue_data.get('issue_number', 'N/A')}")
+        if force_redownload:
+            print(f"DEBUG: Modo FORCE_REDOWNLOAD activado - se reescribirá el archivo")
 
         # Obtener información de la imagen
         image_data = issue_data.get('image')
@@ -1314,13 +1694,26 @@ def download_issue_cover(issue_data, volume, session):
 
         downloaded_new = False
 
-        # Descargar solo si no existe
+        # Si force_redownload, borrar archivo existente
+        if force_redownload and os.path.exists(ruta_archivo):
+            try:
+                os.remove(ruta_archivo)
+                print(f"DEBUG: Archivo existente borrado para redescarga: {ruta_archivo}")
+            except Exception as e:
+                print(f"ERROR: No se pudo borrar archivo existente: {e}")
+                return False
+
+        # Descargar solo si no existe (o si fue borrado por force_redownload)
         if not os.path.exists(ruta_archivo):
             print(f"Descargando portada: {nombre_archivo}")
             try:
-                download_image(image_url, carpeta_destino, nombre_archivo, resize_height=400)
-                downloaded_new = True
-                print(f"DEBUG: Descarga completada: {ruta_archivo}")
+                resultado = download_image(image_url, carpeta_destino, nombre_archivo, resize_height=400)
+                if resultado:
+                    downloaded_new = True
+                    print(f"DEBUG: Descarga completada: {ruta_archivo}")
+                else:
+                    print(f"ERROR: La descarga falló para {nombre_archivo}")
+                    return False
             except Exception as e:
                 print(f"ERROR: Fallo en descarga: {e}")
                 return False
@@ -1357,6 +1750,16 @@ def download_issue_cover(issue_data, volume, session):
                 new_cover.url_imagen = image_url
                 session.add(new_cover)
                 print(f"Agregado registro de portada para issue {comic_info.numero}")
+
+        # Notificar si se descargó algo nuevo (para actualizar UI en tiempo real)
+        if downloaded_new and os.path.exists(ruta_archivo):
+            try:
+                notifier = get_notifier()
+                issue_number = str(issue_data.get('issue_number', ''))
+                print(f"📢 DEBUG: Notificando descarga exitosa - Volumen: {volume.id_volume}, Issue: #{issue_number}")
+                GLib.idle_add(notifier.notify_cover_downloaded, volume.id_volume, issue_number, ruta_archivo)
+            except Exception as e:
+                print(f"Error notificando descarga: {e}")
 
         return downloaded_new
 
@@ -1473,6 +1876,17 @@ def download_covers_in_background(volume, session, comicvine_client, detailed_is
         total_downloads = len(issues_to_download)
         print(f"DEBUG: Total de descargas: {total_downloads}")
 
+        # DEBUG: Listar todas las URLs que vamos a descargar
+        print("\n" + "="*80)
+        print("DEBUG: LISTADO DE URLs A DESCARGAR:")
+        print("="*80)
+        for idx, (issue_type, issue_data, existing_issue) in enumerate(issues_to_download, 1):
+            issue_num = issue_data.get('issue_number', 'N/A')
+            image_data = issue_data.get('image', {})
+            image_url = image_data.get('medium_url', 'NO URL')
+            print(f"{idx}. Issue #{issue_num}: {image_url}")
+        print("="*80 + "\n")
+
         if total_downloads == 0:
             GLib.idle_add(show_update_success, main_window, "No hay portadas para descargar")
             print("DEBUG: No hay portadas para descargar, terminando")
@@ -1481,10 +1895,10 @@ def download_covers_in_background(volume, session, comicvine_client, detailed_is
         GLib.idle_add(show_update_progress, main_window, f"Descargando {total_downloads} portadas...")
         print(f"DEBUG: Iniciando descarga de {total_downloads} portadas")
 
-        # Descargar con pool de hilos (máximo 5 concurrentes)
+        # Descargar con pool de hilos (3 workers para balance entre velocidad y rate limiting)
         downloaded_count = 0
         last_progress_shown = 0  # Evitar toasts duplicados
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=3) as executor:
             # Enviar tareas al pool
             future_to_issue = {}
             for issue_type, issue_data, existing_issue in issues_to_download:
@@ -1516,8 +1930,7 @@ def download_covers_in_background(volume, session, comicvine_client, detailed_is
         # Mostrar resultado final
         if downloaded_count > 0:
             GLib.idle_add(show_update_success, main_window, f"Descargadas {downloaded_count} portadas")
-            # Refrescar la vista para mostrar las nuevas portadas
-            GLib.idle_add(refresh_issues_tab_delayed, volume, main_window)
+            # Ya no es necesario refrescar la vista - los covers se actualizan en tiempo real vía señales
         else:
             GLib.idle_add(show_update_success, main_window, "Todas las portadas ya estaban descargadas")
 
@@ -1596,26 +2009,31 @@ def collect_missing_covers(volume, session, comicvine_client, issues_to_download
 
 def download_single_cover(issue_data, volume, session):
     """Descargar una sola portada (función para usar en thread pool)"""
+    import time
     try:
-        return download_issue_cover(issue_data, volume, session)
+        result = download_issue_cover(issue_data, volume, session)
+        # Agregar delay pequeño para evitar rate limiting de ComicVine (0.3s con 3 workers = ~1 req/seg total)
+        time.sleep(0.3)
+        return result
     except Exception as e:
         print(f"Error en descarga individual: {e}")
         return False
 
 
-def refresh_issues_tab_delayed(volume, main_window):
-    """Refrescar la pestaña de issues con un pequeño delay"""
-    import time
-    time.sleep(1)  # Pequeño delay para asegurar que las imágenes estén escritas
-
-    # Refrescar vista sin borrar cache
-    if hasattr(main_window, 'navigation_view'):
-        try:
-            # Solo re-navegar para refrescar la vista, SIN borrar cache
-            print(f"DEBUG: Refrescando vista del volumen {volume.nombre} sin borrar cache")
-            main_window.navigate_to_volume_detail(volume)
-        except Exception as e:
-            print(f"Error refrescando vista: {e}")
+# FUNCIÓN OBSOLETA - Ya no es necesaria gracias al sistema de actualización en tiempo real
+# def refresh_issues_tab_delayed(volume, main_window):
+#     """Refrescar la pestaña de issues con un pequeño delay"""
+#     import time
+#     time.sleep(1)  # Pequeño delay para asegurar que las imágenes estén escritas
+#
+#     # Refrescar vista sin borrar cache
+#     if hasattr(main_window, 'navigation_view'):
+#         try:
+#             # Solo re-navegar para refrescar la vista, SIN borrar cache
+#             print(f"DEBUG: Refrescando vista del volumen {volume.nombre} sin borrar cache")
+#             main_window.navigate_to_volume_detail(volume)
+#         except Exception as e:
+#             print(f"Error refrescando vista: {e}")
 
 
 def refresh_issues_tab(tab_view, volume, session, thumbnail_generator, main_window):

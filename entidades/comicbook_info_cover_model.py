@@ -11,6 +11,7 @@ class ComicbookInfoCover(Base):
     id_cover = Column(Integer, primary_key=True, autoincrement=True)
     id_comicbook_info = Column(Integer, ForeignKey('comicbooks_info.id_comicbook_info'), nullable=False)
     url_imagen = Column(String, nullable=False)
+    embedding = Column(String, nullable=True)  # JSON string of the image embedding vector
     
 
     comic_info = relationship("ComicbookInfo", back_populates="portadas")

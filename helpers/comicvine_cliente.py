@@ -49,8 +49,9 @@ class ComicVineClient:
         full_url = f"{self.BASE_URL}{endpoint}"
         
         try:
-            print(f"DEBUG: Solicitando URL: {full_url} con params: {params}") 
+            print(f"DEBUG: Solicitando URL: {full_url} con params: {params}")
             response = requests.get(full_url, params=params, headers=self.headers)
+            print(f"DEBUG: URL COMPLETA FINAL: {response.url}")
             response.raise_for_status() 
             
             data = response.json()
@@ -89,13 +90,30 @@ class ComicVineClient:
         return resource_id
 
     def get_publishers(self, limit=10, offset=0, name_filter=None):
-        params = {'limit': limit, 'offset': offset}
+        # Construir URL manualmente para evitar que requests codifique : y +
+        # ComicVine necesita filter=name:Query+Words sin encoding
+        url = f"{self.BASE_URL}publishers/?limit={limit}&offset={offset}"
         if name_filter:
-            params['filter'] = f'name:{name_filter}'
-        data = self._make_api_request('publishers/', params)
-        if data and 'results' in data:
-            return data['results']
-        return []
+            url += f"&filter=name:{name_filter}"
+        url += f"&api_key={self.api_key}&format=json"
+
+        self._wait_for_rate_limit()
+
+        try:
+            print(f"DEBUG: URL construida manualmente: {url}")
+            response = requests.get(url, headers=self.headers)
+            response.raise_for_status()
+
+            data = response.json()
+            if data['status_code'] == 1:
+                if 'results' in data:
+                    return data['results']
+            else:
+                print(f"Error de la API en get_publishers: {data.get('error')} (Código: {data['status_code']})")
+            return []
+        except Exception as e:
+            print(f"Error en get_publishers: {e}")
+            return []
 
     def get_publisher_details(self, publisher_id):
         data = self._make_api_request(f'publisher/{publisher_id}/') 
