@@ -32,11 +32,16 @@ class EmbeddingGenerator:
             self._model = CLIPModel.from_pretrained(model_name)
             self._processor = CLIPProcessor.from_pretrained(model_name)
 
-            # Mover a GPU si está disponible
+            # Usar GPU si está disponible, sino CPU
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
             self._model.to(self.device)
             self._model.eval()
-            print(f"Modelo CLIP cargado en {self.device}")
+
+            if self.device == "cuda":
+                gpu_name = torch.cuda.get_device_name(0)
+                print(f"Modelo CLIP cargado en GPU: {gpu_name}")
+            else:
+                print(f"Modelo CLIP cargado en CPU")
 
     def generate_embedding(self, image_path):
         """

@@ -3,3 +3,4 @@ data/
 **/*.pyc
 entidades/__pycache__
 Documentacion/Babelcomics4/site/
+.venv/

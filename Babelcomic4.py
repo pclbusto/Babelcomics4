@@ -49,6 +49,8 @@ try:
     from thumbnail_generator import ThumbnailGenerator
     from about_dialog import show_about_dialog
     from comicvine_download_window import ComicVineDownloadWindow
+    from generate_embeddings_window import GenerateEmbeddingsWindow
+    from ai_classification_window import AIClassificationWindow
     print("Módulos locales importados correctamente")
 except ImportError as e:
     print(f"Error importando módulos locales: {e}")
@@ -206,6 +208,21 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         download_publishers_action = Gio.SimpleAction.new("download_publishers", None)
         download_publishers_action.connect("activate", self.on_download_publishers_action)
         self.add_action(download_publishers_action)
+
+        # Acción para generar embeddings
+        generate_embeddings_action = Gio.SimpleAction.new("generate_embeddings", None)
+        generate_embeddings_action.connect("activate", self.on_generate_embeddings_action)
+        self.add_action(generate_embeddings_action)
+
+        # Acción para clasificación por IA (múltiple)
+        ai_classify_action = Gio.SimpleAction.new("ai_classify", None)
+        ai_classify_action.connect("activate", self.on_ai_classify_action)
+        self.add_action(ai_classify_action)
+
+        # Acción para clasificación por IA (individual)
+        ai_classify_item_action = Gio.SimpleAction.new("ai_classify_item", GLib.VariantType.new("s"))
+        ai_classify_item_action.connect("activate", self.on_ai_classify_item_action)
+        self.add_action(ai_classify_item_action)
 
         # Acción para reorganizar cómics
         reorganize_comics_action = Gio.SimpleAction.new("reorganize_comics", None)
@@ -416,6 +433,13 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             catalog_button.connect("clicked", self.on_catalog_selected)
             self.action_box.append(catalog_button)
 
+        # Botón clasificación por IA
+        ai_classify_button = Gtk.Button()
+        ai_classify_button.set_icon_name("network-wireless-symbolic")
+        ai_classify_button.set_tooltip_text("Clasificación automática por IA")
+        ai_classify_button.connect("clicked", lambda btn: self.on_ai_classify_action(None, None))
+        self.action_box.append(ai_classify_button)
+
         # Botón papelera
         trash_button = Gtk.Button()
         trash_button.set_icon_name("user-trash-symbolic")
@@ -457,6 +481,8 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         menu_model = Gio.Menu()
         menu_model.append("Descargar Volúmenes", "win.download_volumes")
         menu_model.append("Descargar Editoriales", "win.download_publishers")
+        menu_model.append("Generar Embeddings", "win.generate_embeddings")
+        menu_model.append("Clasificación por IA", "win.ai_classify")
         menu_model.append("Configuración", "win.show_config")
         menu_model.append("Acerca de", "win.show_about")
 
@@ -880,6 +906,9 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             if item_type == "comics" and CATALOGING_AVAILABLE:
                 menu.append(f"Catalogar {selected_count} comics", "win.catalog_selected")
 
+            if item_type == "comics":
+                menu.append(f"Clasificar {selected_count} comics por IA", "win.ai_classify")
+
             if item_type == "volumes":
                 menu.append(f"Reorganizar Cómics de {selected_count} volúmenes", "win.reorganize_volumes_selected")
 
@@ -894,6 +923,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
                 menu.append("Catalogar", f"win.catalog_item('{item_id}')")
 
             if item_type == "comics":
+                menu.append("Clasificar por IA", f"win.ai_classify_item('{item_id}')")
                 menu.append("Regenerar Portada", f"win.regenerate_cover('{item_id}')")
 
             if item_type == "volumes":
@@ -1020,6 +1050,61 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             import traceback
             traceback.print_exc()
             self.show_toast("Error cargando ventana de descarga de editoriales", "error")
+
+    def on_generate_embeddings_action(self, action, parameter):
+        """Mostrar ventana de generación de embeddings"""
+        try:
+            window = GenerateEmbeddingsWindow(self)
+            window.present()
+        except Exception as e:
+            print(f"Error abriendo ventana de embeddings: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_toast("Error abriendo generador de embeddings", "error")
+
+    def on_ai_classify_action(self, action, parameter):
+        """Mostrar ventana de clasificación por IA para comics seleccionados"""
+        selected_items = self.selection_manager.get_selected_items()
+
+        if not selected_items:
+            self.show_toast("No hay items seleccionados", "warning")
+            return
+
+        # Filtrar solo comics para clasificación
+        comics_to_classify = [item_id for item_id in selected_items
+                            if self.current_view == "comics"]
+
+        if not comics_to_classify:
+            self.show_toast("Selecciona comics para clasificar por IA", "warning")
+            return
+
+        print(f"Clasificando {len(comics_to_classify)} comics por IA...")
+
+        try:
+            window = AIClassificationWindow(self, self.session, comics_to_classify)
+            window.present()
+        except Exception as e:
+            print(f"Error abriendo ventana de clasificación por IA: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_toast("Error abriendo clasificación por IA", "error")
+
+    def on_ai_classify_item_action(self, action, parameter):
+        """Clasificar un comic individual por IA"""
+        item_id = parameter.get_string()
+        try:
+            item_id_int = int(item_id)
+            if self.current_view == "comics":
+                print(f"Clasificando comic individual {item_id_int} por IA...")
+                window = AIClassificationWindow(self, self.session, [item_id_int])
+                window.present()
+            else:
+                self.show_toast("Solo se pueden clasificar comics", "warning")
+        except Exception as e:
+            print(f"Error clasificando comic por IA: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_toast("Error en clasificación por IA", "error")
 
     def on_reorganize_comics_action(self, action, parameter):
         """Mostrar ventana de reorganización de cómics (acción desde menú principal)"""
