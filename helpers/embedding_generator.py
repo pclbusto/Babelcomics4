@@ -32,8 +32,30 @@ class EmbeddingGenerator:
             self._model = CLIPModel.from_pretrained(model_name)
             self._processor = CLIPProcessor.from_pretrained(model_name)
 
-            # Usar GPU si está disponible, sino CPU
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+            # Verificar compatibilidad de GPU con versión de PyTorch
+            # PyTorch 1.x: soporta CUDA capability >= 3.5 (incluye GTX 1070 con 6.1)
+            # PyTorch 2.x: requiere CUDA capability >= 7.0
+            use_gpu = False
+            if torch.cuda.is_available():
+                try:
+                    capability = torch.cuda.get_device_capability(0)
+                    major, minor = capability
+                    cuda_version = float(f"{major}.{minor}")
+
+                    # Verificar versión de PyTorch
+                    torch_version = torch.__version__.split('+')[0]
+                    torch_major = int(torch_version.split('.')[0])
+
+                    if torch_major >= 2 and cuda_version < 7.0:
+                        print(f"⚠️ GPU con CUDA capability {cuda_version} incompatible con PyTorch {torch_version}")
+                        print("   Usando CPU. Para usar GPU, instalar PyTorch 1.13.x con CUDA 11.7")
+                    else:
+                        use_gpu = True
+                        print(f"GPU detectada: CUDA capability {cuda_version}, PyTorch {torch_version}")
+                except Exception as e:
+                    print(f"⚠️ Error verificando GPU: {e}")
+
+            self.device = "cuda" if use_gpu else "cpu"
             self._model.to(self.device)
             self._model.eval()
 

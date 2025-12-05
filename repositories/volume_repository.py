@@ -5,6 +5,40 @@ class VolumeRepository(BaseRepository):
     def __init__(self, session):
         super().__init__(session)
 
+    def _generate_cover_embedding(self, cover_record, image_path):
+        """
+        Genera embedding para una cover recién descargada.
+        Se llama automáticamente después de descargar una cover.
+        """
+        try:
+            import os
+            if not os.path.exists(image_path):
+                print(f"⚠️ No se puede generar embedding: imagen no existe en {image_path}")
+                return False
+
+            # Evitar cargar el modelo si la imagen no existe o si ya tiene embedding
+            if cover_record.embedding:
+                print(f"✓ Cover ya tiene embedding, omitiendo...")
+                return True
+
+            from helpers.embedding_generator import get_embedding_generator
+
+            emb_gen = get_embedding_generator()
+            embedding = emb_gen.generate_embedding(image_path)
+
+            if embedding is not None:
+                cover_record.embedding = emb_gen.embedding_to_json(embedding)
+                self.session.flush()  # Usar flush en vez de commit para no cerrar la transacción padre
+                print(f"✓ Embedding generado para cover {cover_record.id_cover}")
+                return True
+            else:
+                print(f"⚠️ No se pudo generar embedding para {image_path}")
+                return False
+
+        except Exception as e:
+            print(f"❌ Error generando embedding: {e}")
+            return False
+
     def obtener_total(self, modelo=None):
         return super().obtener_total(modelo or Volume)
 
@@ -566,9 +600,11 @@ class VolumeRepository(BaseRepository):
     def _download_issues_covers_background(self, volume, detailed_issues, progress_callback=None):
         """Descargar covers de issues en background thread"""
         from helpers.image_downloader import download_image
+        from entidades.comicbook_info_cover_model import ComicbookInfoCover
         import os
 
         covers_downloaded = 0
+        embeddings_generated = 0
         total_issues = len(detailed_issues)
 
         for i, issue_data in enumerate(detailed_issues):
@@ -596,6 +632,12 @@ class VolumeRepository(BaseRepository):
                     cover_path = download_image(cover_url, covers_folder, filename)
                     if cover_path:
                         issue_covers_downloaded += 1
+
+                        # Generar embedding automáticamente
+                        cover_record = self.session.query(ComicbookInfoCover).filter_by(url_imagen=cover_url).first()
+                        if cover_record:
+                            if self._generate_cover_embedding(cover_record, cover_path):
+                                embeddings_generated += 1
 
                 # 2. Descargar associated_images
                 associated_images = issue_data.get('associated_images', [])
@@ -626,6 +668,12 @@ class VolumeRepository(BaseRepository):
                                 issue_covers_downloaded += 1
                                 print(f"📸 Associated image {j+1} descargada: {filename}")
 
+                                # Generar embedding automáticamente
+                                cover_record = self.session.query(ComicbookInfoCover).filter_by(url_imagen=img_url).first()
+                                if cover_record:
+                                    if self._generate_cover_embedding(cover_record, variant_path):
+                                        embeddings_generated += 1
+
                 covers_downloaded += issue_covers_downloaded
 
                 # Reportar progreso cada 5 covers
@@ -636,7 +684,7 @@ class VolumeRepository(BaseRepository):
                 print(f"Error descargando cover del issue {issue_data.get('issue_number', 'N/A')}: {e}")
 
         if progress_callback:
-            progress_callback(f"✅ Descarga de covers completada: {covers_downloaded} covers de issues")
+            progress_callback(f"✅ Descarga completada: {covers_downloaded} covers, {embeddings_generated} embeddings generados")
 
     def _clean_html_text(self, html_text):
         """Limpiar texto HTML para almacenar en base de datos"""

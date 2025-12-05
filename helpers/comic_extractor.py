@@ -73,12 +73,39 @@ class ComicExtractor:
         self.errors = 0
 
     def detect_comic_format(self, file_path: str) -> Optional[str]:
-        """Detectar formato del archivo de cómic"""
+        """Detectar formato del archivo de cómic verificando el contenido real"""
         try:
             path = Path(file_path)
             extension = path.suffix.lower()
 
-            # Mapeo de extensiones a formatos
+            # PASO 1: Verificar el contenido real del archivo (magic bytes)
+            # Esto maneja archivos mal nombrados (ej: .cbr que son realmente .zip)
+            with open(file_path, 'rb') as f:
+                magic_bytes = f.read(8)
+
+                # ZIP magic bytes: 50 4B (PK)
+                if magic_bytes[:2] == b'PK':
+                    print(f"🔍 Archivo detectado como ZIP por magic bytes (independiente de extensión)")
+                    return 'zip'
+
+                # RAR magic bytes: 52 61 72 21 (Rar!)
+                if magic_bytes[:4] == b'Rar!':
+                    print(f"🔍 Archivo detectado como RAR por magic bytes")
+                    if not RAR_SUPPORT:
+                        print(f"❌ Archivo RAR detectado pero sin soporte: {file_path}")
+                        return None
+                    return 'rar'
+
+                # 7z magic bytes: 37 7A BC AF 27 1C
+                if magic_bytes[:6] == b'7z\xbc\xaf\x27\x1c':
+                    print(f"🔍 Archivo detectado como 7z por magic bytes")
+                    if not SEVEN_ZIP_SUPPORT:
+                        print(f"❌ Archivo 7z detectado pero sin soporte: {file_path}")
+                        return None
+                    return '7z'
+
+            # PASO 2: Si no se pudo detectar por magic bytes, usar extensión
+            print(f"🔍 Detectando formato por extensión: {extension}")
             format_map = {
                 '.cbz': 'zip',
                 '.zip': 'zip',

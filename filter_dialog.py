@@ -24,7 +24,9 @@ class AdvancedFilterDialog(Adw.Window):  # Cambiar a Window en lugar de Dialog
 
         # Configurar ventana
         self.set_title("Filtros Avanzados")
-        self.set_default_size(450, 600)
+        # Ajustar altura según la vista (volúmenes necesita más espacio)
+        height = 700 if current_view == "volumes" else 600
+        self.set_default_size(450, height)
         self.set_transient_for(parent_window)
         self.set_modal(True)
 

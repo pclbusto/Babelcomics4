@@ -25,7 +25,7 @@ class AIClassificationWindow(Adw.Window):
         self.comic_ids = comic_ids  # IDs de comics pre-seleccionados
         self.set_transient_for(parent)
         self.set_modal(True)
-        self.set_default_size(950, 1275)  # 25% más alta (700 -> 875)
+        self.set_default_size(950, 1180)
         self.set_title("Auto-Clasificación por IA")
 
         self.threshold = 0.75

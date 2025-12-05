@@ -29,12 +29,21 @@ theme:
 nav:
   - Inicio: index.md
   - Guía de Usuario:
-    - Instalación: usuario/instalacion.md
     - Primeros Pasos: usuario/primeros-pasos.md
+    - Instalación: usuario/instalacion.md
+    - Ventana Principal: usuario/ventana_general.md
+    - Detalle de Cómic: usuario/ventana_detalle_comic.md
+    - Detalle de Volumen: usuario/ventana_detalle_volumen.md
+    - Lector de Cómics: usuario/lector_comic.md
     - Gestión de Comics: usuario/gestion-comics.md
     - Gestión de Volúmenes: usuario/gestion-volumenes.md
-    - Filtros y Búsqueda: usuario/filtros-busqueda.md
-    - Integración ComicVine: usuario/comicvine.md
+    - Filtros Avanzados:
+      - Cómics: usuario/filtros_avanzados_comics.md
+      - Volúmenes: usuario/filtros_avanzados_volumenes.md
+    - Descarga de Metadatos (ComicVine): usuario/Descargar_volumenes_Comicvine.md
+    - Catalogación Manual: usuario/ventana_clasificacion_manual_.md
+    - Clasificación Automática: usuario/Clasificacion_automatica.md
+    - Configuración del Sistema: usuario/ventana_configuracion.md
   - Funcionalidades:
     - Catalogación: funcionalidades/catalogacion.md
     - Thumbnails: funcionalidades/thumbnails.md

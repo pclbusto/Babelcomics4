@@ -512,6 +512,21 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
 
     comics_box.append(comics_scroll)
 
+    # Obtener configuración de batch_size para scroll infinito
+    from repositories.setup_repository import SetupRepository
+    setup_repo = SetupRepository(session)
+    config = setup_repo.obtener_o_crear_configuracion()
+    batch_size = config.items_per_batch if config else 20
+
+    # Inicializar variables de paginado
+    comics_flow_box.loaded_count = 0
+    comics_flow_box.batch_size = batch_size
+    comics_flow_box.is_loading = False
+
+    # Conectar evento de scroll para cargar más
+    vadj = comics_scroll.get_vadjustment()
+    vadj.connect("value-changed", on_issues_scroll, comics_flow_box, volume, session, thumbnail_generator, main_window)
+
     # Función para filtrar issues según selección
     def apply_filter(button):
         """Aplicar filtro de visibilidad a los issues"""
@@ -627,8 +642,8 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
 
     comics_flow_box.connect('destroy', on_flowbox_destroy)
 
-    # Cargar issues
-    GLib.idle_add(load_comics, volume, session, thumbnail_generator, main_window, comics_flow_box)
+    # Cargar primer lote de issues
+    GLib.idle_add(load_comics_batch, volume, session, thumbnail_generator, main_window, comics_flow_box)
 
 
 def create_header_section(parent, volume, session, thumbnail_generator):
@@ -873,6 +888,116 @@ def set_placeholder_image(volume_image):
     except Exception as e:
         print(f"Error creando placeholder: {e}")
 
+
+def on_issues_scroll(adjustment, flow_box, volume, session, thumbnail_generator, main_window):
+    """Manejar scroll para cargar más issues"""
+    if flow_box.is_loading:
+        return
+
+    # Verificar si estamos cerca del final
+    value = adjustment.get_value()
+    upper = adjustment.get_upper()
+    page_size = adjustment.get_page_size()
+
+    # Cargar más cuando estamos al 80% del scroll
+    if value + page_size >= upper * 0.8:
+        # Verificar si hay más issues por cargar
+        total = getattr(flow_box, 'total_issues', 0)
+        if total == 0 or flow_box.loaded_count < total:
+            flow_box.is_loading = True
+            GLib.idle_add(load_comics_batch, volume, session, thumbnail_generator, main_window, flow_box)
+
+def load_comics_batch(volume, session, thumbnail_generator, main_window, comics_flow_box):
+    """Cargar un lote de issues"""
+    try:
+        if not ComicbookInfo:
+            print("No se pueden cargar issues - faltan dependencias")
+            return False
+
+        # Si es la primera carga, obtener el total de issues (sin cargar los datos)
+        if not hasattr(comics_flow_box, 'total_issues'):
+            comics_flow_box.total_issues = session.query(ComicbookInfo).filter(
+                ComicbookInfo.id_volume == volume.id_volume
+            ).count()
+            print(f"Total de issues: {comics_flow_box.total_issues}")
+
+        # Verificar si ya cargamos todo
+        if comics_flow_box.loaded_count >= comics_flow_box.total_issues:
+            print("Todos los issues ya están cargados")
+            return False
+
+        # Obtener el mapa de cards si existe
+        if not hasattr(comics_flow_box, 'issue_cards_map'):
+            comics_flow_box.issue_cards_map = {}
+
+        # Calcular offset y limit para la consulta SQL
+        offset = comics_flow_box.loaded_count
+        limit = comics_flow_box.batch_size
+
+        print(f"Cargando lote: offset={offset}, limit={limit}")
+
+        # Cargar solo el lote actual desde la base de datos
+        from sqlalchemy.orm import joinedload
+        batch_issues = session.query(ComicbookInfo).options(
+            joinedload(ComicbookInfo.portadas)
+        ).filter(
+            ComicbookInfo.id_volume == volume.id_volume
+        ).order_by(
+            ComicbookInfo.numero.cast(Integer),
+            ComicbookInfo.numero
+        ).offset(offset).limit(limit).all()
+
+        print(f"Lote obtenido: {len(batch_issues)} issues")
+
+        # Cargar el lote actual
+        for comic_info in batch_issues:
+            try:
+                # Contar cómics físicos asociados a este metadata
+                physical_count = 0
+                if Comicbook:
+                    physical_count = session.query(Comicbook).filter(
+                        Comicbook.id_comicbook_info == comic_info.id_comicbook_info
+                    ).count()
+
+                # Crear card para metadata con contador
+                comic_card = create_issue_card(comic_info, physical_count, thumbnail_generator, session, volume, main_window)
+
+                # Tamaños más grandes ahora que tienen toda la pestaña
+                comic_card.set_size_request(220, 350)
+
+                # Registrar el card en el mapa para actualizaciones futuras
+                comics_flow_box.issue_cards_map[comic_info.numero] = comic_card
+
+                # Hacer que sea clickeable para ver físicos de este issue
+                click_gesture = Gtk.GestureClick()
+                click_gesture.connect("pressed", on_issue_clicked, comic_info, physical_count, main_window)
+                comic_card.add_controller(click_gesture)
+
+                # Agregar menú contextual para clic derecho
+                right_click_gesture = Gtk.GestureClick()
+                right_click_gesture.set_button(3)  # Botón derecho
+                right_click_gesture.connect("pressed", on_issue_right_click, comic_card, comic_info, volume, session, main_window)
+                comic_card.add_controller(right_click_gesture)
+
+                comics_flow_box.append(comic_card)
+
+            except Exception as e:
+                print(f"Error creando card para comic_info {comic_info.id_comicbook_info}: {e}")
+
+        # Actualizar contador
+        comics_flow_box.loaded_count += len(batch_issues)
+        comics_flow_box.is_loading = False
+
+        print(f"✓ Lote cargado: {comics_flow_box.loaded_count}/{comics_flow_box.total_issues} issues")
+
+        return False
+
+    except Exception as e:
+        print(f"Error cargando lote de issues: {e}")
+        import traceback
+        traceback.print_exc()
+        comics_flow_box.is_loading = False
+        return False
 
 def load_comics(volume, session, thumbnail_generator, main_window, comics_flow_box):
     """Cargar issues del volumen"""
@@ -2112,7 +2237,22 @@ def create_issues_tab_content(volume, session, thumbnail_generator, main_window)
     scrolled.set_child(flow_box)
     box.append(scrolled)
 
-    # Cargar issues
-    GLib.idle_add(load_comics, volume, session, thumbnail_generator, main_window, flow_box)
+    # Obtener configuración de batch_size
+    from repositories.setup_repository import SetupRepository
+    setup_repo = SetupRepository(session)
+    config = setup_repo.obtener_o_crear_configuracion()
+    batch_size = config.items_per_batch if config else 20
+
+    # Inicializar variables de paginado
+    flow_box.loaded_count = 0
+    flow_box.batch_size = batch_size
+    flow_box.is_loading = False
+
+    # Conectar evento de scroll para cargar más
+    vadj = scrolled.get_vadjustment()
+    vadj.connect("value-changed", on_issues_scroll, flow_box, volume, session, thumbnail_generator, main_window)
+
+    # Cargar primer lote
+    GLib.idle_add(load_comics_batch, volume, session, thumbnail_generator, main_window, flow_box)
 
     return box

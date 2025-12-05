@@ -261,7 +261,11 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         reorganize_volumes_selected_action = Gio.SimpleAction.new("reorganize_volumes_selected", None)
         reorganize_volumes_selected_action.connect("activate", lambda action, param: self.on_reorganize_volumes_selected(None))
         self.add_action(reorganize_volumes_selected_action)
-        
+
+        update_volumes_selected_action = Gio.SimpleAction.new("update_volumes_selected", None)
+        update_volumes_selected_action.connect("activate", lambda action, param: self.on_update_volumes_selected(None))
+        self.add_action(update_volumes_selected_action)
+
     def setup_keyboard_shortcuts(self):
         """Configurar atajos de teclado"""
         # Ctrl+A para seleccionar todo en modo selección
@@ -910,6 +914,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
                 menu.append(f"Clasificar {selected_count} comics por IA", "win.ai_classify")
 
             if item_type == "volumes":
+                menu.append(f"Actualizar {selected_count} volúmenes desde ComicVine", "win.update_volumes_selected")
                 menu.append(f"Reorganizar Cómics de {selected_count} volúmenes", "win.reorganize_volumes_selected")
 
             menu.append(f"Mover {selected_count} items a papelera", "win.trash_selected")
@@ -973,8 +978,38 @@ class ComicManagerWindow(Adw.ApplicationWindow):
     def on_show_details_action(self, action, parameter):
         """Mostrar detalles de un item"""
         item_id = parameter.get_string()
-        # Implementar diálogo de detalles
-        self.show_toast(f"Detalles de item {item_id} (por implementar)", "info")
+        try:
+            item_id_int = int(item_id)
+
+            # Obtener el item desde la base de datos según la vista actual
+            if self.current_view == "comics":
+                from entidades.comicbook_model import Comicbook
+                item = self.session.query(Comicbook).filter(Comicbook.id_comicbook == item_id_int).first()
+                if item and COMIC_DETAIL_AVAILABLE:
+                    self.navigate_to_comic_detail(item)
+                elif item:
+                    self.show_toast("Detalle de comic no disponible", "warning")
+                else:
+                    self.show_toast("Comic no encontrado", "error")
+
+            elif self.current_view == "volumes":
+                from entidades.volume_model import Volume
+                item = self.session.query(Volume).filter(Volume.id_volume == item_id_int).first()
+                if item and VOLUME_DETAIL_AVAILABLE:
+                    self.navigate_to_volume_detail(item)
+                elif item:
+                    self.show_toast("Detalle de volumen no disponible", "warning")
+                else:
+                    self.show_toast("Volumen no encontrado", "error")
+
+            elif self.current_view == "publishers":
+                self.show_toast("Detalle de editorial no implementado", "info")
+
+        except ValueError:
+            self.show_toast("ID de item inválido", "error")
+        except Exception as e:
+            print(f"Error mostrando detalles: {e}")
+            self.show_toast(f"Error mostrando detalles: {str(e)}", "error")
 
     def on_regenerate_cover_action(self, action, parameter):
         """Regenerar portada/thumbnail de un comic"""
@@ -1023,6 +1058,146 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         except Exception as e:
             print(f"Error actualizando volumen: {e}")
             self.show_toast(f"Error actualizando volumen: {str(e)}", "error")
+
+    def on_update_volumes_selected(self, button):
+        """Actualizar volúmenes seleccionados desde ComicVine"""
+        # Obtener volúmenes seleccionados
+        selected_ids = list(self.selection_manager.selected_items)
+
+        if not selected_ids:
+            self.show_toast("No hay volúmenes seleccionados", "warning")
+            return
+
+        # Verificar que son volúmenes
+        if self.current_view != "volumes":
+            self.show_toast("Esta acción solo funciona con volúmenes", "warning")
+            return
+
+        # Confirmar acción con el usuario
+        dialog = Adw.MessageDialog.new(self)
+        dialog.set_heading("Actualizar volúmenes desde ComicVine")
+        dialog.set_body(
+            f"¿Deseas actualizar {len(selected_ids)} volúmenes desde ComicVine?\n\n"
+            "Esto descargará información actualizada, nuevos issues y covers para cada volumen."
+        )
+        dialog.add_response("cancel", "Cancelar")
+        dialog.add_response("confirm", "Actualizar")
+        dialog.set_response_appearance("confirm", Adw.ResponseAppearance.SUGGESTED)
+        dialog.connect("response", self.on_update_volumes_confirm, selected_ids)
+        dialog.present()
+
+    def on_update_volumes_confirm(self, dialog, response, selected_ids):
+        """Confirmar actualización de múltiples volúmenes"""
+        if response != "confirm":
+            return
+
+        from entidades.volume_model import Volume
+
+        # Obtener volúmenes desde la base de datos
+        volumes = []
+        volumes_without_cv_id = []
+
+        for volume_id in selected_ids:
+            volume = self.session.query(Volume).filter(Volume.id_volume == volume_id).first()
+            if volume:
+                if volume.id_comicvine:
+                    volumes.append(volume)
+                else:
+                    volumes_without_cv_id.append(volume.nombre)
+
+        if not volumes:
+            self.show_toast("Ningún volumen seleccionado tiene ID de ComicVine", "error")
+            return
+
+        # Advertir sobre volúmenes sin ID
+        if volumes_without_cv_id:
+            count = len(volumes_without_cv_id)
+            self.show_toast(f"{count} volumen(es) omitido(s) por no tener ID de ComicVine", "warning")
+
+        # Mostrar progreso inicial
+        self.show_toast(f"Actualizando {len(volumes)} volúmenes...", "info")
+
+        # Iniciar actualización en segundo plano
+        import threading
+        thread = threading.Thread(target=self._update_volumes_batch, args=(volumes,))
+        thread.daemon = True
+        thread.start()
+
+    def _update_volumes_batch(self, volumes):
+        """Actualizar múltiples volúmenes en segundo plano"""
+        from helpers.comicvine_cliente import ComicVineClient
+        from repositories.volume_repository import VolumeRepository
+
+        try:
+            # Obtener API key de la configuración
+            api_key = self.config.get_api_key() if self.config else ""
+            if not api_key:
+                GLib.idle_add(
+                    self.show_toast,
+                    "Error: No se ha configurado la API key de ComicVine",
+                    "error"
+                )
+                return
+
+            # Crear cliente de ComicVine
+            cv_client = ComicVineClient(api_key)
+            volume_repo = VolumeRepository(self.session)
+
+            total = len(volumes)
+            success_count = 0
+            error_count = 0
+
+            for i, volume in enumerate(volumes, 1):
+                try:
+                    # Reportar progreso
+                    GLib.idle_add(
+                        self.show_toast,
+                        f"Actualizando {i}/{total}: {volume.nombre}",
+                        "info"
+                    )
+
+                    # Actualizar volumen usando el método del repositorio
+                    volume_data = {'id': volume.id_comicvine}
+                    volume_repo.download_complete_volume_data(
+                        volume_data,
+                        cv_client,
+                        download_covers=True,
+                        progress_callback=None
+                    )
+
+                    success_count += 1
+                    print(f"✓ Volumen actualizado: {volume.nombre}")
+
+                except Exception as e:
+                    error_count += 1
+                    print(f"✗ Error actualizando {volume.nombre}: {e}")
+
+            # Reportar resultado final
+            if error_count == 0:
+                GLib.idle_add(
+                    self.show_toast,
+                    f"✅ {success_count} volúmenes actualizados correctamente",
+                    "success"
+                )
+            else:
+                GLib.idle_add(
+                    self.show_toast,
+                    f"Completado: {success_count} exitosos, {error_count} errores",
+                    "warning"
+                )
+
+            # Recargar vista
+            GLib.idle_add(self.on_refresh_clicked, None)
+
+        except Exception as e:
+            print(f"Error en actualización batch: {e}")
+            import traceback
+            traceback.print_exc()
+            GLib.idle_add(
+                self.show_toast,
+                f"Error en actualización: {str(e)}",
+                "error"
+            )
 
     def on_show_about_action(self, action, parameter):
         """Mostrar diálogo Acerca de (acción)"""
@@ -1876,7 +2051,12 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         print(f"🎛️ Filtros recibidos desde diálogo: {filters}")
         print(f"🗂️ Filtros actuales antes de actualizar: {self.current_filters}")
 
-        self.current_filters.update(filters)
+        # Si filters está vacío (limpiar), reemplazar completamente
+        # Si no, actualizar con los nuevos valores
+        if not filters:
+            self.current_filters = {}
+        else:
+            self.current_filters.update(filters)
         print(f"🔄 Filtros actuales después de actualizar: {self.current_filters}")
 
         # Guardar los filtros en el estado de la vista actual

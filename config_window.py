@@ -34,7 +34,7 @@ class ConfigWindow(Adw.PreferencesWindow):
 
         # Configuración básica de la ventana
         self.set_title("Configuración de Babelcomics4")
-        self.set_default_size(600, 500)
+        self.set_default_size(600, 1200)
         self.set_modal(True)
 
         if parent_window:

@@ -8,6 +8,7 @@ import threading
 import queue
 from pathlib import Path
 from gi.repository import GdkPixbuf, GLib
+from helpers.comic_extractor import ComicExtractor
 
 
 class ThumbnailGenerator:
@@ -25,14 +26,17 @@ class ThumbnailGenerator:
         # Configuración de rutas
         self.cache_dir = Path(cache_dir)
         self._create_cache_directories()
-        
+
         # Queue y worker thread
         self.thumbnail_queue = queue.Queue()
         self.worker_thread = threading.Thread(target=self._worker, daemon=True)
-        
+
+        # Extractor de comics compartido (usa la lógica unificada)
+        self.comic_extractor = ComicExtractor()
+
         # Verificar dependencias
         self._check_dependencies()
-        
+
         # Iniciar worker
         self.worker_thread.start()
         print("ThumbnailGenerator iniciado")
@@ -162,8 +166,6 @@ class ThumbnailGenerator:
             
     def _generate_comic_thumbnail(self, comic_path, thumbnail_path, comic_id=None):
         """Generar thumbnail desde archivo de comic con lógica inteligente de cover"""
-        extension = comic_path.lower()
-
         # Si tenemos comic_id, intentar usar la lógica inteligente de cover
         if comic_id and hasattr(self, 'session') and self.session:
             try:
@@ -177,19 +179,31 @@ class ThumbnailGenerator:
             except Exception as e:
                 print(f"Error con lógica inteligente de cover, usando método normal: {e}")
 
-        # Fallback al método original
-        if extension.endswith('.cbz'):
+        # Usar ComicExtractor para detectar formato real (por magic bytes)
+        comic_format = self.comic_extractor.detect_comic_format(comic_path)
+
+        if not comic_format:
+            # Si no es un comic, verificar si es imagen directa
+            extension = comic_path.lower()
+            if extension.endswith(('.jpg', '.jpeg', '.png', '.webp', '.bmp')):
+                return self._generate_image_thumbnail(comic_path, thumbnail_path)
+            print(f"Formato no soportado: {comic_path}")
+            return False
+
+        # Extraer según el formato REAL detectado
+        if comic_format == 'zip':
             return self._extract_from_cbz(comic_path, thumbnail_path)
-        elif extension.endswith('.cbr'):
+        elif comic_format == 'rar':
             if self.has_rarfile:
                 return self._extract_from_cbr(comic_path, thumbnail_path)
             else:
                 print("CBR no soportado - falta rarfile")
                 return False
-        elif extension.endswith(('.jpg', '.jpeg', '.png', '.webp', '.bmp')):
-            return self._generate_image_thumbnail(comic_path, thumbnail_path)
+        elif comic_format == '7z':
+            print("Formato 7z detectado - extracción no implementada en ThumbnailGenerator")
+            return False
         else:
-            print(f"Formato no soportado: {comic_path}")
+            print(f"Formato no soportado: {comic_format}")
             return False
             
     def _extract_from_cbz(self, cbz_path, thumbnail_path):
@@ -403,8 +417,9 @@ class ThumbnailGenerator:
     def _find_smart_cover_image(self, comic_id, comic_path):
         """
         Encontrar imagen de cover inteligentemente:
-        1. Si tiene comic_detail, buscar página marcada como cover (tipoPagina=1)
-        2. Si no, extraer primera página del archivo
+        1. PRIORIDAD MÁXIMA: Página marcada manualmente (tipoPagina=1)
+        2. Si no hay marcada: Buscar por nombre (cover/portada/caratula) y marcarla
+        3. Último recurso: Primera imagen en orden y marcarla
         """
         try:
             print(f"\n🔍 SMART COVER SEARCH para comic {comic_id}")
@@ -423,30 +438,90 @@ class ThumbnailGenerator:
             ).count()
             print(f"📄 Total páginas en BD: {total_pages}")
 
-            # Buscar página marcada como cover
+            # PRIORIDAD 1: Buscar página marcada como cover (tipoPagina=1)
             cover_page = self.session.query(Comicbook_Detail).filter(
                 Comicbook_Detail.comicbook_id == comic_id,
                 Comicbook_Detail.tipoPagina == 1  # COVER
             ).first()
 
             if cover_page:
-                print(f"✅ COVER encontrado: {cover_page.nombre_pagina} (tipoPagina={cover_page.tipoPagina})")
+                print(f"✅ COVER MARCADO encontrado: {cover_page.nombre_pagina} (tipoPagina={cover_page.tipoPagina})")
                 print(f"📄 Orden de página: {cover_page.ordenPagina}")
 
-                # Extraer esa página específica del archivo original
-                extracted_cover = self._extract_specific_page_from_comic(comic_path, cover_page.ordenPagina)
+                # Extraer esa página específica del archivo original (por nombre primero)
+                extracted_cover = self._extract_specific_page_from_comic(
+                    comic_path,
+                    cover_page.ordenPagina,
+                    page_name=cover_page.nombre_pagina
+                )
                 if extracted_cover:
-                    print(f"🎯 USANDO COVER MARCADO (extraído): {extracted_cover}")
+                    print(f"🎯 USANDO COVER MARCADO: {extracted_cover}")
                     return extracted_cover
                 else:
-                    print(f"⚠️ Error extrayendo cover marcado, usando primera página")
-            else:
-                print(f"❌ No hay página marcada como COVER (tipoPagina=1)")
+                    print(f"⚠️ Error extrayendo cover marcado, continuando con fallbacks...")
 
-            # Fallback: extraer primera página del archivo
-            print(f"📦 Extrayendo primera página del archivo...")
+            # PRIORIDAD 2: Buscar por nombre (cover, portada, caratula) y marcar
+            print(f"❌ No hay página marcada como COVER, buscando por nombre...")
+            cover_by_name = self.session.query(Comicbook_Detail).filter(
+                Comicbook_Detail.comicbook_id == comic_id
+            ).filter(
+                Comicbook_Detail.nombre_pagina.ilike('cover.%') |
+                Comicbook_Detail.nombre_pagina.ilike('portada.%') |
+                Comicbook_Detail.nombre_pagina.ilike('caratula.%')
+            ).first()
+
+            if cover_by_name:
+                print(f"🎯 COVER ENCONTRADO POR NOMBRE: {cover_by_name.nombre_pagina}")
+                print(f"📄 Orden de página: {cover_by_name.ordenPagina}")
+
+                # Marcar como cover automáticamente
+                print(f"📌 Marcando automáticamente como cover...")
+                cover_by_name.tipoPagina = 1
+                self.session.commit()
+                print(f"✅ Página marcada como cover en BD")
+
+                # Extraer esa página específica del archivo original (por nombre primero)
+                extracted_cover = self._extract_specific_page_from_comic(
+                    comic_path,
+                    cover_by_name.ordenPagina,
+                    page_name=cover_by_name.nombre_pagina
+                )
+                if extracted_cover:
+                    print(f"✅ USANDO COVER POR NOMBRE: {extracted_cover}")
+                    return extracted_cover
+                else:
+                    print(f"⚠️ Error extrayendo cover por nombre, usando primera página...")
+
+            # PRIORIDAD 3: Primera página en orden lexicográfico y marcar
+            print(f"📦 Usando primera página en orden lexicográfico...")
+            first_page = self.session.query(Comicbook_Detail).filter(
+                Comicbook_Detail.comicbook_id == comic_id
+            ).order_by(Comicbook_Detail.ordenPagina).first()
+
+            if first_page:
+                print(f"🎯 PRIMERA PÁGINA: {first_page.nombre_pagina}")
+                print(f"📄 Orden: {first_page.ordenPagina}")
+
+                # Marcar como cover automáticamente
+                print(f"📌 Marcando primera página como cover...")
+                first_page.tipoPagina = 1
+                self.session.commit()
+                print(f"✅ Página marcada como cover en BD")
+
+                # Extraer esa página específica (por nombre primero)
+                extracted_cover = self._extract_specific_page_from_comic(
+                    comic_path,
+                    first_page.ordenPagina,
+                    page_name=first_page.nombre_pagina
+                )
+                if extracted_cover:
+                    print(f"✅ USANDO PRIMERA PÁGINA: {extracted_cover}")
+                    return extracted_cover
+
+            # FALLBACK FINAL: extracción directa sin BD
+            print(f"⚠️ Fallback: extracción directa del archivo...")
             extracted = self._extract_first_page_from_comic_file(comic_path)
-            print(f"🎯 USANDO PRIMERA PÁGINA: {extracted}")
+            print(f"🎯 USANDO EXTRACCIÓN DIRECTA: {extracted}")
             return extracted
 
         except Exception as e:
@@ -455,12 +530,15 @@ class ThumbnailGenerator:
             traceback.print_exc()
             return self._extract_first_page_from_comic_file(comic_path)
 
-    def _extract_specific_page_from_comic(self, comic_path, page_order):
-        """Extraer una página específica por orden del archivo de comic"""
+    def _extract_specific_page_from_comic(self, comic_path, page_order, page_name=None):
+        """Extraer una página específica por nombre o por orden del archivo de comic"""
         import tempfile
 
         try:
-            print(f"🎯 Extrayendo página #{page_order} de {os.path.basename(comic_path)}")
+            if page_name:
+                print(f"🎯 Extrayendo página '{page_name}' de {os.path.basename(comic_path)}")
+            else:
+                print(f"🎯 Extrayendo página #{page_order} de {os.path.basename(comic_path)}")
 
             if comic_path.lower().endswith('.cbz'):
                 with self.zipfile.ZipFile(comic_path, 'r') as zip_file:
@@ -477,11 +555,22 @@ class ThumbnailGenerator:
                         image_files.sort()
                         print(f"📄 Total imágenes encontradas: {len(image_files)}")
 
-                        # Verificar si el orden está dentro del rango (1-based)
-                        if 1 <= page_order <= len(image_files):
-                            target_image = image_files[page_order - 1]  # Convertir a 0-based
+                        target_image = None
+
+                        # PRIORIDAD 1: Buscar por nombre exacto si se proporcionó
+                        if page_name:
+                            for img_path in image_files:
+                                if os.path.basename(img_path) == page_name or img_path.endswith('/' + page_name):
+                                    target_image = img_path
+                                    print(f"✅ Encontrada por nombre: {target_image}")
+                                    break
+
+                        # PRIORIDAD 2: Buscar por orden si no se encontró por nombre
+                        if not target_image and 1 <= page_order <= len(image_files):
+                            target_image = image_files[page_order - 1]
                             print(f"📖 Página #{page_order}: {target_image}")
 
+                        if target_image:
                             # Extraer a temporal
                             temp_dir = tempfile.mkdtemp(dir='/tmp')
                             temp_path = os.path.join(temp_dir, os.path.basename(target_image))
@@ -493,7 +582,10 @@ class ThumbnailGenerator:
                             print(f"✅ Página extraída: {temp_path}")
                             return temp_path
                         else:
-                            print(f"❌ Orden {page_order} fuera de rango (1-{len(image_files)})")
+                            if page_name:
+                                print(f"❌ No se encontró página con nombre '{page_name}'")
+                            else:
+                                print(f"❌ Orden {page_order} fuera de rango (1-{len(image_files)})")
 
             elif comic_path.lower().endswith('.cbr') and self.has_rarfile:
                 with self.rarfile.RarFile(comic_path, 'r') as rar_file:
@@ -506,10 +598,22 @@ class ThumbnailGenerator:
                         image_files.sort()
                         print(f"📄 Total imágenes encontradas: {len(image_files)}")
 
-                        if 1 <= page_order <= len(image_files):
+                        target_image = None
+
+                        # PRIORIDAD 1: Buscar por nombre exacto si se proporcionó
+                        if page_name:
+                            for img_path in image_files:
+                                if os.path.basename(img_path) == page_name or img_path.endswith('/' + page_name) or img_path.endswith('\\' + page_name):
+                                    target_image = img_path
+                                    print(f"✅ Encontrada por nombre: {target_image}")
+                                    break
+
+                        # PRIORIDAD 2: Buscar por orden si no se encontró por nombre
+                        if not target_image and 1 <= page_order <= len(image_files):
                             target_image = image_files[page_order - 1]
                             print(f"📖 Página #{page_order}: {target_image}")
 
+                        if target_image:
                             temp_dir = tempfile.mkdtemp(dir='/tmp')
                             temp_path = os.path.join(temp_dir, os.path.basename(target_image))
 
@@ -520,7 +624,10 @@ class ThumbnailGenerator:
                             print(f"✅ Página extraída: {temp_path}")
                             return temp_path
                         else:
-                            print(f"❌ Orden {page_order} fuera de rango (1-{len(image_files)})")
+                            if page_name:
+                                print(f"❌ No se encontró página con nombre '{page_name}'")
+                            else:
+                                print(f"❌ Orden {page_order} fuera de rango (1-{len(image_files)})")
 
             return None
 
@@ -533,7 +640,10 @@ class ThumbnailGenerator:
         import tempfile
 
         try:
-            if comic_path.lower().endswith('.cbz'):
+            # Usar ComicExtractor para detectar formato real
+            comic_format = self.comic_extractor.detect_comic_format(comic_path)
+
+            if comic_format == 'zip':
                 with self.zipfile.ZipFile(comic_path, 'r') as zip_file:
                     # Encontrar archivos de imagen
                     image_files = [
@@ -558,7 +668,7 @@ class ThumbnailGenerator:
 
                         return temp_path
 
-            elif comic_path.lower().endswith('.cbr') and self.has_rarfile:
+            elif comic_format == 'rar' and self.has_rarfile:
                 with self.rarfile.RarFile(comic_path, 'r') as rar_file:
                     image_files = [
                         f for f in rar_file.namelist()
