@@ -528,7 +528,8 @@ class PublisherDownloadWindow(Adw.Window):
         """Descargar logo de editorial"""
         try:
             # Crear directorio si no existe
-            logo_dir = Path("data/thumbnails/editoriales")
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            logo_dir = Path(get_thumbnails_base_path()) / "editoriales"
             logo_dir.mkdir(parents=True, exist_ok=True)
 
             # Descargar imagen directamente a la carpeta de editoriales

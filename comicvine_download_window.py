@@ -1040,10 +1040,77 @@ class ComicVineDownloadWindow(Adw.Window):
             # - Información del volumen
             # - Todos los issues
             # - Covers del volumen e issues
+            # - Todos los issues
+            # - Covers del volumen e issues
             def progress_callback(message):
                 # Actualizar progreso en la interfaz
                 progress_message = f"[{volume_data.get('name', 'Volumen')}] {message}"
                 print(progress_message)
+                
+            def save_cover_result(result):
+                """Callback para guardar resultados de covers en el hilo principal (safe DB access)"""
+                def _update_db_in_main_thread():
+                    try:
+                        # Usar la sesión de la ventana
+                        from entidades.comicbook_info_model import ComicbookInfo
+                        from entidades.comicbook_info_cover_model import ComicbookInfoCover
+                        
+                        issue_num = result.get('issue_number')
+                        results_list = result.get('results', [])
+                        
+                        if not results_list: return False
+                            
+                        # El volumen puede haber sido creado recién, necesitamos asegurarnos de tener el ID correcto
+                        # Como 'saved_volume' es local a la función padre y esto es asíncrono, 
+                        # mejor buscamos el volumen por su ID de comicvine si es posible, o confiamos 
+                        # en que volume_repo devuelve el objeto actualizado.
+                        # PERO: saved_volume no está disponible todavía cuando se define esto.
+                        # Solución: Usar el volume_data['id'] para buscarlo, o pasar el objeto volume 
+                        # si volume_repo lo permitiera (pero volume_repo crea el volumen dentro).
+                        
+                        # Estrategia: Buscar el volumen por id_comicvine
+                        from entidades.volume_model import Volume
+                        vol = self.session.query(Volume).filter_by(id_comicvine=volume_data.get('id')).first()
+                        
+                        if not vol: return False
+                        
+                        comic_info = self.session.query(ComicbookInfo).filter(
+                            ComicbookInfo.id_volume == vol.id_volume,
+                            ComicbookInfo.numero == str(issue_num)
+                        ).first()
+                        
+                        if not comic_info: return False
+
+                        changes_made = False
+                        for item in results_list:
+                            url = item.get('url')
+                            embedding_json = item.get('embedding')
+                            
+                            cover_record = next((c for c in comic_info.portadas if c.url_imagen == url), None)
+                            
+                            if not cover_record:
+                                cover_record = ComicbookInfoCover(
+                                    id_comicbook_info=comic_info.id_comicbook_info,
+                                    url_imagen=url
+                                )
+                                self.session.add(cover_record)
+                                comic_info.portadas.append(cover_record)
+                                changes_made = True
+                            
+                            if embedding_json and cover_record.embedding != embedding_json:
+                                cover_record.embedding = embedding_json
+                                changes_made = True
+                                    
+                        if changes_made:
+                            self.session.commit()
+                            
+                        return False
+                    except Exception as e:
+                        print(f"❌ Error guardando cover result en DB (download window): {e}")
+                        self.session.rollback()
+                        return False
+
+                GLib.idle_add(_update_db_in_main_thread)
 
             print(f"🚀 Iniciando descarga completa de: {volume_data.get('name', 'Volumen')}")
 
@@ -1052,7 +1119,8 @@ class ComicVineDownloadWindow(Adw.Window):
                 volume_data=volume_data,
                 comicvine_client=self.comicvine_client,
                 download_covers=download_covers,
-                progress_callback=progress_callback
+                progress_callback=progress_callback,
+                result_callback=save_cover_result
             )
 
             print(f"✅ Descarga completa exitosa: '{saved_volume.nombre}'")
@@ -1076,9 +1144,10 @@ class ComicVineDownloadWindow(Adw.Window):
                 volume_details['image'].get('medium_url')):
 
                 cover_url = volume_details['image']['medium_url']
+                from helpers.thumbnail_path import get_thumbnails_base_path
                 cover_path = download_image(
                     cover_url,
-                    "data/thumbnails/volumes",
+                    os.path.join(get_thumbnails_base_path(), "volumes"),
                     f"{volume.id_volume}.jpg"
                 )
 

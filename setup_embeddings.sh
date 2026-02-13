@@ -1,5 +1,10 @@
 #!/bin/bash
 # Script de instalación del sistema de embeddings
+#
+# NOTA: Este script se integra con install.py
+# También podés ejecutar: python3 install.py --embeddings
+#
+# Usa el mismo entorno virtual (.venv) que install.py
 
 echo "=========================================="
 echo "Setup de Sistema de Clasificación por"
@@ -14,9 +19,9 @@ if [ ! -f "Babelcomic4.py" ]; then
 fi
 
 # Crear virtual environment si no existe
-if [ ! -d "venv" ]; then
+if [ ! -d ".venv" ]; then
     echo "1. Creando virtual environment..."
-    python3 -m venv venv
+    python3 -m venv .venv
     echo "   ✓ Virtual environment creado"
 else
     echo "1. Virtual environment ya existe"
@@ -26,7 +31,12 @@ fi
 echo ""
 echo "2. Instalando dependencias..."
 echo "   (Esto puede tardar varios minutos - descarga ~2GB)"
-./venv/bin/pip install -q torch transformers numpy pillow sqlalchemy requests
+echo ""
+echo "   NOTA: Para PyTorch con GPU, usa python3 install.py --embeddings"
+echo "   Este script instala la versión CPU de PyTorch"
+echo ""
+./.venv/bin/pip install -q torch torchvision --index-url https://download.pytorch.org/whl/cpu
+./.venv/bin/pip install -q "transformers>=4.30.0" numpy pillow sqlalchemy requests
 
 if [ $? -eq 0 ]; then
     echo "   ✓ Dependencias instaladas"
@@ -38,7 +48,7 @@ fi
 # Actualizar esquema de base de datos
 echo ""
 echo "3. Actualizando esquema de base de datos..."
-./venv/bin/python -c "
+./.venv/bin/python -c "
 import os
 from sqlalchemy import create_engine
 
@@ -64,7 +74,7 @@ else:
 # Verificar instalación
 echo ""
 echo "4. Verificando instalación..."
-./venv/bin/python test_embeddings.py > /dev/null 2>&1
+./.venv/bin/python test_embeddings.py > /dev/null 2>&1
 
 if [ $? -eq 0 ]; then
     echo "   ✓ Instalación verificada correctamente"
@@ -78,13 +88,16 @@ echo "=========================================="
 echo "✅ INSTALACIÓN COMPLETADA"
 echo "=========================================="
 echo ""
+echo "💡 NOTA: Este script ahora está integrado con install.py"
+echo "   También podés usar: python3 install.py --embeddings"
+echo ""
 echo "Próximos pasos:"
 echo ""
 echo "1. Generar embeddings de tus covers de ComicVine:"
-echo "   ./venv/bin/python generate_cover_embeddings.py"
+echo "   ./.venv/bin/python generate_cover_embeddings.py"
 echo ""
 echo "2. Clasificar automáticamente tus comics:"
-echo "   ./venv/bin/python auto_classify_comics.py --max 10"
+echo "   Usar la interfaz gráfica (ventana de clasificación por IA)"
 echo ""
 echo "Consulta EMBEDDINGS_README.md para más información"
 echo ""

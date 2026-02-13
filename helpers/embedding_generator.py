@@ -33,8 +33,8 @@ class EmbeddingGenerator:
             self._processor = CLIPProcessor.from_pretrained(model_name)
 
             # Verificar compatibilidad de GPU con versión de PyTorch
-            # PyTorch 1.x: soporta CUDA capability >= 3.5 (incluye GTX 1070 con 6.1)
-            # PyTorch 2.x: requiere CUDA capability >= 7.0
+            # PyTorch 2.x con CUDA 11.8+: soporta CUDA capability >= 3.7
+            # Esto incluye GTX 1070 (6.1), RTX 2000/3000/4000, etc.
             use_gpu = False
             if torch.cuda.is_available():
                 try:
@@ -46,12 +46,15 @@ class EmbeddingGenerator:
                     torch_version = torch.__version__.split('+')[0]
                     torch_major = int(torch_version.split('.')[0])
 
-                    if torch_major >= 2 and cuda_version < 7.0:
-                        print(f"⚠️ GPU con CUDA capability {cuda_version} incompatible con PyTorch {torch_version}")
-                        print("   Usando CPU. Para usar GPU, instalar PyTorch 1.13.x con CUDA 11.7")
-                    else:
+                    # PyTorch 2.x con CUDA 11.8+ funciona bien con capability >= 3.7
+                    # La GTX 1070 (6.1) funciona perfectamente
+                    if cuda_version >= 3.7:
                         use_gpu = True
-                        print(f"GPU detectada: CUDA capability {cuda_version}, PyTorch {torch_version}")
+                        gpu_name = torch.cuda.get_device_name(0)
+                        print(f"GPU detectada: {gpu_name} (CUDA capability {cuda_version}, PyTorch {torch_version})")
+                    else:
+                        print(f"⚠️ GPU con CUDA capability {cuda_version} muy antigua")
+                        print("   Usando CPU")
                 except Exception as e:
                     print(f"⚠️ Error verificando GPU: {e}")
 
@@ -60,10 +63,9 @@ class EmbeddingGenerator:
             self._model.eval()
 
             if self.device == "cuda":
-                gpu_name = torch.cuda.get_device_name(0)
-                print(f"Modelo CLIP cargado en GPU: {gpu_name}")
+                print(f"✓ Modelo CLIP cargado en GPU")
             else:
-                print(f"Modelo CLIP cargado en CPU")
+                print(f"✓ Modelo CLIP cargado en CPU")
 
     def generate_embedding(self, image_path):
         """
@@ -87,6 +89,10 @@ class EmbeddingGenerator:
             # Generar embedding
             with torch.no_grad():
                 image_features = self._model.get_image_features(**inputs)
+
+            # Versiones recientes de transformers pueden devolver un objeto en vez de tensor
+            if not isinstance(image_features, torch.Tensor):
+                image_features = image_features.pooler_output if hasattr(image_features, 'pooler_output') else image_features.last_hidden_state[:, 0, :]
 
             # Normalizar el embedding (importante para cosine similarity)
             image_features = image_features / image_features.norm(dim=-1, keepdim=True)

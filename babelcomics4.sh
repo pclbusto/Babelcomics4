@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script de inicio para Babelcomics4
 
-cd "/home/pedro/PycharmProjects/Babelcomics4"
+cd "/home/pedro/Documents/Python Projects/Babelcomics4"
 
 # Activar entorno virtual si existe
 if [ -d ".venv" ]; then
@@ -17,7 +17,7 @@ fi
 
 # Ejecutar aplicación
 echo "🚀 Iniciando Babelcomics4..."
-python3 Babelcomic4.py
+python Babelcomic4.py
 
 # Desactivar entorno virtual
 if [ -d ".venv" ]; then

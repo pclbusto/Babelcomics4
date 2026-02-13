@@ -203,17 +203,25 @@ class ConfigWindow(Adw.PreferencesWindow):
         dirs_group.add(data_dir_row)
 
         # Directorio de thumbnails
-        thumb_dir_row = Adw.ActionRow()
-        thumb_dir_row.set_title("Directorio de thumbnails")
-        thumb_dir_row.set_subtitle(str(Path("data/thumbnails").absolute()))
+        self.thumb_dir_row = Adw.ActionRow()
+        self.thumb_dir_row.set_title("Directorio de thumbnails")
+        from helpers.thumbnail_path import get_thumbnails_base_path
+        self.thumb_dir_row.set_subtitle(str(Path(get_thumbnails_base_path()).absolute()))
+
+        thumb_edit_button = Gtk.Button()
+        thumb_edit_button.set_icon_name("document-edit-symbolic")
+        thumb_edit_button.set_valign(Gtk.Align.CENTER)
+        thumb_edit_button.set_tooltip_text("Cambiar carpeta de thumbnails")
+        thumb_edit_button.connect("clicked", self.on_change_thumbnails_directory)
+        self.thumb_dir_row.add_suffix(thumb_edit_button)
 
         thumb_button = Gtk.Button()
         thumb_button.set_icon_name("folder-open-symbolic")
         thumb_button.set_valign(Gtk.Align.CENTER)
         thumb_button.connect("clicked", self.on_open_thumbnails_directory)
-        thumb_dir_row.add_suffix(thumb_button)
+        self.thumb_dir_row.add_suffix(thumb_button)
 
-        dirs_group.add(thumb_dir_row)
+        dirs_group.add(self.thumb_dir_row)
 
         page.add(dirs_group)
 
@@ -386,7 +394,10 @@ class ConfigWindow(Adw.PreferencesWindow):
         # Cargar valor desde BD
         current_size = 200
         if self.config:
-            current_size = self.config.thumbnail_size
+            try:
+                current_size = int(self.config.thumbnail_size)
+            except (ValueError, TypeError):
+                current_size = 200
 
         size_adjustment = Gtk.Adjustment(value=current_size, lower=100, upper=400, step_increment=10)
         self.thumbnail_size_row.set_adjustment(size_adjustment)
@@ -402,7 +413,10 @@ class ConfigWindow(Adw.PreferencesWindow):
         # Cargar valor desde BD
         current_batch = 20
         if self.config:
-            current_batch = self.config.items_per_batch
+            try:
+                current_batch = int(self.config.items_per_batch)
+            except (ValueError, TypeError):
+                current_batch = 20
 
         items_adjustment = Gtk.Adjustment(value=current_batch, lower=10, upper=100, step_increment=5)
         self.items_per_batch_row.set_adjustment(items_adjustment)
@@ -419,7 +433,10 @@ class ConfigWindow(Adw.PreferencesWindow):
         # Cargar valor desde BD
         current_threshold = 1.0
         if self.config:
-            current_threshold = self.config.scroll_threshold
+            try:
+                current_threshold = float(self.config.scroll_threshold)
+            except (ValueError, TypeError):
+                current_threshold = 1.0
 
         threshold_adjustment = Gtk.Adjustment(value=current_threshold, lower=0.1, upper=5.0, step_increment=0.1)
         self.scroll_threshold_row.set_adjustment(threshold_adjustment)
@@ -436,7 +453,10 @@ class ConfigWindow(Adw.PreferencesWindow):
         # Cargar valor desde BD
         current_cooldown = 100
         if self.config:
-            current_cooldown = self.config.scroll_cooldown
+            try:
+                current_cooldown = int(self.config.scroll_cooldown)
+            except (ValueError, TypeError):
+                current_cooldown = 100
 
         cooldown_adjustment = Gtk.Adjustment(value=current_cooldown, lower=50, upper=1000, step_increment=50)
         self.scroll_cooldown_row.set_adjustment(cooldown_adjustment)
@@ -1087,7 +1107,184 @@ class ConfigWindow(Adw.PreferencesWindow):
 
     def on_open_thumbnails_directory(self, button):
         """Abrir directorio de thumbnails"""
-        self.open_directory("data/thumbnails")
+        from helpers.thumbnail_path import get_thumbnails_base_path
+        self.open_directory(get_thumbnails_base_path())
+
+    def on_change_thumbnails_directory(self, button):
+        """Abrir diálogo para cambiar la carpeta de thumbnails"""
+        from helpers.thumbnail_path import get_thumbnails_base_path
+
+        dialog = Gtk.FileDialog.new()
+        dialog.set_title("Seleccionar nueva carpeta de thumbnails")
+
+        # Intentar establecer la carpeta actual como inicial
+        current_path = Path(get_thumbnails_base_path()).absolute()
+        if current_path.exists():
+            dialog.set_initial_folder(Gio.File.new_for_path(str(current_path)))
+
+        dialog.select_folder(self, None, self._on_thumbnail_folder_selected)
+
+    def _on_thumbnail_folder_selected(self, dialog, result):
+        """Callback cuando se selecciona una nueva carpeta de thumbnails"""
+        try:
+            folder = dialog.select_folder_finish(result)
+            if folder is None:
+                return
+
+            new_path = folder.get_path()
+            if not new_path:
+                return
+
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            current_path = str(Path(get_thumbnails_base_path()).absolute())
+
+            if new_path == current_path:
+                self.show_success_message("La carpeta seleccionada es la misma que la actual.")
+                return
+
+            # Diálogo de confirmación
+            confirm_dialog = Adw.MessageDialog.new(self)
+            confirm_dialog.set_heading("Cambiar carpeta de thumbnails")
+            confirm_dialog.set_body(
+                f"Ruta actual:\n{current_path}\n\n"
+                f"Nueva ruta:\n{new_path}\n\n"
+                "Se copiarán todos los archivos existentes a la nueva ubicación. "
+                "Los originales se borrarán solo tras completar la copia."
+            )
+            confirm_dialog.add_response("cancel", "Cancelar")
+            confirm_dialog.add_response("migrate", "Migrar")
+            confirm_dialog.set_response_appearance("migrate", Adw.ResponseAppearance.SUGGESTED)
+            confirm_dialog.set_default_response("cancel")
+            confirm_dialog.connect("response", self._on_migrate_thumbnails_confirmed, new_path)
+            confirm_dialog.present()
+
+        except GLib.Error:
+            # El usuario canceló el diálogo
+            pass
+
+    def _on_migrate_thumbnails_confirmed(self, dialog, response, new_path):
+        """Confirmar y ejecutar la migración de thumbnails"""
+        if response != "migrate":
+            return
+
+        from helpers.thumbnail_path import get_thumbnails_base_path, set_thumbnails_base_path, ensure_directories_exist
+
+        old_path = str(Path(get_thumbnails_base_path()).absolute())
+
+        # Crear diálogo de progreso
+        progress_dialog = Adw.MessageDialog.new(self)
+        progress_dialog.set_heading("Migrando thumbnails...")
+        progress_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        progress_box.set_margin_start(12)
+        progress_box.set_margin_end(12)
+        progress_label = Gtk.Label(label="Preparando...")
+        progress_label.set_xalign(0)
+        progress_bar = Gtk.ProgressBar()
+        progress_box.append(progress_label)
+        progress_box.append(progress_bar)
+        progress_dialog.set_extra_child(progress_box)
+        progress_dialog.set_body("")
+        progress_dialog.present()
+
+        def migrate_worker():
+            import shutil as _shutil
+
+            try:
+                old_abs = Path(old_path)
+
+                # Verificar espacio en disco destino
+                dest_stat = _shutil.disk_usage(str(Path(new_path).parent))
+                if old_abs.exists():
+                    total_size = sum(f.stat().st_size for f in old_abs.rglob("*") if f.is_file())
+                else:
+                    total_size = 0
+
+                if total_size > 0 and dest_stat.free < total_size * 1.1:
+                    GLib.idle_add(lambda: self._finish_migration(progress_dialog, False,
+                        f"Espacio insuficiente en destino.\n"
+                        f"Necesario: {total_size / (1024*1024):.1f} MB\n"
+                        f"Disponible: {dest_stat.free / (1024*1024):.1f} MB"))
+                    return
+
+                # Crear estructura de subdirectorios en destino
+                GLib.idle_add(lambda: progress_label.set_text("Creando directorios..."))
+                ensure_directories_exist(new_path)
+
+                # Recopilar archivos a copiar
+                if old_abs.exists():
+                    files_to_copy = [f for f in old_abs.rglob("*") if f.is_file()]
+                else:
+                    files_to_copy = []
+
+                total_files = len(files_to_copy)
+                copied = 0
+                errors = []
+
+                for src_file in files_to_copy:
+                    try:
+                        rel = src_file.relative_to(old_abs)
+                        dst_file = Path(new_path) / rel
+                        dst_file.parent.mkdir(parents=True, exist_ok=True)
+                        _shutil.copy2(str(src_file), str(dst_file))
+                        copied += 1
+                        if total_files > 0:
+                            frac = copied / total_files
+                            GLib.idle_add(lambda f=frac, c=copied, t=total_files:
+                                (progress_bar.set_fraction(f),
+                                 progress_label.set_text(f"Copiando: {c}/{t} archivos...")))
+                    except Exception as copy_err:
+                        errors.append(f"{src_file.name}: {copy_err}")
+
+                if errors:
+                    GLib.idle_add(lambda: self._finish_migration(progress_dialog, False,
+                        f"Errores al copiar {len(errors)} archivos.\n"
+                        "Los archivos originales no se han modificado.\n"
+                        f"Primer error: {errors[0]}"))
+                    return
+
+                # Copia exitosa: actualizar BD y cache
+                try:
+                    if self.config:
+                        self.config.carpeta_thumbnails = new_path
+                        self.session.commit()
+                    set_thumbnails_base_path(new_path)
+                except Exception as db_err:
+                    GLib.idle_add(lambda: self._finish_migration(progress_dialog, False,
+                        f"Error actualizando configuración: {db_err}\n"
+                        "Los archivos fueron copiados pero la configuración no se actualizó."))
+                    return
+
+                # Borrar originales
+                if old_abs.exists() and str(old_abs) != new_path:
+                    try:
+                        _shutil.rmtree(str(old_abs))
+                    except Exception as rm_err:
+                        print(f"No se pudieron borrar los originales: {rm_err}")
+
+                GLib.idle_add(lambda: self._finish_migration(progress_dialog, True,
+                    f"Migración completada.\n{copied} archivos movidos a:\n{new_path}"))
+
+            except Exception as e:
+                GLib.idle_add(lambda: self._finish_migration(progress_dialog, False,
+                    f"Error durante la migración: {e}"))
+
+        threading.Thread(target=migrate_worker, daemon=True).start()
+
+    def _finish_migration(self, progress_dialog, success, message):
+        """Finalizar diálogo de migración"""
+        progress_dialog.close()
+
+        result_dialog = Adw.MessageDialog.new(self)
+        if success:
+            result_dialog.set_heading("Migración exitosa")
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            self.thumb_dir_row.set_subtitle(str(Path(get_thumbnails_base_path()).absolute()))
+        else:
+            result_dialog.set_heading("Error en migración")
+        result_dialog.set_body(message)
+        result_dialog.add_response("ok", "OK")
+        result_dialog.set_default_response("ok")
+        result_dialog.present()
 
     def on_open_database_directory(self, button):
         """Abrir directorio de la base de datos"""
@@ -1182,7 +1379,8 @@ class ConfigWindow(Adw.PreferencesWindow):
     def get_thumbnail_stats(self):
         """Obtener estadísticas de thumbnails"""
         try:
-            thumb_dir = Path("data/thumbnails/volumes")
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            thumb_dir = Path(get_thumbnails_base_path()) / "volumes"
             if thumb_dir.exists():
                 volume_thumbs = len(list(thumb_dir.glob("*.jpg")))
                 total_size = sum(f.stat().st_size for f in thumb_dir.glob("*.jpg"))
@@ -1214,14 +1412,11 @@ class ConfigWindow(Adw.PreferencesWindow):
         """Confirmar limpieza de cache"""
         if response == "clear":
             try:
-                thumb_dir = Path("data/thumbnails")
+                from helpers.thumbnail_path import get_thumbnails_base_path, ensure_directories_exist
+                thumb_dir = Path(get_thumbnails_base_path())
                 if thumb_dir.exists():
                     shutil.rmtree(thumb_dir)
-                    thumb_dir.mkdir(parents=True, exist_ok=True)
-                    (thumb_dir / "volumes").mkdir(exist_ok=True)
-                    (thumb_dir / "comics").mkdir(exist_ok=True)
-                    (thumb_dir / "publishers").mkdir(exist_ok=True)
-                    (thumb_dir / "comicbook_info").mkdir(exist_ok=True)
+                    ensure_directories_exist()
 
                 self.show_success_message("Cache de thumbnails limpiado exitosamente")
             except Exception as e:
@@ -1393,7 +1588,8 @@ class ConfigWindow(Adw.PreferencesWindow):
                     return False
 
             # Crear directorio si no existe
-            thumb_dir = Path("data/thumbnails/volumes")
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            thumb_dir = Path(get_thumbnails_base_path()) / "volumes"
             thumb_dir.mkdir(parents=True, exist_ok=True)
 
             # Guardar imagen

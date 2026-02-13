@@ -37,7 +37,8 @@ class Comicbook(Base):
         nombre_thumbnail = nombre_base + ".jpg"
 
         # 3. Construye la ruta donde debería estar la miniatura del cómic
-        ruta = os.path.join("data", "thumbnails", "comics", nombre_thumbnail)
+        from helpers.thumbnail_path import get_thumbnails_base_path
+        ruta = os.path.join(get_thumbnails_base_path(), "comics", nombre_thumbnail)
         # 4. Si el archivo de miniatura existe, devuelve su ruta
         if os.path.exists(ruta):
             return ruta

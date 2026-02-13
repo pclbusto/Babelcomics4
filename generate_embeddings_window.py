@@ -259,7 +259,15 @@ class GenerateEmbeddingsWindow(Adw.Window):
                     imagen_path = cover.obtener_ruta_local()
 
                     # Verificar si existe
-                    if "Comic_sin_caratula" in imagen_path or not os.path.exists(imagen_path):
+                    if "Comic_sin_caratula" in imagen_path:
+                        self.log(f"⚠️ Omitido: Sin carátula (ID {cover.id_cover})")
+                        skipped += 1
+                        self.update_stats(total, processed, skipped, errors)
+                        self.update_progress(i, total)
+                        continue
+
+                    if not os.path.exists(imagen_path):
+                        self.log(f"⚠️ Omitido: Archivo no encontrado: {imagen_path}")
                         skipped += 1
                         self.update_stats(total, processed, skipped, errors)
                         self.update_progress(i, total)

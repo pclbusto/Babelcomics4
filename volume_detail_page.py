@@ -217,13 +217,141 @@ class IssueCard(BaseCard):
     def set_issue_placeholder(self):
         """Placeholder específico para issues"""
         try:
-            color = 0x33D17AFF if self.physical_count > 0 else 0x808080FF
-            pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 250, 350)
-            pixbuf.fill(color)
-            texture = Gdk.Texture.new_for_pixbuf(pixbuf)
             self.image.set_paintable(texture)
         except Exception as e:
             print(f"Error creando placeholder de issue: {e}")
+
+
+class IssueFilterDialog(Adw.Window):
+    """Diálogo para filtrar issues"""
+    
+    __gsignals__ = {
+        'filters-applied': (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+    }
+    
+    def __init__(self, parent_window, current_filters):
+        super().__init__()
+        self.set_transient_for(parent_window)
+        self.set_modal(True)
+        self.set_title("Filtrar Issues")
+        self.set_default_size(350, 400)
+        
+        # Filtros actuales
+        self.current_filters = current_filters.copy() if current_filters else {"status": "all", "min_quantity": 0}
+        
+        self.create_content()
+        self.load_filters()
+        
+    def create_content(self):
+        """Crear contenido del diálogo"""
+        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        
+        # Header
+        header = Adw.HeaderBar()
+        header.set_show_end_title_buttons(False) # Usaremos nuestros botones
+        header.set_title_widget(Gtk.Label(label="Filtros"))
+        
+        cancel_btn = Gtk.Button(label="Cancelar")
+        cancel_btn.connect("clicked", lambda x: self.close())
+        header.pack_start(cancel_btn)
+        
+        apply_btn = Gtk.Button(label="Aplicar")
+        apply_btn.add_css_class("suggested-action")
+        apply_btn.connect("clicked", self.on_apply)
+        header.pack_end(apply_btn)
+        
+        main_box.append(header)
+        
+        # Contenido
+        content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+        content_box.set_margin_top(20)
+        content_box.set_margin_bottom(20)
+        content_box.set_margin_start(20)
+        content_box.set_margin_end(20)
+        
+        # Grupo 1: Estado (Mostrar)
+        status_group = Adw.PreferencesGroup()
+        status_group.set_title("Mostrar")
+        
+        # Usamos ActionRows con RadioButtons para el estado
+        self.status_all = Adw.ActionRow()
+        self.status_all.set_title("Todos")
+        self.radio_all = Gtk.CheckButton()
+        self.radio_all.set_active(True)
+        self.status_all.add_prefix(self.radio_all)
+        self.status_all.set_activatable_widget(self.radio_all)
+        status_group.add(self.status_all)
+        
+        self.status_with = Adw.ActionRow()
+        self.status_with.set_title("Con físicos")
+        self.status_with.set_subtitle("Muestra issues que tienes en tu colección")
+        self.radio_with = Gtk.CheckButton()
+        self.radio_with.set_group(self.radio_all)
+        self.status_with.add_prefix(self.radio_with)
+        self.status_with.set_activatable_widget(self.radio_with)
+        status_group.add(self.status_with)
+        
+        self.status_without = Adw.ActionRow()
+        self.status_without.set_title("Sin físicos")
+        self.status_without.set_subtitle("Muestra issues que faltan en tu colección")
+        self.radio_without = Gtk.CheckButton()
+        self.radio_without.set_group(self.radio_all)
+        self.status_without.add_prefix(self.radio_without)
+        self.status_without.set_activatable_widget(self.radio_without)
+        status_group.add(self.status_without)
+        
+        content_box.append(status_group)
+        
+        # Grupo 2: Cantidad
+        qty_group = Adw.PreferencesGroup()
+        qty_group.set_title("Inventario")
+        
+        # Crear adjustment explícito para evitar problemas
+        adjustment = Gtk.Adjustment(value=0, lower=0, upper=100, step_increment=1, page_increment=10, page_size=0)
+        
+        self.min_qty_row = Adw.SpinRow()
+        self.min_qty_row.set_adjustment(adjustment)
+        self.min_qty_row.set_title("Cantidad mínima")
+        self.min_qty_row.set_subtitle("Filtrar por cantidad de copias físicas")
+        # set_range ya no es necesario si usamos adjustment configurado, pero no hace daño
+        self.min_qty_row.set_climb_rate(1)
+        qty_group.add(self.min_qty_row)
+        
+        content_box.append(qty_group)
+        
+        main_box.append(content_box)
+        self.set_content(main_box)
+        
+    def load_filters(self):
+        """Cargar estado actual"""
+        status = self.current_filters.get("status", "all")
+        if status == "all":
+            self.radio_all.set_active(True)
+        elif status == "with":
+            self.radio_with.set_active(True)
+        elif status == "without":
+            self.radio_without.set_active(True)
+            
+        min_qty = self.current_filters.get("min_quantity", 0)
+        self.min_qty_row.set_value(float(min_qty))
+        
+    def on_apply(self, btn):
+        """Emitir señal con nuevos filtros"""
+        new_filters = {}
+        
+        # Estado
+        if self.radio_with.get_active():
+            new_filters["status"] = "with"
+        elif self.radio_without.get_active():
+            new_filters["status"] = "without"
+        else:
+            new_filters["status"] = "all"
+            
+        # Cantidad
+        new_filters["min_quantity"] = int(self.min_qty_row.get_value())
+        
+        self.emit("filters-applied", new_filters)
+        self.close()
 
 
 def create_volume_detail_content(volume, session, thumbnail_generator, main_window):
@@ -413,7 +541,8 @@ def update_card_cover(card, file_path, thumbnail_generator):
 
         # Borrar cache del thumbnail si existe
         try:
-            cache_path = f"data/thumbnails/comicinfo/issue_{card.item.id_comicbook_info}.jpg"
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            cache_path = os.path.join(get_thumbnails_base_path(), "comicinfo", f"issue_{card.item.id_comicbook_info}.jpg")
             if os.path.exists(cache_path):
                 os.remove(cache_path)
                 print(f"🗑️ DEBUG: Cache borrado: {cache_path}")
@@ -459,37 +588,26 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
     header_box.append(comics_title)
 
     # Filtro con SegmentedButton
+    # Filtro con Botón y Dialogo
     filter_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
     filter_box.set_halign(Gtk.Align.END)
-
-    filter_label = Gtk.Label(label="Mostrar:")
-    filter_label.add_css_class("dim-label")
-    filter_box.append(filter_label)
-
-    # SegmentedButton para filtrar
-    filter_group = Gtk.ToggleButton(label="Todos")
-    filter_group.set_active(True)
-    filter_group.add_css_class("flat")
-    filter_group.filter_type = "all"
-
-    filter_with = Gtk.ToggleButton(label="📚 Con físicos")
-    filter_with.set_group(filter_group)
-    filter_with.add_css_class("flat")
-    filter_with.filter_type = "with"
-
-    filter_without = Gtk.ToggleButton(label="📋 Sin físicos")
-    filter_without.set_group(filter_group)
-    filter_without.add_css_class("flat")
-    filter_without.add_css_class("suggested-action")  # Destacar como opción recomendada
-    filter_without.filter_type = "without"
-
-    filter_buttons_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-    filter_buttons_box.add_css_class("linked")
-    filter_buttons_box.append(filter_group)
-    filter_buttons_box.append(filter_with)
-    filter_buttons_box.append(filter_without)
-
-    filter_box.append(filter_buttons_box)
+    
+    # Estado actual de los filtros
+    filter_state = {
+        "status": "all",  # all, with, without
+        "min_quantity": 0
+    }
+    
+    # Label de estado del filtro
+    filter_info_label = Gtk.Label(label="Todos")
+    filter_info_label.add_css_class("dim-label")
+    filter_box.append(filter_info_label)
+    
+    # Botón de filtro
+    filter_button = Gtk.Button.new_from_icon_name("view-filter-symbolic")
+    filter_button.set_tooltip_text("Filtrar issues")
+    filter_box.append(filter_button)
+    
     header_box.append(filter_box)
 
     comics_box.append(header_box)
@@ -527,56 +645,79 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
     vadj = comics_scroll.get_vadjustment()
     vadj.connect("value-changed", on_issues_scroll, comics_flow_box, volume, session, thumbnail_generator, main_window)
 
-    # Función para filtrar issues según selección
-    def apply_filter(button):
-        """Aplicar filtro de visibilidad a los issues"""
-        if not button.get_active():
-            return
+    def update_filter_label():
+        """Actualizar etiqueta de estado del filtro"""
+        text_parts = []
+        
+        # Estado
+        status = filter_state["status"]
+        if status == "all":
+            text_parts.append("Todos")
+        elif status == "with":
+            text_parts.append("Con físicos")
+        elif status == "without":
+            text_parts.append("Sin físicos")
+            
+        # Cantidad
+        min_qty = filter_state["min_quantity"]
+        if min_qty > 0:
+            text_parts.append(f"(Min: {min_qty})")
+            
+        filter_info_label.set_text(" ".join(text_parts))
+        
+        # Cambiar estilo del botón si hay filtros activos
+        if status != "all" or min_qty > 0:
+            filter_button.add_css_class("suggested-action")
+        else:
+            filter_button.remove_css_class("suggested-action")
 
-        filter_type = button.filter_type
-        print(f"🔍 Aplicando filtro: {filter_type}")
-
-        # Iterar sobre todos los children del FlowBox
+    def apply_current_filters():
+        """Aplicar filtros actuales a los issues (recargando desde BD)"""
+        print(f"🔄 DEBUG: Recargando lista con filtros: {filter_state}")
+        
+        # 1. Actualizar UI
+        update_filter_label()
+        
+        # 2. Guardar filtros en el flowbox para que load_comics_batch los vea
+        comics_flow_box.current_filters = filter_state.copy()
+        
+        # 3. Limpiar FlowBox
         child = comics_flow_box.get_first_child()
-        shown = 0
-        hidden = 0
-
         while child:
-            # Obtener la card dentro del FlowBoxChild
-            flow_box_child = child
-            card = flow_box_child.get_child()
+            comics_flow_box.remove(child)
+            child = comics_flow_box.get_first_child()
+            
+        # 4. Resetear contadores de paginación
+        comics_flow_box.loaded_count = 0
+        comics_flow_box.issue_cards_map = {}
+        comics_flow_box.processed_covers = set()
+        comics_flow_box.is_loading = False
+        
+        # Forzar recalculación de total_issues
+        if hasattr(comics_flow_box, 'total_issues'):
+            del comics_flow_box.total_issues
+        
+        # 5. Cargar primer lote
+        GLib.idle_add(load_comics_batch, volume, session, thumbnail_generator, main_window, comics_flow_box)
 
-            if card and hasattr(card, 'physical_count'):
-                # Aplicar filtro según tipo
-                if filter_type == "all":
-                    flow_box_child.set_visible(True)
-                    shown += 1
-                elif filter_type == "with":
-                    visible = card.physical_count > 0
-                    flow_box_child.set_visible(visible)
-                    if visible:
-                        shown += 1
-                    else:
-                        hidden += 1
-                elif filter_type == "without":
-                    visible = card.physical_count == 0
-                    flow_box_child.set_visible(visible)
-                    if visible:
-                        shown += 1
-                    else:
-                        hidden += 1
+    def on_filter_clicked(btn):
+        """Abrir diálogo de filtros"""
+        print("🔘 Botón de filtro clickeado")
+        dialog = IssueFilterDialog(main_window, filter_state)
+        dialog.connect("filters-applied", lambda d, new_filters: on_filters_applied(new_filters))
+        dialog.present()
+        
+    def on_filters_applied(new_filters):
+        """Callback cuando se aplican nuevos filtros desde el diálogo"""
+        print(f"📥 Filtros recibidos del diálogo: {new_filters}")
+        filter_state.update(new_filters)
+        apply_current_filters()
 
-            child = child.get_next_sibling()
-
-        print(f"  ✓ Mostrando: {shown}, Ocultando: {hidden}")
-
-    # Conectar filtros
-    filter_group.connect("toggled", apply_filter)
-    filter_with.connect("toggled", apply_filter)
-    filter_without.connect("toggled", apply_filter)
+    filter_button.connect("clicked", on_filter_clicked)
 
     # Crear pestaña
     comics_page = tab_view.append(comics_box)
+
     comics_page.set_title("Issues")
     comics_page.set_icon(Gio.ThemedIcon.new("view-list-symbolic"))
 
@@ -729,10 +870,16 @@ def create_info_grid(volume, session):
 
     # URL si existe
     if volume.url:
-        url_label = Gtk.Label(label=volume.url)
+        url_label = Gtk.Label()
+        url_label.set_markup(f"<a href='{volume.url}'>{volume.url}</a>")
         url_label.set_halign(Gtk.Align.START)
+        url_label.set_ellipsize(Pango.EllipsizeMode.END)
+        url_label.set_max_width_chars(50)
         url_label.add_css_class("link")
         url_label.set_selectable(True)
+        # Importante: para que los links funcionen
+        url_label.set_property("use-markup", True)
+        
         add_info_row(grid, row, "URL", "")
         grid.attach(url_label, 1, row, 1, 1)
         row += 1
@@ -915,15 +1062,58 @@ def load_comics_batch(volume, session, thumbnail_generator, main_window, comics_
             return False
 
         # Si es la primera carga, obtener el total de issues (sin cargar los datos)
-        if not hasattr(comics_flow_box, 'total_issues'):
-            comics_flow_box.total_issues = session.query(ComicbookInfo).filter(
-                ComicbookInfo.id_volume == volume.id_volume
-            ).count()
-            print(f"Total de issues: {comics_flow_box.total_issues}")
+        if not hasattr(comics_flow_box, 'current_filters'):
+             comics_flow_box.current_filters = {"status": "all", "min_quantity": 0}
+
+        filters = comics_flow_box.current_filters
+        print(f"📥 DEBUG: Cargando batch con filtros: {filters}")
+
+        # Construir consulta base con filtros
+        from sqlalchemy import func, or_, and_
+        from sqlalchemy.orm import aliased
+        
+        # Subquery para contar físicos
+        # Contamos cuántos comics físicos hay para cada comicbook_info
+        if Comicbook:
+            stmt = session.query(
+                Comicbook.id_comicbook_info,
+                func.count('*').label('count')
+            ).group_by(Comicbook.id_comicbook_info).subquery()
+            
+            physical_counts = aliased(stmt)
+        
+        # Query base
+        query = session.query(ComicbookInfo)
+        
+        # Join con conteos si es necesario filtrar por cantidad/estado
+        # O si simplemente queremos ordenar/mostrar info (aunque el count lo hacemos en el loop por ahora)
+        # Para filtrar, necesitamos el join
+        if filters["status"] != "all" or filters["min_quantity"] > 0:
+             if Comicbook:
+                query = query.outerjoin(physical_counts, ComicbookInfo.id_comicbook_info == physical_counts.c.id_comicbook_info)
+                
+                # Aplicar filtros
+                if filters["status"] == "with":
+                    query = query.filter(physical_counts.c.count > 0)
+                elif filters["status"] == "without":
+                    query = query.filter(or_(physical_counts.c.count == 0, physical_counts.c.count.is_(None)))
+                    
+                if filters["min_quantity"] > 0:
+                    # Nota: si min_quantity > 0, implícitamente es "with" physicals
+                    query = query.filter(physical_counts.c.count >= filters["min_quantity"])
+
+        # Filtro de volumen siempre aplica
+        query = query.filter(ComicbookInfo.id_volume == volume.id_volume)
+
+        # Si es la primera carga (o recarga por filtro), obtener el total de issues filtrados
+        if not hasattr(comics_flow_box, 'total_issues') or comics_flow_box.loaded_count == 0:
+            comics_flow_box.total_issues = query.count()
+            print(f"Total de issues (filtrados): {comics_flow_box.total_issues}")
 
         # Verificar si ya cargamos todo
-        if comics_flow_box.loaded_count >= comics_flow_box.total_issues:
+        if comics_flow_box.loaded_count > 0 and comics_flow_box.loaded_count >= comics_flow_box.total_issues:
             print("Todos los issues ya están cargados")
+            comics_flow_box.is_loading = False
             return False
 
         # Obtener el mapa de cards si existe
@@ -938,10 +1128,8 @@ def load_comics_batch(volume, session, thumbnail_generator, main_window, comics_
 
         # Cargar solo el lote actual desde la base de datos
         from sqlalchemy.orm import joinedload
-        batch_issues = session.query(ComicbookInfo).options(
+        batch_issues = query.options(
             joinedload(ComicbookInfo.portadas)
-        ).filter(
-            ComicbookInfo.id_volume == volume.id_volume
         ).order_by(
             ComicbookInfo.numero.cast(Integer),
             ComicbookInfo.numero
@@ -1183,7 +1371,8 @@ def redownload_issue_cover(comic_info, volume, session, main_window):
 
                     # Borrar cache del thumbnail para forzar regeneración
                     try:
-                        cache_path = f"data/thumbnails/comicinfo/issue_{comic_info.id_comicbook_info}.jpg"
+                        from helpers.thumbnail_path import get_thumbnails_base_path
+                        cache_path = os.path.join(get_thumbnails_base_path(), "comicinfo", f"issue_{comic_info.id_comicbook_info}.jpg")
                         if os.path.exists(cache_path):
                             os.remove(cache_path)
                             print(f"DEBUG: Cache borrado: {cache_path}")
@@ -1426,10 +1615,12 @@ def load_comicbook_cover_image(image_widget, cover):
             extension = filename.rsplit('.', 1)[1] if '.' in filename else 'jpg'
 
             # Buscar archivo principal y variantes
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            _ci_base = os.path.join(get_thumbnails_base_path(), "comicbook_info")
             possible_patterns = [
-                f"data/thumbnails/comicbook_info/*/{filename}",  # Nombre exacto
-                f"data/thumbnails/comicbook_info/*/{base_name}_variant_*.{extension}",  # Variantes
-                f"data/thumbnails/comicbook_info/*/{base_name}.{extension}",  # Sin variant
+                f"{_ci_base}/*/{filename}",  # Nombre exacto
+                f"{_ci_base}/*/{base_name}_variant_*.{extension}",  # Variantes
+                f"{_ci_base}/*/{base_name}.{extension}",  # Sin variant
             ]
 
             print(f"🖼️ DEBUG: Buscando variantes de: {filename}")
@@ -1664,7 +1855,8 @@ def perform_comicvine_update(volume, session, main_window, tab_view):
             try:
                 show_update_progress(main_window, "Descargando cover del volumen...")
                 cover_url = volume_details['image']['medium_url']
-                cover_path = download_image(cover_url, "data/thumbnails/volumes", f"{volume.id_volume}.jpg")
+                from helpers.thumbnail_path import get_thumbnails_base_path
+                cover_path = download_image(cover_url, os.path.join(get_thumbnails_base_path(), "volumes"), f"{volume.id_volume}.jpg")
                 if cover_path:
                     # Actualizar image_url para mantener consistencia con el modelo
                     volume.image_url = cover_url
@@ -1688,14 +1880,87 @@ def perform_comicvine_update(volume, session, main_window, tab_view):
 
         # Descargar portadas en hilo separado para no bloquear UI
         print(f"DEBUG: Iniciando hilo de descarga para {len(detailed_issues)} issues")
-        import threading
-        download_thread = threading.Thread(
-            target=download_covers_in_background,
-            args=(volume, session, client, detailed_issues, main_window),
-            daemon=True
+        
+        def progress_callback(msg):
+            GLib.idle_add(show_update_progress, main_window, msg)
+            
+        def save_cover_result(result):
+            """
+            Callback ejecutado por el worker de descarga.
+            Recibe un diccionario con resultados y los guarda en DB usando GLib.idle_add
+            para asegurar ejecución en el hilo principal.
+            """
+            def _update_db_in_main_thread():
+                try:
+                    # Este código corre en el Main Thread
+                    # Usamos la sesión de la ventana principal
+                    from entidades.comicbook_info_model import ComicbookInfo
+                    from entidades.comicbook_info_cover_model import ComicbookInfoCover
+                    
+                    issue_num = result.get('issue_number')
+                    results_list = result.get('results', [])
+                    
+                    if not results_list:
+                        return False
+                        
+                    # Buscar ComicbookInfo
+                    comic_info = session.query(ComicbookInfo).filter(
+                        ComicbookInfo.id_volume == volume.id_volume,
+                        ComicbookInfo.numero == str(issue_num)
+                    ).first()
+                    
+                    if not comic_info:
+                        print(f"⚠️ No se encontró ComicbookInfo para issue #{issue_num}")
+                        return False
+                        
+                    changes_made = False
+                    for item in results_list:
+                        url = item.get('url')
+                        embedding_json = item.get('embedding')
+                        # item.get('path') -> ruta local, no la guardamos en DB, solo verificamos
+                        
+                        # Buscar si ya existe la portada
+                        cover_record = next((c for c in comic_info.portadas if c.url_imagen == url), None)
+                        
+                        if not cover_record:
+                            # Crear nueva
+                            cover_record = ComicbookInfoCover(
+                                id_comicbook_info=comic_info.id_comicbook_info,
+                                url_imagen=url
+                            )
+                            session.add(cover_record)
+                            comic_info.portadas.append(cover_record)
+                            changes_made = True
+                        
+                        # Actualizar embedding si existe y es nuevo
+                        if embedding_json:
+                            if cover_record.embedding != embedding_json:
+                                cover_record.embedding = embedding_json
+                                changes_made = True
+                                
+                    if changes_made:
+                        session.commit()
+                        # print(f"💾 Guardado en DB issue #{issue_num}")
+                        
+                    return False # Retornar False para que GLib no lo vuelva a llamar
+                    
+                except Exception as e:
+                    print(f"❌ Error guardando cover result en DB thread principal: {e}")
+                    session.rollback()
+                    return False
+
+            # Programar ejecución en main thread
+            GLib.idle_add(_update_db_in_main_thread)
+
+        # Usar el nuevo método unificado del repositorio
+        volume_repo.download_covers_concurrently(
+            volume, 
+            detailed_issues, 
+            progress_callback=progress_callback,
+            background=True,
+            result_callback=save_cover_result
         )
-        download_thread.start()
-        print("DEBUG: Hilo de descarga iniciado")
+        print("DEBUG: Hilo de descarga iniciado (Repository)")
 
     except Exception as e:
         print(f"Error en actualización ComicVine: {e}")
@@ -1768,133 +2033,167 @@ def create_new_issue(volume, issue_data, session):
 
 
 def download_issue_cover(issue_data, volume, session, force_redownload=False):
-    """Descargar portada del issue si no existe. Retorna True si descarga algo nuevo.
-
+    """Descargar portadas del issue (principal y variantes). 
+    Retorna True si descarga al menos una imagen nueva.
+    
     Args:
         issue_data: Datos del issue desde ComicVine
         volume: Objeto Volume
         session: Sesión de base de datos
-        force_redownload: Si es True, reescribe el archivo aunque ya exista
+        force_redownload: Si es True, reescribe los archivos aunque ya existan
     """
     try:
         from helpers.image_downloader import download_image
         from helpers.cover_download_notifier import get_notifier
         import os
 
-        print(f"DEBUG: Iniciando descarga para issue {issue_data.get('issue_number', 'N/A')}")
+        issue_number = str(issue_data.get('issue_number', 'N/A'))
+        print(f"DEBUG: Iniciando descarga de portadas para issue {issue_number}")
+        
         if force_redownload:
-            print(f"DEBUG: Modo FORCE_REDOWNLOAD activado - se reescribirá el archivo")
+            print(f"DEBUG: Modo FORCE_REDOWNLOAD activado")
 
-        # Obtener información de la imagen
-        image_data = issue_data.get('image')
-        if not image_data or not image_data.get('medium_url'):
-            print(f"No hay imagen disponible para issue {issue_data.get('issue_number', 'N/A')}")
+        # Recopilar todas las URLs de imágenes disponibles
+        image_urls = []
+        
+        # 1. Imagen principal
+        if issue_data.get('image') and issue_data['image'].get('medium_url'):
+            image_urls.append(issue_data['image']['medium_url'])
+            
+        # 2. Imágenes asociadas (variantes, etc.)
+        if issue_data.get('associated_images'):
+            for img in issue_data['associated_images']:
+                if img.get('medium_url'):
+                    image_urls.append(img['medium_url'])
+                elif img.get('original_url'):
+                    image_urls.append(img['original_url'])
+                    
+        # 3. Lista de imágenes genérica (por si acaso)
+        if issue_data.get('images'):
+            for img in issue_data['images']:
+                if img.get('medium_url'):
+                    image_urls.append(img['medium_url'])
+
+        # Eliminar duplicados manteniendo orden
+        unique_urls = []
+        seen = set()
+        for url in image_urls:
+            if url not in seen:
+                unique_urls.append(url)
+                seen.add(url)
+                
+        if not unique_urls:
+            print(f"No hay imágenes disponibles para issue {issue_number}")
             return False
 
-        image_url = image_data['medium_url']
-        print(f"DEBUG: URL de imagen: {image_url}")
+        print(f"DEBUG: Encontradas {len(unique_urls)} imágenes para descargar")
 
-        # Crear carpeta de destino (mismo método que obtener_ruta_local)
+        # Preparar carpeta de destino
         clean_volume_name = "".join([c if c.isalnum() or c.isspace() else "" for c in volume.nombre]).strip()
-        print(f"DEBUG: Nombre limpio del volumen: '{clean_volume_name}'")
-
+        from helpers.thumbnail_path import get_thumbnails_base_path
         carpeta_destino = os.path.join(
-            "data", "thumbnails", "comicbook_info",
+            get_thumbnails_base_path(), "comicbook_info",
             f"{clean_volume_name}_{volume.id_volume}"
         )
-        print(f"DEBUG: Carpeta destino: {carpeta_destino}")
 
-        # Crear carpeta si no existe
         try:
             os.makedirs(carpeta_destino, exist_ok=True)
-            print(f"DEBUG: Carpeta creada/verificada: {carpeta_destino}")
         except Exception as e:
             print(f"ERROR: No se pudo crear carpeta {carpeta_destino}: {e}")
             return False
 
-        # Nombre del archivo
-        nombre_archivo = image_url.split('/')[-1]
-        ruta_archivo = os.path.join(carpeta_destino, nombre_archivo)
-        print(f"DEBUG: Ruta completa del archivo: {ruta_archivo}")
-
-        downloaded_new = False
-
-        # Si force_redownload, borrar archivo existente
-        if force_redownload and os.path.exists(ruta_archivo):
-            try:
-                os.remove(ruta_archivo)
-                print(f"DEBUG: Archivo existente borrado para redescarga: {ruta_archivo}")
-            except Exception as e:
-                print(f"ERROR: No se pudo borrar archivo existente: {e}")
-                return False
-
-        # Descargar solo si no existe (o si fue borrado por force_redownload)
-        if not os.path.exists(ruta_archivo):
-            print(f"Descargando portada: {nombre_archivo}")
-            try:
-                resultado = download_image(image_url, carpeta_destino, nombre_archivo, resize_height=400)
-                if resultado:
-                    downloaded_new = True
-                    print(f"DEBUG: Descarga completada: {ruta_archivo}")
-                else:
-                    print(f"ERROR: La descarga falló para {nombre_archivo}")
-                    return False
-            except Exception as e:
-                print(f"ERROR: Fallo en descarga: {e}")
-                return False
-        else:
-            print(f"DEBUG: Archivo ya existe: {ruta_archivo}")
-
-        # Verificar si el archivo se descargó correctamente
-        if downloaded_new and os.path.exists(ruta_archivo):
-            print(f"DEBUG: Archivo verificado exitosamente: {ruta_archivo}")
-        elif downloaded_new:
-            print(f"ERROR: Archivo no se creó después de descarga: {ruta_archivo}")
-            return False
-        else:
-            print(f"Portada ya existe: {nombre_archivo}")
-
-        # Buscar el ComicbookInfo correspondiente (siempre ejecutar esto)
+        # Buscar el ComicbookInfo correspondiente
         comic_info = session.query(ComicbookInfo).filter(
             ComicbookInfo.id_volume == volume.id_volume,
             ComicbookInfo.numero == str(issue_data.get('issue_number', ''))
         ).first()
 
-        if comic_info:
-            # Verificar si ya existe el registro de portada
-            from entidades.comicbook_info_cover_model import ComicbookInfoCover
-            existing_cover = session.query(ComicbookInfoCover).filter(
-                ComicbookInfoCover.id_comicbook_info == comic_info.id_comicbook_info,
-                ComicbookInfoCover.url_imagen == image_url
-            ).first()
+        any_downloaded_new = False
 
-            if not existing_cover:
-                # Crear registro de portada
-                new_cover = ComicbookInfoCover()
-                new_cover.id_comicbook_info = comic_info.id_comicbook_info
-                new_cover.url_imagen = image_url
-                session.add(new_cover)
-                print(f"Agregado registro de portada para issue {comic_info.numero}")
-
-        # Notificar si se descargó algo nuevo (para actualizar UI en tiempo real)
-        if downloaded_new and os.path.exists(ruta_archivo):
+        # Procesar cada URL
+        for image_url in unique_urls:
             try:
-                notifier = get_notifier()
-                issue_number = str(issue_data.get('issue_number', ''))
-                print(f"📢 DEBUG: Notificando descarga exitosa - Volumen: {volume.id_volume}, Issue: #{issue_number}")
-                GLib.idle_add(notifier.notify_cover_downloaded, volume.id_volume, issue_number, ruta_archivo)
-            except Exception as e:
-                print(f"Error notificando descarga: {e}")
+                nombre_archivo = image_url.split('/')[-1]
+                ruta_archivo = os.path.join(carpeta_destino, nombre_archivo)
+                
+                downloaded_this = False
+                
+                # Si force_redownload, borrar archivo existente
+                if force_redownload and os.path.exists(ruta_archivo):
+                    try:
+                        os.remove(ruta_archivo)
+                        print(f"DEBUG: Archivo borrado para redescarga: {nombre_archivo}")
+                    except Exception as e:
+                        print(f"ERROR: No se pudo borrar {nombre_archivo}: {e}")
 
-        return downloaded_new
+                # Descargar si no existe
+                if not os.path.exists(ruta_archivo):
+                    print(f"Descargando: {nombre_archivo}")
+                    # NOTA: Usar resize_height=400 para consistencia con el nuevo proceso
+                    resultado = download_image(image_url, carpeta_destino, nombre_archivo, resize_height=400)
+                    if resultado:
+                        downloaded_this = True
+                        any_downloaded_new = True
+                        print(f"DEBUG: Descargado exitosamente: {nombre_archivo}")
+                    else:
+                        print(f"ERROR: Falló descarga de {nombre_archivo}")
+                else:
+                    print(f"DEBUG: Ya existe: {nombre_archivo}")
+
+                # Registrar en base de datos si tenemos el comic_info y el archivo existe
+                if comic_info and os.path.exists(ruta_archivo):
+                    from entidades.comicbook_info_cover_model import ComicbookInfoCover
+                    
+                    # Verificar si existe el registro
+                    existing_cover = session.query(ComicbookInfoCover).filter(
+                        ComicbookInfoCover.id_comicbook_info == comic_info.id_comicbook_info,
+                        ComicbookInfoCover.url_imagen == image_url
+                    ).first()
+
+                    if not existing_cover:
+                        new_cover = ComicbookInfoCover()
+                        new_cover.id_comicbook_info = comic_info.id_comicbook_info
+                        new_cover.url_imagen = image_url
+                        session.add(new_cover)
+                        print(f"Agregado registro de portada: {nombre_archivo}")
+                        try:
+                            session.commit()
+                        except:
+                            session.rollback()
+                        
+                        # Si ya existe y se redescargó (downloaded_this), invalidar embedding
+                        # para que se regenere
+                        if existing_cover and downloaded_this:
+                            try:
+                                existing_cover.embedding = None
+                                session.commit()
+                                print(f"DEBUG: Embedding invalidado para: {nombre_archivo}")
+                            except Exception as e:
+                                print(f"Error invalidando embedding: {e}")
+
+                # Notificar si se descargó algo nuevo
+                if downloaded_this:
+                    try:
+                        notifier = get_notifier()
+                        GLib.idle_add(notifier.notify_cover_downloaded, volume.id_volume, issue_number, ruta_archivo)
+                    except Exception as e:
+                        print(f"Error notificando: {e}")
+
+            except Exception as e:
+                print(f"Error procesando imagen {image_url}: {e}")
+
+        return any_downloaded_new
 
     except Exception as e:
-        print(f"Error descargando portada: {e}")
+        print(f"Error general descargando portadas: {e}")
         return False
 
 
 def check_and_download_missing_covers(volume, session, comicvine_client):
     """Verificar y descargar portadas faltantes para issues existentes"""
+    # Mantenemos esta función por compatibilidad si es llamada desde otros lugares,
+    # pero internamente podría delegar o simplificarse.
+    # Por ahora la dejamos funcional como fallback.
     try:
         import os
         downloaded_count = 0
@@ -1966,183 +2265,9 @@ def check_and_download_missing_covers(volume, session, comicvine_client):
         print(f"Error verificando portadas faltantes: {e}")
         return 0
 
+# NOTE: download_covers_in_background, collect_missing_covers, download_single_cover 
+# were removed/replaced by VolumeRepository.download_covers_concurrently logic
 
-def download_covers_in_background(volume, session, comicvine_client, detailed_issues, main_window):
-    """Descargar portadas en hilo separado con concurrencia"""
-    print(f"DEBUG: Entrando a download_covers_in_background para volumen {volume.nombre}")
-    try:
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-        import time
-
-        # Crear nueva sesión para el hilo usando el mismo engine que la sesión original
-        from sqlalchemy.orm import sessionmaker
-        thread_session = sessionmaker(bind=session.bind)()
-        print("DEBUG: Nueva sesión de DB creada para el hilo")
-
-        # Mostrar inicio de descarga
-        GLib.idle_add(show_update_progress, main_window, "Iniciando descarga de portadas...")
-        print("DEBUG: Mensaje de progreso enviado")
-
-        # Recopilar todos los issues que necesitan descarga
-        issues_to_download = []
-
-        # 1. Issues de la actualización actual
-        for issue_data in detailed_issues:
-            if issue_data.get('image') and issue_data.get('image', {}).get('medium_url'):
-                issues_to_download.append(('new', issue_data, None))
-                print(f"DEBUG: Agregado issue {issue_data.get('issue_number', 'N/A')} para descarga")
-
-        print(f"DEBUG: {len(issues_to_download)} issues de actualización actual para descargar")
-
-        # 2. Issues existentes sin portadas
-        missing_covers_count = collect_missing_covers(volume, thread_session, comicvine_client, issues_to_download)
-        print(f"DEBUG: {missing_covers_count} portadas faltantes encontradas")
-
-        total_downloads = len(issues_to_download)
-        print(f"DEBUG: Total de descargas: {total_downloads}")
-
-        # DEBUG: Listar todas las URLs que vamos a descargar
-        print("\n" + "="*80)
-        print("DEBUG: LISTADO DE URLs A DESCARGAR:")
-        print("="*80)
-        for idx, (issue_type, issue_data, existing_issue) in enumerate(issues_to_download, 1):
-            issue_num = issue_data.get('issue_number', 'N/A')
-            image_data = issue_data.get('image', {})
-            image_url = image_data.get('medium_url', 'NO URL')
-            print(f"{idx}. Issue #{issue_num}: {image_url}")
-        print("="*80 + "\n")
-
-        if total_downloads == 0:
-            GLib.idle_add(show_update_success, main_window, "No hay portadas para descargar")
-            print("DEBUG: No hay portadas para descargar, terminando")
-            return
-
-        GLib.idle_add(show_update_progress, main_window, f"Descargando {total_downloads} portadas...")
-        print(f"DEBUG: Iniciando descarga de {total_downloads} portadas")
-
-        # Descargar con pool de hilos (3 workers para balance entre velocidad y rate limiting)
-        downloaded_count = 0
-        last_progress_shown = 0  # Evitar toasts duplicados
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            # Enviar tareas al pool
-            future_to_issue = {}
-            for issue_type, issue_data, existing_issue in issues_to_download:
-                future = executor.submit(download_single_cover, issue_data, volume, thread_session)
-                future_to_issue[future] = (issue_type, issue_data, existing_issue)
-
-            # Procesar resultados conforme se completan
-            for future in as_completed(future_to_issue):
-                issue_type, issue_data, existing_issue = future_to_issue[future]
-                try:
-                    success = future.result()
-                    if success:
-                        downloaded_count += 1
-
-                    # Actualizar progreso cada 3 descargas (evitar duplicados)
-                    if downloaded_count % 3 == 0 and downloaded_count > last_progress_shown:
-                        last_progress_shown = downloaded_count
-                        progress_msg = f"Descargadas {downloaded_count}/{total_downloads} portadas..."
-                        GLib.idle_add(show_update_progress, main_window, progress_msg)
-
-                except Exception as exc:
-                    issue_num = issue_data.get('issue_number', 'N/A')
-                    print(f"Error descargando portada para issue {issue_num}: {exc}")
-
-        # Confirmar cambios
-        thread_session.commit()
-        thread_session.close()
-
-        # Mostrar resultado final
-        if downloaded_count > 0:
-            GLib.idle_add(show_update_success, main_window, f"Descargadas {downloaded_count} portadas")
-            # Ya no es necesario refrescar la vista - los covers se actualizan en tiempo real vía señales
-        else:
-            GLib.idle_add(show_update_success, main_window, "Todas las portadas ya estaban descargadas")
-
-    except Exception as e:
-        print(f"Error en descarga de portadas en background: {e}")
-        GLib.idle_add(show_update_error, main_window, "Error descargando portadas")
-
-
-def collect_missing_covers(volume, session, comicvine_client, issues_to_download):
-    """Recopilar issues existentes que necesitan portadas"""
-    try:
-        from entidades.comicbook_info_cover_model import ComicbookInfoCover
-        import os
-
-        # Issues sin portadas en base de datos
-        issues_without_covers = session.query(ComicbookInfo).outerjoin(ComicbookInfoCover).filter(
-            ComicbookInfo.id_volume == volume.id_volume,
-            ComicbookInfoCover.id_cover.is_(None)
-        ).all()
-
-        # Issues con portadas en base de datos pero archivos faltantes
-        issues_with_covers = session.query(ComicbookInfo).join(ComicbookInfoCover).filter(
-            ComicbookInfo.id_volume == volume.id_volume
-        ).all()
-
-        issues_missing_files = []
-        for issue in issues_with_covers:
-            try:
-                cover_path = issue.obtener_portada_principal()
-                if cover_path == "images/Comic_sin_caratula.png" or not os.path.exists(cover_path):
-                    issues_missing_files.append(issue)
-            except:
-                issues_missing_files.append(issue)
-
-        # Combinar y agregar a la lista de descarga
-        all_missing = list(set(issues_without_covers + issues_missing_files))
-
-        # Si el volumen tiene ID de ComicVine, obtener todos los issues de CV para hacer match
-        comicvine_issues = {}
-        if volume.id_comicvine:
-            try:
-                cv_issues = comicvine_client.get_volume_issues(volume.id_comicvine)
-                if cv_issues:
-                    # Crear diccionario por número de issue para match rápido
-                    comicvine_issues = {str(issue.get('issue_number', '')): issue for issue in cv_issues}
-            except Exception as e:
-                print(f"Error obteniendo issues de ComicVine: {e}")
-
-        # Obtener números de issue ya agregados para evitar duplicados
-        existing_issue_numbers = set()
-        for issue_type, issue_data, existing_issue in issues_to_download:
-            issue_number = str(issue_data.get('issue_number', ''))
-            existing_issue_numbers.add(issue_number)
-
-        for issue in all_missing:
-            if volume.id_comicvine and issue.numero in comicvine_issues:
-                # Verificar si ya está en la lista de descarga
-                if issue.numero not in existing_issue_numbers:
-                    try:
-                        # Obtener datos del issue desde ComicVine usando el número
-                        cv_issue = comicvine_issues[issue.numero]
-                        if cv_issue and cv_issue.get('image'):
-                            issues_to_download.append(('existing', cv_issue, issue))
-                            print(f"DEBUG: Agregado issue existente #{issue.numero} para descarga")
-                    except Exception as e:
-                        print(f"Error obteniendo detalles para issue #{issue.numero}: {e}")
-                else:
-                    print(f"DEBUG: Issue #{issue.numero} ya está en lista de descarga, omitiendo duplicado")
-
-        return len(all_missing)
-
-    except Exception as e:
-        print(f"Error recopilando portadas faltantes: {e}")
-        return 0
-
-
-def download_single_cover(issue_data, volume, session):
-    """Descargar una sola portada (función para usar en thread pool)"""
-    import time
-    try:
-        result = download_issue_cover(issue_data, volume, session)
-        # Agregar delay pequeño para evitar rate limiting de ComicVine (0.3s con 3 workers = ~1 req/seg total)
-        time.sleep(0.3)
-        return result
-    except Exception as e:
-        print(f"Error en descarga individual: {e}")
-        return False
 
 
 # FUNCIÓN OBSOLETA - Ya no es necesaria gracias al sistema de actualización en tiempo real

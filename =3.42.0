@@ -1,0 +1,7 @@
+Collecting PyGObject
+  Using cached pygobject-3.54.5-cp313-cp313-linux_x86_64.whl
+Collecting pycairo>=1.16 (from PyGObject)
+  Using cached pycairo-1.29.0-cp313-cp313-linux_x86_64.whl
+Installing collected packages: pycairo, PyGObject
+
+Successfully installed PyGObject-3.54.5 pycairo-1.29.0

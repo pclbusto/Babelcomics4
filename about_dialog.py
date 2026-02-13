@@ -41,7 +41,7 @@ def create_about_window(parent_window=None):
     # Si no funciona el local, intentar iconos del sistema
     if not icono_usado:
         iconos_prueba = [
-            "Babelcomics4",            # Tu icono instalado
+            "com.babelcomics.manager",  # Tu icono instalado
             "accessories-text-editor",  # Editor de texto
             "applications-graphics",    # Aplicaciones gráficas
             "folder-documents",         # Documentos

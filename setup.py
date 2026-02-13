@@ -50,11 +50,6 @@ def create_directories():
     directories = [
         # Directorios de datos
         "data",
-        "data/thumbnails",
-        "data/thumbnails/comics",
-        "data/thumbnails/volumes",
-        "data/thumbnails/publishers",
-        "data/thumbnails/comicbook_info",
 
         # Directorios de logs
         "logs",
@@ -70,6 +65,11 @@ def create_directories():
         path = Path(directory)
         path.mkdir(parents=True, exist_ok=True)
         print(f"📁 {directory}")
+
+    # Crear estructura de thumbnails usando el módulo centralizado
+    from helpers.thumbnail_path import ensure_directories_exist
+    ensure_directories_exist()
+    print("📁 data/thumbnails (+ subdirectorios)")
 
     print("✅ Estructura de directorios creada")
 
@@ -188,18 +188,29 @@ def create_desktop_file():
     desktop_dir = Path.home() / ".local/share/applications"
     desktop_dir.mkdir(parents=True, exist_ok=True)
 
-    desktop_file = desktop_dir / "Babelcomics4.desktop"
+    # Eliminar archivo desktop viejo si existe (para evitar duplicados)
+    old_desktop_file = desktop_dir / "Babelcomics4.desktop"
+    if old_desktop_file.exists():
+        old_desktop_file.unlink()
+        print(f"🗑️ Eliminado archivo desktop antiguo: {old_desktop_file}")
+
+    desktop_file = desktop_dir / "com.babelcomics.manager.desktop"
     current_dir = Path.cwd().absolute()
 
+    script_path = current_dir / "babelcomics4.sh"
+
     desktop_content = f"""[Desktop Entry]
-Name=Babelcomics4
-Comment=Gestor completo de colección de comics digitales
-Exec=python3 {current_dir}/Babelcomic4.py
-Icon=Babelcomics4
-Terminal=false
+Version=1.0
 Type=Application
-Categories=Graphics;Office;AudioVideo;
-MimeType=application/x-cbz;application/x-cbr;application/pdf;
+Name=Babelcomics4
+GenericName=Comic Collection Manager
+Comment=Manage your digital comic collection with GTK4
+Exec="{script_path}"
+Icon=com.babelcomics.manager
+Terminal=false
+Categories=Graphics;Viewer;GTK;
+Keywords=comic;cbr;cbz;pdf;collection;manager;
+MimeType=application/x-cbz;application/x-cbr;application/x-cb7;application/pdf;
 StartupNotify=true
 """
 
@@ -209,6 +220,14 @@ StartupNotify=true
 
         # Hacer ejecutable
         desktop_file.chmod(0o755)
+
+        # Actualizar base de datos de aplicaciones
+        try:
+            subprocess.run(["update-desktop-database", str(desktop_dir)],
+                          capture_output=True, check=False)
+            print("🔄 Base de datos de aplicaciones actualizada")
+        except:
+            print("⚠️ No se pudo actualizar la base de datos de aplicaciones (no crítico)")
 
         print(f"✅ Archivo desktop creado: {desktop_file}")
         print("   La aplicación aparecerá en el menú de aplicaciones")
@@ -244,7 +263,7 @@ fi
 
 # Ejecutar aplicación
 echo "🚀 Iniciando Babelcomics4..."
-python3 Babelcomic4.py
+python Babelcomic4.py
 
 # Desactivar entorno virtual
 if [ -d ".venv" ]; then

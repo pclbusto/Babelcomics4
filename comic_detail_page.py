@@ -1069,7 +1069,8 @@ def generate_thumbnail_from_comic(page_image, page, comic):
                         page_file = extracted_files[page.ordenPagina - 1]  # ordenPagina es 1-based
 
                         # Generar thumbnail
-                        thumbnail_dir = os.path.join("data", "thumbnails", "comic_pages", str(comic.id_comicbook))
+                        from helpers.thumbnail_path import get_thumbnails_base_path
+                        thumbnail_dir = os.path.join(get_thumbnails_base_path(), "comic_pages", str(comic.id_comicbook))
                         thumbnail_filename = f"page_{page.ordenPagina:03d}.jpg"
                         thumbnail_path = os.path.join(thumbnail_dir, thumbnail_filename)
 

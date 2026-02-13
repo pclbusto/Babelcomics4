@@ -18,8 +18,9 @@ class Publisher(Base):
     def obtener_nombre_logo(self):
         """Obtiene la ruta completa del logo o una imagen por defecto."""
         if self.url_logo:
+            from helpers.thumbnail_path import get_thumbnails_base_path
             nombre_archivo = self.url_logo.split('/')[-1]  # Extraer el nombre del archivo
-            ruta = os.path.join("data", "thumbnails", "editoriales", nombre_archivo)  # Construir la ruta completa
+            ruta = os.path.join(get_thumbnails_base_path(), "editoriales", nombre_archivo)  # Construir la ruta completa
             if os.path.exists(ruta):  # Verificar si el archivo existe
                 return ruta
         # Si no se encuentra el archivo, retornar la imagen por defecto

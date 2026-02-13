@@ -28,6 +28,7 @@ try:
     from repositories.volume_repository import VolumeRepository
     from repositories.publisher_repository import PublisherRepository
     from repositories.setup_repository import SetupRepository
+    from helpers.thumbnail_path import initialize as init_thumbnail_path, ensure_directories_exist
     
     # Importar ComicbookInfo si está disponible
     try:
@@ -49,13 +50,24 @@ try:
     from thumbnail_generator import ThumbnailGenerator
     from about_dialog import show_about_dialog
     from comicvine_download_window import ComicVineDownloadWindow
-    from generate_embeddings_window import GenerateEmbeddingsWindow
-    from ai_classification_window import AIClassificationWindow
     print("Módulos locales importados correctamente")
 except ImportError as e:
     print(f"Error importando módulos locales: {e}")
     print("Asegúrate de tener todos los archivos: comic_cards.py, filter_dialog.py, selectable_card.py, thumbnail_generator.py")
     sys.exit(1)
+
+# Importar módulos de IA (opcionales)
+try:
+    from generate_embeddings_window import GenerateEmbeddingsWindow
+    from ai_classification_window import AIClassificationWindow
+    print("✅ Módulos de IA importados correctamente")
+    AI_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️  Módulos de IA no disponibles: {e}")
+    print("Para usar funciones de IA, instala: torch, transformers")
+    AI_AVAILABLE = False
+    GenerateEmbeddingsWindow = None
+    AIClassificationWindow = None
 
 # Intentar importar cataloging_window
 try:
@@ -124,7 +136,14 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Variables para lazy loading
         self.items_data = []
         self.loaded_items = 0
+        # Variables para lazy loading
+        self.items_data = []
+        self.loaded_items = 0
         self.batch_size = 20
+
+        # Variables para preservar scroll
+        self.saved_scroll_pos = 0
+        self.saved_loaded_count = 0
         
         # Inicializar componentes
         self.init_database()
@@ -165,9 +184,25 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             self.publisher_repository = PublisherRepository(self.session)
             self.setup_repository = SetupRepository(self.session)
 
+            # Migración: añadir columna carpeta_thumbnails si no existe
+            try:
+                from sqlalchemy import text, inspect as sa_inspect
+                inspector = sa_inspect(engine)
+                columns = [col['name'] for col in inspector.get_columns('setups')]
+                if 'carpeta_thumbnails' not in columns:
+                    with engine.begin() as conn:
+                        conn.execute(text("ALTER TABLE setups ADD COLUMN carpeta_thumbnails VARCHAR DEFAULT 'data/thumbnails'"))
+                    print("Migración: columna carpeta_thumbnails añadida a setups")
+            except Exception as mig_e:
+                print(f"Migración carpeta_thumbnails: {mig_e}")
+
             # Cargar configuración
             self.config = self.setup_repository.obtener_o_crear_configuracion()
-            
+
+            # Inicializar módulo de ruta de thumbnails
+            init_thumbnail_path(getattr(self.config, 'carpeta_thumbnails', None))
+            ensure_directories_exist()
+
             print(f"Base de datos inicializada: {db_path}")
             
         except Exception as e:
@@ -453,12 +488,12 @@ class ComicManagerWindow(Adw.ApplicationWindow):
 
         header.pack_end(self.action_box)
 
-        # Botón descargar volúmenes
-        download_volumes_button = Gtk.Button()
-        download_volumes_button.set_icon_name("folder-download-symbolic")
-        download_volumes_button.set_tooltip_text("Descargar volúmenes de ComicVine")
-        download_volumes_button.connect("clicked", self.on_download_volumes_clicked)
-        header.pack_end(download_volumes_button)
+        # Botón descargar (contextual)
+        self.download_button = Gtk.Button()
+        self.download_button.set_icon_name("folder-download-symbolic")
+        self.download_button.set_tooltip_text("Descargar volúmenes de ComicVine")
+        self.download_button.connect("clicked", self.on_download_button_clicked)
+        header.pack_end(self.download_button)
 
         # Botón filtros avanzados
         self.filter_button = Gtk.Button()
@@ -691,6 +726,13 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             "publishers": "Buscar editoriales...",
             "arcs": "Buscar arcos..."
         }
+
+        # Actualizar tooltip del botón de descarga
+        if hasattr(self, 'download_button'):
+            if view == "publishers":
+                self.download_button.set_tooltip_text("Descargar editoriales de ComicVine")
+            else:
+                self.download_button.set_tooltip_text("Descargar volúmenes de ComicVine")
 
         self.search_entry.set_placeholder_text(placeholders.get(view, "Buscar..."))
 
@@ -1228,6 +1270,9 @@ class ComicManagerWindow(Adw.ApplicationWindow):
 
     def on_generate_embeddings_action(self, action, parameter):
         """Mostrar ventana de generación de embeddings"""
+        if not AI_AVAILABLE:
+            self.show_toast("Funciones de IA no disponibles. Instala torch y transformers", "warning")
+            return
         try:
             window = GenerateEmbeddingsWindow(self)
             window.present()
@@ -1239,6 +1284,10 @@ class ComicManagerWindow(Adw.ApplicationWindow):
 
     def on_ai_classify_action(self, action, parameter):
         """Mostrar ventana de clasificación por IA para comics seleccionados"""
+        if not AI_AVAILABLE:
+            self.show_toast("Funciones de IA no disponibles. Instala torch y transformers", "warning")
+            return
+
         selected_items = self.selection_manager.get_selected_items()
 
         if not selected_items:
@@ -1266,6 +1315,10 @@ class ComicManagerWindow(Adw.ApplicationWindow):
 
     def on_ai_classify_item_action(self, action, parameter):
         """Clasificar un comic individual por IA"""
+        if not AI_AVAILABLE:
+            self.show_toast("Funciones de IA no disponibles. Instala torch y transformers", "warning")
+            return
+
         item_id = parameter.get_string()
         try:
             item_id_int = int(item_id)
@@ -1462,9 +1515,27 @@ class ComicManagerWindow(Adw.ApplicationWindow):
 
             self.show_toast("Portada regenerada exitosamente", "success")
 
+
+            # Preservar posición de scroll antes de refrescar
+            adj = self.scrolled_window.get_vadjustment()
+            self.saved_scroll_pos = adj.get_value()
+            self.saved_loaded_count = self.loaded_items
+            original_batch_size = self.batch_size
+
+            # Cargar suficientes items para restaurar posición
+            if self.saved_loaded_count > 0:
+                self.batch_size = max(self.saved_loaded_count, original_batch_size)
+                print(f"DEBUG: Preservando scroll - items: {self.saved_loaded_count}, pos: {self.saved_scroll_pos}")
+
             # Refrescar la vista actual para mostrar el nuevo thumbnail
             self.clear_content()
             self.load_items_batch()
+
+            # Restaurar batch size original
+            self.batch_size = original_batch_size
+
+            # Restaurar posición de scroll después de que la UI se actualice
+            GLib.idle_add(self.restore_scroll_position)
 
         except Exception as e:
             print(f"Error regenerando portada: {e}")
@@ -2035,6 +2106,13 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         except Exception as e:
             print(f"Error abriendo filtros: {e}")
             self.show_toast(f"Error abriendo filtros: {e}", "error")
+    def on_download_button_clicked(self, button):
+        """Manejar click en botón de descarga según el contexto"""
+        if self.current_view == "publishers":
+            self.show_publisher_download_window()
+        else:
+            self.on_download_volumes_clicked(button)
+
 
     def on_download_volumes_clicked(self, button):
         """Abrir ventana de descarga de volúmenes"""
@@ -2124,8 +2202,46 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Actualizar contenido"""
         print(f"Actualizando {self.current_view}")
         self.show_toast("Actualizando contenido...", "info")
+        
+        # Preservar posición de scroll
+        adj = self.scrolled_window.get_vadjustment()
+        self.saved_scroll_pos = adj.get_value()
+        self.saved_loaded_count = self.loaded_items
+        original_batch_size = self.batch_size
+
+        # Cargar suficientes items para restaurar posición
+        if self.saved_loaded_count > 0:
+            self.batch_size = max(self.saved_loaded_count, original_batch_size)
+            print(f"DEBUG: Preservando scroll en refresh - items: {self.saved_loaded_count}, pos: {self.saved_scroll_pos}")
+
         self.clear_content()
-        GLib.idle_add(self.load_items_batch)
+        # Cargar items inmediatamente para asegurar que estén disponibles para el scroll
+        self.load_items_batch()
+        
+        # Restaurar batch size original
+        self.batch_size = original_batch_size
+        
+        # Restaurar posición de scroll
+        GLib.idle_add(self.restore_scroll_position)
+
+    def restore_scroll_position(self):
+        """Restaurar posición de scroll guardada"""
+        try:
+            if self.saved_scroll_pos > 0:
+                adj = self.scrolled_window.get_vadjustment()
+                # Verificar rango válido
+                max_value = adj.get_upper() - adj.get_page_size()
+                target_pos = min(self.saved_scroll_pos, max_value)
+                
+                print(f"DEBUG: Restaurando scroll a {target_pos} (max: {max_value})")
+                adj.set_value(target_pos)
+                
+                # Resetear para evitar restauraciones accidentales
+                self.saved_scroll_pos = 0
+                self.saved_loaded_count = 0
+        except Exception as e:
+            print(f"Error restaurando scroll: {e}")
+        return False
 
     def on_item_activated(self, selectable_card, item):
         """Manejar activación de item (doble click)"""
@@ -2203,7 +2319,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         from physical_comics_page import create_physical_comics_content
 
         # Crear contenido de físicos
-        content = create_physical_comics_content(comic_info, self.session, self.thumbnail_generator)
+        content = create_physical_comics_content(comic_info, self.session, self.thumbnail_generator, self)
 
         # Crear NavigationPage
         physical_page = Adw.NavigationPage()
@@ -2358,7 +2474,7 @@ class ComicManagerApp(Adw.Application):
     """Aplicación principal"""
     
     def __init__(self):
-        super().__init__(application_id="Babelcomics4")
+        super().__init__(application_id="com.babelcomics.manager")
         
     def do_activate(self):
         """Activar aplicación"""
@@ -2431,17 +2547,8 @@ def main():
         return 1
     
     # Crear directorios necesarios
-    directories = [
-        "data",
-        "data/thumbnails",
-        "data/thumbnails/comics",
-        "data/thumbnails/volumes", 
-        "data/thumbnails/publishers"
-    ]
-    
-    for directory in directories:
-        Path(directory).mkdir(parents=True, exist_ok=True)
-        
+    Path("data").mkdir(parents=True, exist_ok=True)
+    ensure_directories_exist()
     print("✓ Directorios creados/verificados")
     
     # Verificar si existe la base de datos

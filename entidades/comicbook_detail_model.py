@@ -30,8 +30,9 @@ class Comicbook_Detail(Base):
         Estructura propuesta:
           data/thumbnails/comic_pages/{comicbook_id}/page_{indice}.jpg
         """
-        # carpeta destino “estándar”, similar al de ComicbookInfoCover
-        base_dir = os.path.join("data", "thumbnails", "comic_pages", str(self.comicbook_id))
+        # carpeta destino "estándar", similar al de ComicbookInfoCover
+        from helpers.thumbnail_path import get_thumbnails_base_path
+        base_dir = os.path.join(get_thumbnails_base_path(), "comic_pages", str(self.comicbook_id))
         filename = f"page_{self.indicePagina}.jpg"
         ruta = os.path.join(base_dir, filename)
 

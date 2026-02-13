@@ -134,7 +134,8 @@ class VolumeRowWidget(Gtk.ListBoxRow):
         image.set_keep_aspect_ratio(True)
 
         # Cargar thumbnail si existe
-        thumb_path = f"data/thumbnails/volumes/{volume.id_volume}.jpg"
+        from helpers.thumbnail_path import get_thumbnails_base_path
+        thumb_path = os.path.join(get_thumbnails_base_path(), "volumes", f"{volume.id_volume}.jpg")
         if os.path.exists(thumb_path):
             image.set_filename(thumb_path)
         else:
@@ -362,8 +363,9 @@ class MetadataComicItem(Gtk.ListBoxRow):
             # Buscar cover en directorio de issues
             if hasattr(self.comicbook_info, 'volume') and self.comicbook_info.volume:
                 volume_name = self.comicbook_info.volume.nombre.replace("/", "_").replace("\\", "_")
-                cover_dir = f"data/thumbnails/comicbook_info/{volume_name}_{self.comicbook_info.volume.id_volume}"
-                cover_path = f"{cover_dir}/{self.comicbook_info.id_comicbook_info}-{self.comicbook_info.numero}.jpg"
+                from helpers.thumbnail_path import get_thumbnails_base_path
+                cover_dir = os.path.join(get_thumbnails_base_path(), "comicbook_info", f"{volume_name}_{self.comicbook_info.volume.id_volume}")
+                cover_path = os.path.join(cover_dir, f"{self.comicbook_info.id_comicbook_info}-{self.comicbook_info.numero}.jpg")
 
                 if os.path.exists(cover_path):
                     self.image.set_filename(cover_path)
@@ -439,8 +441,9 @@ class CoverPreviewWidget(Gtk.Box):
             # Buscar cover en directorio de issues
             if hasattr(comicbook_info, 'volume') and comicbook_info.volume:
                 volume_name = comicbook_info.volume.nombre.replace("/", "_").replace("\\", "_")
-                cover_dir = f"data/thumbnails/comicbook_info/{volume_name}_{comicbook_info.volume.id_volume}"
-                cover_path = f"{cover_dir}/{comicbook_info.id_comicbook_info}-{comicbook_info.numero}.jpg"
+                from helpers.thumbnail_path import get_thumbnails_base_path
+                cover_dir = os.path.join(get_thumbnails_base_path(), "comicbook_info", f"{volume_name}_{comicbook_info.volume.id_volume}")
+                cover_path = os.path.join(cover_dir, f"{comicbook_info.id_comicbook_info}-{comicbook_info.numero}.jpg")
 
                 print(f"DEBUG Metadata: Buscando cover en: {cover_path}")
                 print(f"DEBUG Metadata: Existe? {os.path.exists(cover_path)}")
@@ -579,6 +582,11 @@ class ImprovedCatalogingWindow(Adw.Window):
         auto_button.set_tooltip_text("Extraer números automáticamente")
         auto_button.connect("clicked", self.on_auto_extract_numbers)
         title_row.append(auto_button)
+
+        regex_button = Gtk.Button.new_with_label("Regex")
+        regex_button.set_tooltip_text("Usar expresión regular personalizada")
+        regex_button.connect("clicked", self.on_regex_button_clicked)
+        title_row.append(regex_button)
 
         header_box.append(title_row)
 
@@ -848,6 +856,221 @@ class ImprovedCatalogingWindow(Adw.Window):
         # Recargar metadata si se extrajeron números
         if numbers_changed and hasattr(self, 'selected_volume') and self.selected_volume:
             self.load_volume_metadata()
+
+    def on_regex_button_clicked(self, button):
+        """Mostrar diálogo para ingresar y gestionar regex personalizados"""
+        import json
+        from entidades.setup_model import Setup
+        
+        # Obtener configuración
+        setup_config = self.session.query(Setup).first()
+        if not setup_config:
+            # Crear configuración por defecto si no existe (no debería pasar si migración corrió)
+            setup_config = Setup()
+            self.session.add(setup_config)
+            self.session.commit()
+            
+        saved_regexes = []
+        if setup_config.custom_regexes:
+            try:
+                saved_regexes = json.loads(setup_config.custom_regexes)
+            except:
+                saved_regexes = []
+        
+        # Crear diálogo custom
+        dialog = Gtk.Window(transient_for=self, modal=True, title="Regex Personalizados")
+        dialog.set_default_size(500, 400)
+        
+        # Contenedor principal 
+        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        main_box.set_margin_top(16)
+        main_box.set_margin_bottom(16)
+        main_box.set_margin_start(16)
+        main_box.set_margin_end(16)
+        dialog.set_child(main_box)
+        
+        # Instrucciones
+        info_label = Gtk.Label(label="Ingresa una expresión regular para extraer el número.\nUsa un grupo de captura ( ) para indicar el número.")
+        info_label.set_justify(Gtk.Justification.CENTER)
+        info_label.add_css_class("dim-label")
+        main_box.append(info_label)
+        
+        # Entry para el regex
+        entry_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        
+        entry = Gtk.Entry()
+        entry.set_placeholder_text("Ej: #(\\d+)")
+        entry.set_hexpand(True)
+        entry_box.append(entry)
+        
+        # Botón Guardar
+        save_btn = Gtk.Button.new_from_icon_name("document-save-symbolic")
+        save_btn.set_tooltip_text("Guardar este patrón")
+        entry_box.append(save_btn)
+        
+        main_box.append(entry_box)
+        
+        # Separador
+        main_box.append(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
+        
+        # Lista de guardados
+        list_label = Gtk.Label(label="Patrones Guardados")
+        list_label.set_halign(Gtk.Align.START)
+        list_label.add_css_class("heading")
+        main_box.append(list_label)
+        
+        scrolled = Gtk.ScrolledWindow()
+        scrolled.set_vexpand(True)
+        scrolled.set_min_content_height(200)
+        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        
+        regex_list = Gtk.ListBox()
+        regex_list.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        regex_list.add_css_class("boxed-list")
+        scrolled.set_child(regex_list)
+        main_box.append(scrolled)
+        
+        # Botones de acción inferior
+        action_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        action_box.set_halign(Gtk.Align.END)
+        
+        cancel_btn = Gtk.Button.new_with_label("Cancelar")
+        cancel_btn.connect("clicked", lambda b: dialog.close())
+        action_box.append(cancel_btn)
+        
+        apply_btn = Gtk.Button.new_with_label("Aplicar")
+        apply_btn.add_css_class("suggested-action")
+        action_box.append(apply_btn)
+        
+        main_box.append(action_box)
+        
+        # Funciones helpers
+        def load_regex_list():
+            # Limpiar lista
+            while True:
+                row = regex_list.get_first_child()
+                if not row: break
+                regex_list.remove(row)
+                
+            for pattern in saved_regexes:
+                row = Adw.ActionRow()
+                row.set_title(pattern)
+                
+                # Botón borrar
+                del_btn = Gtk.Button.new_from_icon_name("user-trash-symbolic")
+                del_btn.add_css_class("flat")
+                del_btn.connect("clicked", lambda b, p=pattern: delete_pattern(p))
+                row.add_suffix(del_btn)
+                
+                # Clic en la fila -> cargar en entry
+                # Hack: ActionRow no tiene señal 'clicked' directa fácil, usamos un botón invisible o gesture
+                # O mejor, usamos el signal 'row-activated' del listbox
+                
+                regex_list.append(row)
+                
+        def delete_pattern(pattern):
+            if pattern in saved_regexes:
+                saved_regexes.remove(pattern)
+                save_to_db()
+                load_regex_list()
+                
+        def save_pattern(button):
+            pattern = entry.get_text()
+            if pattern and pattern not in saved_regexes:
+                saved_regexes.append(pattern)
+                save_to_db()
+                load_regex_list()
+                
+        def save_to_db():
+            setup_config.custom_regexes = json.dumps(saved_regexes)
+            try:
+                self.session.commit()
+            except Exception as e:
+                print(f"Error guardando regexes: {e}")
+                self.session.rollback()
+
+        def on_row_selected(listbox, row):
+            if row:
+                pattern = row.get_title()
+                entry.set_text(pattern)
+                
+        def on_apply(button):
+            pattern = entry.get_text()
+            if not pattern:
+                # Si está vacío, intentar usar el seleccionado
+                row = regex_list.get_selected_row()
+                if row:
+                    pattern = row.get_title()
+                    entry.set_text(pattern) # Feedback visual
+            
+            if pattern:
+                self.apply_custom_regex(pattern)
+                dialog.close()
+            else:
+                # Si sigue vacío
+                self.show_toast("Ingresa o selecciona una expresión regular", "warning")
+                
+        # Conectar señales
+        save_btn.connect("clicked", save_pattern)
+        regex_list.connect("row-selected", on_row_selected)
+        apply_btn.connect("clicked", on_apply)
+        
+        # Cargar inicial
+        load_regex_list()
+        
+        dialog.present()
+
+    def apply_custom_regex(self, pattern):
+        """Aplicar regex personalizado"""
+        try:
+            regex = re.compile(pattern, re.IGNORECASE)
+            row = self.physical_list.get_first_child()
+            count = 0
+            numbers_changed = False
+            
+            while row:
+                if hasattr(row, 'number_entry') and hasattr(row, 'comicbook'):
+                    filename = os.path.basename(row.comicbook.path)
+                    match = regex.search(filename)
+                    if match:
+                        # Usar el primer grupo si existe, sino todo el match
+                        if match.groups():
+                            value = match.group(1)
+                        else:
+                            value = match.group(0)
+                            
+                        # Limpiar ceros a la izquierda si es puramente numérico
+                        if value.isdigit():
+                            value = str(int(value))
+                            
+                        row.number_entry.set_text(value)
+                        count += 1
+                        numbers_changed = True
+                        
+                row = row.get_next_sibling()
+            
+            if count > 0:
+                self.show_toast(f"Se actualizaron {count} números", "success")
+                # Recargar metadata
+                if numbers_changed and hasattr(self, 'selected_volume') and self.selected_volume:
+                    self.load_volume_metadata()
+            else:
+                self.show_toast("No se encontraron coincidencias con el regex", "warning")
+                
+        except re.error:
+            self.show_toast("Expresión regular inválida", "error")
+        except Exception as e:
+            print(f"Error aplicando regex: {e}")
+            self.show_toast(f"Error: {e}", "error")
+
+    def show_toast(self, message, toast_type="info"):
+        """Mostrar notificación"""
+        toast = Adw.Toast()
+        toast.set_title(message)
+        toast.set_timeout(3)
+        
+        if hasattr(self.parent_window, 'toast_overlay'):
+            self.parent_window.toast_overlay.add_toast(toast)
 
     def setup_context_menu(self):
         """Configurar menú contextual para la lista de físicos"""

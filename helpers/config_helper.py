@@ -111,6 +111,14 @@ class ConfigHelper:
         return True  # Valor por defecto
 
     @staticmethod
+    def get_thumbnails_path():
+        """Obtener ruta configurada para thumbnails"""
+        config = ConfigHelper.get_setup_config()
+        if config and config.carpeta_thumbnails:
+            return config.carpeta_thumbnails
+        return "data/thumbnails"  # Valor por defecto
+
+    @staticmethod
     def should_auto_cleanup():
         """Verificar si debe hacer limpieza automática"""
         config = ConfigHelper.get_setup_config()

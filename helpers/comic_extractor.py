@@ -349,7 +349,8 @@ class ComicExtractor:
                 print(f"📄 Extraídas {len(page_files)} páginas de {Path(comic.path).name}")
 
                 # Crear directorio de thumbnails
-                thumbnail_dir = os.path.join("data", "thumbnails", "comic_pages", str(comic.id_comicbook))
+                from helpers.thumbnail_path import get_thumbnails_base_path
+                thumbnail_dir = os.path.join(get_thumbnails_base_path(), "comic_pages", str(comic.id_comicbook))
                 os.makedirs(thumbnail_dir, exist_ok=True)
 
                 # Procesar cada página

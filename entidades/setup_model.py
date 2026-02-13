@@ -14,11 +14,13 @@ class Setup(Base):
     expresion_regular_numero = Column(String, nullable=False, default=r'.* (\d*) \(')
     modo_oscuro = Column(Boolean, nullable=False, default=False)
     actualizar_metadata = Column(Boolean, nullable=False, default=False)
+    custom_regexes = Column(String, default='[]') # Lista JSON de regex guardados
 
     # Configuración API
     api_key_encrypted = Column(String, nullable=False, default='')
     rate_limit_interval = Column(Float, nullable=False, default=0.5)
     carpeta_organizacion = Column(String, default='')
+    carpeta_thumbnails = Column(String, default='data/thumbnails')
 
     # Configuración interfaz
     thumbnail_size = Column(Integer, nullable=False, default=200)

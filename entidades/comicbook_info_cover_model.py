@@ -31,9 +31,9 @@ class ComicbookInfoCover(Base):
             print(f"Nombre del archivo de la portada: {nombre_archivo}")
             print(f"nombre del volumen: {self.comic_info.volume.nombre}")
 
+            from helpers.thumbnail_path import get_thumbnails_base_path
             covers_destination_folder = os.path.join(
-                "data",
-                "thumbnails",
+                get_thumbnails_base_path(),
                 "comicbook_info",
                 f"{clean_volume_name}_{self.comic_info.volume.id_volume}" # Combinar nombre limpio y ID
             )

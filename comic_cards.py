@@ -52,6 +52,10 @@ class BaseCard(Gtk.Box):
         self.image.set_content_fit(Gtk.ContentFit.CONTAIN)
         self.image.add_css_class("cover-image")
         
+        # Alinear imagen al fondo para dejar el espacio vacío arriba
+        # Esto asegura que el texto siempre comience en la misma posición visual relativa a la imagen
+        self.image.set_valign(Gtk.Align.END)
+        
         # Imagen placeholder inicial
         self.set_placeholder_image()
         
@@ -217,6 +221,8 @@ class VolumeCard(BaseCard):
         self.title_label.set_ellipsize(Pango.EllipsizeMode.END)
         self.title_label.set_justify(Gtk.Justification.CENTER)
         self.title_label.add_css_class("heading")
+        # Forzar altura mínima para 2 líneas para alinear visualmente cards con 1 o 2 líneas de título
+        self.title_label.set_size_request(-1, 44) 
         
         # Información básica
         basic_info = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
@@ -243,6 +249,7 @@ class VolumeCard(BaseCard):
         
         # Completitud
         completion_info = self.create_completion_info()
+        completion_info.set_halign(Gtk.Align.CENTER) # Centrar explícitamente
         
         info_box.append(self.title_label)
         info_box.append(basic_info)
@@ -253,6 +260,7 @@ class VolumeCard(BaseCard):
     def create_completion_info(self):
         """Crear información de completitud del volumen"""
         completion_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        completion_box.set_halign(Gtk.Align.CENTER) # Asegurar centrado interno
         
         try:
             # Contar comics físicos para este volumen
@@ -297,6 +305,7 @@ class VolumeCard(BaseCard):
             # Barra de progreso
             progress_bar = Gtk.ProgressBar()
             progress_bar.set_fraction(completion_percentage)
+            progress_bar.set_size_request(180, -1) # Ancho fijo para barra de progreso
             progress_bar.set_margin_start(8)
             progress_bar.set_margin_end(8)
             progress_bar.add_css_class("completion-bar")
@@ -336,7 +345,9 @@ class VolumeCard(BaseCard):
                     print(f"✅ Imagen real encontrada: {cover_path}")
 
                     # Si la imagen es JPG descargada de ComicVine, cargarla directamente
-                    if cover_path.endswith('.jpg') and 'data/thumbnails/volumes' in cover_path:
+                    from helpers.thumbnail_path import get_thumbnails_base_path
+                    _volumes_thumb_dir = os.path.join(get_thumbnails_base_path(), "volumes")
+                    if cover_path.endswith('.jpg') and _volumes_thumb_dir in cover_path:
                         print(f"📷 Cargando imagen JPG directamente: {cover_path}")
                         self.load_thumbnail(cover_path)
                     else:

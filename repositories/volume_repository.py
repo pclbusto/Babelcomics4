@@ -264,7 +264,7 @@ class VolumeRepository(BaseRepository):
             self.session.rollback()
             raise e
 
-    def download_complete_volume_data(self, volume_data, comicvine_client, download_covers=True, progress_callback=None):
+    def download_complete_volume_data(self, volume_data, comicvine_client, download_covers=True, progress_callback=None, result_callback=None):
         """
         Descarga COMPLETA de un volumen desde ComicVine incluyendo:
         - Información del volumen
@@ -276,6 +276,7 @@ class VolumeRepository(BaseRepository):
             comicvine_client: Cliente de ComicVine ya inicializado
             download_covers: Si descargar covers o no
             progress_callback: Función para reportar progreso (mensaje)
+            result_callback: Función para guardar resultados de covers en DB (thread-safe)
 
         Returns:
             Volume: Objeto volumen creado/actualizado
@@ -320,7 +321,7 @@ class VolumeRepository(BaseRepository):
                         # 4. Descargar covers si está habilitado
                         if download_covers:
                             self._download_volume_and_issues_covers(
-                                volume, volume_details, detailed_issues, report_progress
+                                volume, volume_details, detailed_issues, report_progress, result_callback=result_callback
                             )
                     else:
                         report_progress("No se pudieron obtener detalles de los issues")
@@ -560,10 +561,11 @@ class VolumeRepository(BaseRepository):
         except Exception as e:
             print(f"❌ Error creando cover record para issue #{issue.numero}: {e}")
 
-    def _download_volume_and_issues_covers(self, volume, volume_details, detailed_issues, progress_callback=None):
+    def _download_volume_and_issues_covers(self, volume, volume_details, detailed_issues, progress_callback=None, result_callback=None):
         """Descargar covers del volumen y de los issues"""
+        import os
         from helpers.image_downloader import download_image
-
+        
         covers_downloaded = 0
 
         # Descargar cover del volumen
@@ -573,8 +575,9 @@ class VolumeRepository(BaseRepository):
                     progress_callback("Descargando cover del volumen...")
 
                 cover_url = volume_details['image']['medium_url']
-                cover_path = download_image(cover_url, "data/thumbnails/volumes", f"{volume.id_volume}.jpg")
-
+                from helpers.thumbnail_path import get_thumbnails_base_path
+                cover_path = download_image(cover_url, os.path.join(get_thumbnails_base_path(), "volumes"), f"{volume.id_volume}.jpg", resize_height=400)
+                
                 if cover_path:
                     volume.image_url = cover_url
                     covers_downloaded += 1
@@ -584,107 +587,212 @@ class VolumeRepository(BaseRepository):
 
         # Descargar covers de issues en background (sin bloquear)
         if detailed_issues:
-            if progress_callback:
-                progress_callback(f"Iniciando descarga de covers de {len(detailed_issues)} issues...")
-
-            import threading
-            cover_thread = threading.Thread(
-                target=self._download_issues_covers_background,
-                args=(volume, detailed_issues, progress_callback),
-                daemon=True
-            )
-            cover_thread.start()
-
+            # Ahora usamos la versión concurrente con callback
+            self.download_covers_concurrently(volume, detailed_issues, progress_callback, background=True, result_callback=result_callback)
+            
         return covers_downloaded
 
-    def _download_issues_covers_background(self, volume, detailed_issues, progress_callback=None):
-        """Descargar covers de issues en background thread"""
-        from helpers.image_downloader import download_image
-        from entidades.comicbook_info_cover_model import ComicbookInfoCover
+    def download_covers_concurrently(self, volume, detailed_issues, progress_callback=None, background=True, result_callback=None):
+        """
+        Descargar portadas de issues de forma concurrente.
+        
+        Args:
+            volume: Objeto Volume
+            detailed_issues: Lista de diccionarios con datos de issues
+            progress_callback: Función para reportar progreso
+            background: Si es True, ejecuta en un hilo separado (para no bloquear UI)
+            result_callback: Función que recibe (result_data) para guardar en DB en el hilo principal
+        """
+        if background:
+            import threading
+            thread = threading.Thread(
+                target=self._download_covers_worker,
+                args=(volume, detailed_issues, progress_callback, result_callback),
+                daemon=True
+            )
+            thread.start()
+            print("🚀 Iniciando descarga de covers en background thread...")
+        else:
+            self._download_covers_worker(volume, detailed_issues, progress_callback, result_callback)
+
+    def _download_covers_worker(self, volume, detailed_issues, progress_callback=None, result_callback=None):
+        """Worker que ejecuta la descarga concurrente PURE (sin DB writes)"""
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        
+        # NOTA: En este hilo NO tocamos la base de datos (ni lectura ni escritura)
+        # Solo descargamos ficheros y calculamos embeddings.
+        # Todo lo que sea tocar DB se manda via result_callback al main thread.
+        
+        try:
+            total_issues = len(detailed_issues)
+            if progress_callback:
+                progress_callback(f"Iniciando descarga optimizada de {total_issues} portadas...")
+            
+            print(f"🚀 Iniciando worker de descarga PURE para {total_issues} issues")
+
+            downloaded_count = 0
+            embeddings_generated = 0
+            
+            # Parametros constantes para pasar a workers
+            volume_id = volume.id_volume
+            volume_name = volume.nombre
+            
+            # Usar 3 workers para descargas/embeddings (CPU/IO bound)
+            with ThreadPoolExecutor(max_workers=3) as executor:
+                future_to_issue = {}
+                
+                for issue_data in detailed_issues:
+                    # El worker ya no recibe 'db_state' porque no consultamos BD aquí.
+                    # Asumimos que si se pide descarga, se descarga. 
+                    # La verificación de "ya existe" se hace a nivel de archivo.
+                    future = executor.submit(
+                        self._download_single_issue_covers_pure, 
+                        volume_id, 
+                        volume_name, 
+                        issue_data
+                    )
+                    future_to_issue[future] = issue_data
+                
+                # Procesar resultados
+                completed_count = 0
+                for future in as_completed(future_to_issue):
+                    completed_count += 1
+                    issue_data = future_to_issue[future]
+                    issue_num = str(issue_data.get('issue_number', 'N/A'))
+                    
+                    try:
+                        result = future.result()
+                        # result = {'issue_number': str, 'results': [...]}
+                        
+                        if result and result.get('results'):
+                            for item in result['results']:
+                                if item.get('downloaded'):
+                                    downloaded_count += 1
+                                if item.get('embedding'):
+                                    embeddings_generated += 1
+                            
+                            # DELEGAR PERSISTENCIA:
+                            # Llamamos al callback (que debe usar GLib.idle_add internamente si es UI app)
+                            if result_callback:
+                                result_callback(result)
+
+                        # Actualizar progreso UI
+                        if progress_callback and completed_count % 3 == 0:
+                             progress_callback(f"Procesando: {completed_count}/{total_issues}")
+                                
+                    except Exception as e:
+                        print(f"❌ Error procesando resultados para issue #{issue_num}: {e}")
+            
+            final_message = f"✅ Finalizado: {downloaded_count} descargas, {embeddings_generated} embeddings calculados"
+            print(final_message)
+            if progress_callback:
+                progress_callback(final_message)
+                
+        except Exception as e:
+            print(f"❌ Error grave en worker de descarga: {e}")
+            if progress_callback:
+                progress_callback(f"Error: {str(e)}")
+
+    def _download_single_issue_covers_pure(self, volume_id, volume_name, issue_data):
+        """
+        Versión PURA de la descarga. No accede a DB.
+        Solo descarga archivos y calcula embeddings.
+        """
         import os
-
-        covers_downloaded = 0
-        embeddings_generated = 0
-        total_issues = len(detailed_issues)
-
-        for i, issue_data in enumerate(detailed_issues):
-            try:
-                issue_number = issue_data.get('issue_number', 'unknown')
-
-                # Crear carpeta específica para este volumen según ComicbookInfoCover
-                clean_volume_name = "".join([c if c.isalnum() or c.isspace() else "" for c in volume.nombre]).strip()
-                covers_folder = os.path.join(
-                    "data", "thumbnails", "comicbook_info",
-                    f"{clean_volume_name}_{volume.id_volume}"
-                )
-
-                issue_covers_downloaded = 0
-
-                # 1. Descargar cover principal
-                if issue_data.get('image') and issue_data['image'].get('medium_url'):
-                    cover_url = issue_data['image']['medium_url']
-
-                    # Usar el nombre de archivo original de la URL
-                    filename = cover_url.split('/')[-1]
+        import time
+        from helpers.image_downloader import download_image
+        
+        # Delay para rate limiting
+        time.sleep(0.3)
+        
+        issue_number = str(issue_data.get('issue_number', ''))
+        result_pkg = {
+            'issue_number': issue_number,
+            'results': []
+        }
+        
+        try:
+            # Preparar carpeta
+            clean_volume_name = "".join([c if c.isalnum() or c.isspace() else "" for c in volume_name]).strip()
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            covers_folder = os.path.join(
+                get_thumbnails_base_path(), "comicbook_info",
+                f"{clean_volume_name}_{volume_id}"
+            )
+            
+            # Recopilar URLs
+            urls_to_process = []
+            
+             # 1. Cover principal
+            if issue_data.get('image') and issue_data['image'].get('medium_url'):
+                url = issue_data['image']['medium_url']
+                filename = url.split('/')[-1]
+                if not filename.endswith(('.jpg', '.jpeg', '.png')):
+                    filename = f"issue_{issue_number}.jpg"
+                urls_to_process.append((url, filename))
+                
+            # 2. Associated images
+            associated_images = issue_data.get('associated_images', [])
+            for j, img_data in enumerate(associated_images):
+                img_url = img_data.get('original_url')
+                if not img_url:
+                    for k in ['medium_url', 'super_url', 'screen_url']:
+                        if img_data.get(k):
+                            img_url = img_data[k]
+                            break
+                if img_url:
+                    filename = img_url.split('/')[-1]
                     if not filename.endswith(('.jpg', '.jpeg', '.png')):
-                        filename = f"issue_{issue_number}.jpg"
+                        filename = f"issue_{issue_number}_variant_{j+1}.jpg"
+                    else:
+                        name, ext = filename.rsplit('.', 1)
+                        filename = f"{name}_variant_{j+1}.{ext}"
+                    urls_to_process.append((img_url, filename))
+            
+            # Procesar
+            for url, filename in urls_to_process:
+                file_path = os.path.join(covers_folder, filename)
+                downloaded = False
+                embedding_json = None
+                
+                # Descargar si no existe
+                if not os.path.exists(file_path):
+                    path = download_image(url, covers_folder, filename, resize_height=400)
+                    if path:
+                        downloaded = True
+                
+                # Generar embedding si el archivo existe (siempre intentamos generarlo si está ahí 
+                # y dejamos que el callback decida si guardarlo o no, o lo generamos solo si se descargó.
+                # Para ser robustos: generamos si acabamos de descargar O si existe.
+                # El callback verificará si ya tiene embedding en DB para no sobrescribir inútilmente).
+                
+                # Optimización: Solo generar si descargamos O si queremos asegurar que exista.
+                # Como no sabemos el estado de la DB aquí, generamos el embedding. 
+                # Es costoso (CPU), pero seguro.
+                if os.path.exists(file_path):
+                    try:
+                        from helpers.embedding_generator import get_embedding_generator
+                        emb_gen = get_embedding_generator()
+                        emb = emb_gen.generate_embedding(file_path)
+                        if emb:
+                            embedding_json = emb_gen.embedding_to_json(emb)
+                    except Exception as e:
+                        print(f"⚠️ Error generando embedding {filename}: {e}")
 
-                    cover_path = download_image(cover_url, covers_folder, filename)
-                    if cover_path:
-                        issue_covers_downloaded += 1
+                result_pkg['results'].append({
+                    'url': url,
+                    'path': file_path,
+                    'embedding': embedding_json,
+                    'downloaded': downloaded
+                })
+                
+            return result_pkg
+            
+        except Exception as e:
+            print(f"❌ Error en worker_pure issue #{issue_number}: {e}")
+            return result_pkg
 
-                        # Generar embedding automáticamente
-                        cover_record = self.session.query(ComicbookInfoCover).filter_by(url_imagen=cover_url).first()
-                        if cover_record:
-                            if self._generate_cover_embedding(cover_record, cover_path):
-                                embeddings_generated += 1
 
-                # 2. Descargar associated_images
-                associated_images = issue_data.get('associated_images', [])
-                if associated_images:
-                    print(f"📸 Descargando {len(associated_images)} associated_images para issue #{issue_number}")
-
-                    for j, img_data in enumerate(associated_images):
-                        img_url = img_data.get('original_url')
-                        if not img_url:
-                            # Buscar otras URLs disponibles
-                            for url_key in ['medium_url', 'super_url', 'screen_url']:
-                                if img_data.get(url_key):
-                                    img_url = img_data[url_key]
-                                    break
-
-                        if img_url:
-                            # Generar nombre único para associated image
-                            filename = img_url.split('/')[-1]
-                            if not filename.endswith(('.jpg', '.jpeg', '.png')):
-                                filename = f"issue_{issue_number}_variant_{j+1}.jpg"
-                            else:
-                                # Agregar sufijo para diferenciarlo de la cover principal
-                                name, ext = filename.rsplit('.', 1)
-                                filename = f"{name}_variant_{j+1}.{ext}"
-
-                            variant_path = download_image(img_url, covers_folder, filename)
-                            if variant_path:
-                                issue_covers_downloaded += 1
-                                print(f"📸 Associated image {j+1} descargada: {filename}")
-
-                                # Generar embedding automáticamente
-                                cover_record = self.session.query(ComicbookInfoCover).filter_by(url_imagen=img_url).first()
-                                if cover_record:
-                                    if self._generate_cover_embedding(cover_record, variant_path):
-                                        embeddings_generated += 1
-
-                covers_downloaded += issue_covers_downloaded
-
-                # Reportar progreso cada 5 covers
-                if progress_callback and i % 5 == 0:
-                    progress_callback(f"Covers descargados: {covers_downloaded}/{i+1} issues procesados")
-
-            except Exception as e:
-                print(f"Error descargando cover del issue {issue_data.get('issue_number', 'N/A')}: {e}")
-
-        if progress_callback:
-            progress_callback(f"✅ Descarga completada: {covers_downloaded} covers, {embeddings_generated} embeddings generados")
 
     def _clean_html_text(self, html_text):
         """Limpiar texto HTML para almacenar en base de datos"""

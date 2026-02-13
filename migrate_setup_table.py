@@ -77,20 +77,25 @@ def migrate_setup_table():
                 expresion_regular_numero VARCHAR NOT NULL DEFAULT '.* (\d*) \(',
                 modo_oscuro BOOLEAN NOT NULL DEFAULT 0,
                 actualizar_metadata BOOLEAN NOT NULL DEFAULT 0,
+                custom_regexes VARCHAR DEFAULT '[]',
                 api_key_encrypted VARCHAR NOT NULL DEFAULT '',
                 rate_limit_interval REAL NOT NULL DEFAULT 0.5,
+                carpeta_organizacion VARCHAR DEFAULT '',
+                carpeta_thumbnails VARCHAR DEFAULT 'data/thumbnails',
                 thumbnail_size INTEGER NOT NULL DEFAULT 200,
                 items_per_batch INTEGER NOT NULL DEFAULT 20,
                 workers_concurrentes INTEGER NOT NULL DEFAULT 5,
                 cache_thumbnails BOOLEAN NOT NULL DEFAULT 1,
-                limpieza_automatica BOOLEAN NOT NULL DEFAULT 1
+                limpieza_automatica BOOLEAN NOT NULL DEFAULT 1,
+                scroll_threshold REAL NOT NULL DEFAULT 1.0,
+                scroll_cooldown INTEGER NOT NULL DEFAULT 100
             )
         """)
 
         # 4. Encriptar API key (simple base64)
-        api_key_encrypted = ""
         if api_key_actual:
-            api_key_encrypted = base64.b64encode(api_key_actual.encode()).decode()
+            api_key_str = str(api_key_actual)
+            api_key_encrypted = base64.b64encode(api_key_str.encode()).decode()
             print("🔐 API Key encriptada")
 
         # 5. Migrar datos a nueva estructura
@@ -98,23 +103,29 @@ def migrate_setup_table():
         cursor.execute("""
             INSERT INTO setups_new (
                 setupkey, ultimo_volume_id_utilizado, expresion_regular_numero,
-                modo_oscuro, actualizar_metadata, api_key_encrypted,
-                rate_limit_interval, thumbnail_size, items_per_batch,
-                workers_concurrentes, cache_thumbnails, limpieza_automatica
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                modo_oscuro, actualizar_metadata, custom_regexes, api_key_encrypted,
+                rate_limit_interval, carpeta_organizacion, carpeta_thumbnails,
+                thumbnail_size, items_per_batch, workers_concurrentes,
+                cache_thumbnails, limpieza_automatica, scroll_threshold, scroll_cooldown
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             setupkey,
             ultimo_volume_id,
             expresion_regular,
             modo_oscuro_actual,
             actualizar_metadata_actual,
+            '[]',  # custom_regexes por defecto
             api_key_encrypted,
             0.5,  # rate_limit_interval
+            '',   # carpeta_organizacion
+            'data/thumbnails', # carpeta_thumbnails
             ancho_thumbnail_actual,  # usar ancho_thumbnail actual como thumbnail_size
             20,   # items_per_batch
             5,    # workers_concurrentes
             1,    # cache_thumbnails
-            1     # limpieza_automatica
+            1,    # limpieza_automatica
+            1.0,  # scroll_threshold
+            100   # scroll_cooldown
         ))
 
         # 6. Migrar directorio_base a setup_directorios (si existe)

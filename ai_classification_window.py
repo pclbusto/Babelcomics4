@@ -25,7 +25,7 @@ class AIClassificationWindow(Adw.Window):
         self.comic_ids = comic_ids  # IDs de comics pre-seleccionados
         self.set_transient_for(parent)
         self.set_modal(True)
-        self.set_default_size(950, 1180)
+        self.set_default_size(1200, 800)
         self.set_title("Auto-Clasificación por IA")
 
         self.threshold = 0.75
@@ -82,9 +82,15 @@ class AIClassificationWindow(Adw.Window):
         stats_box.append(self.remaining_label)
 
         # Comic actual
+        # Layout dividido
+        split_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        split_box.set_homogeneous(True)
+        content_box.append(split_box)
+
+        # Comic actual
         current_frame = Gtk.Frame()
         current_frame.set_label("Comic Actual")
-        content_box.append(current_frame)
+        split_box.append(current_frame)
 
         current_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         current_box.set_margin_top(12)
@@ -112,49 +118,62 @@ class AIClassificationWindow(Adw.Window):
         # Matches carousel
         matches_frame = Gtk.Frame()
         matches_frame.set_label("Top 3 Matches (navega con ← → o desliza)")
-        content_box.append(matches_frame)
+        split_box.append(matches_frame)
 
-        carousel_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        carousel_box.set_margin_top(12)
-        carousel_box.set_margin_bottom(12)
-        carousel_box.set_margin_start(12)
-        carousel_box.set_margin_end(12)
-        matches_frame.set_child(carousel_box)
+        # Overlay para controles flotantes sobre el carousel
+        carousel_overlay = Gtk.Overlay()
+        carousel_overlay.set_margin_top(12)
+        carousel_overlay.set_margin_bottom(12)
+        carousel_overlay.set_margin_start(12)
+        carousel_overlay.set_margin_end(12)
+        matches_frame.set_child(carousel_overlay)
 
-        # Carousel para mostrar matches de a uno
+        # Carousel principal
         self.carousel = Adw.Carousel()
         self.carousel.set_allow_mouse_drag(True)
         self.carousel.set_allow_scroll_wheel(True)
         self.carousel.set_vexpand(True)
+        self.carousel.set_hexpand(True)
         # Reducir altura para que los botones sean visibles
-        self.carousel.set_size_request(-1, 420)
-        carousel_box.append(self.carousel)
+        self.carousel.set_size_request(-1, 600)
+        carousel_overlay.set_child(self.carousel)
 
-        # Indicador de páginas
-        self.carousel_indicator = Adw.CarouselIndicatorDots()
-        self.carousel_indicator.set_carousel(self.carousel)
-        carousel_box.append(self.carousel_indicator)
-
-        # Botones de navegación
-        nav_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        nav_box.set_halign(Gtk.Align.CENTER)
-        carousel_box.append(nav_box)
-
-        prev_button = Gtk.Button(label="← Anterior")
-        prev_button.connect("clicked", lambda b: self.carousel.scroll_to(
+        # Botón Anterior (Overlay Izquierda)
+        self.prev_button = Gtk.Button(label="")
+        self.prev_button.add_css_class("osd")
+        self.prev_button.add_css_class("circular")
+        self.prev_button.set_valign(Gtk.Align.CENTER)
+        self.prev_button.set_halign(Gtk.Align.START)
+        self.prev_button.set_margin_start(12)
+        self.prev_button.connect("clicked", lambda b: self.carousel.scroll_to(
             self.carousel.get_nth_page(max(0, int(self.carousel.get_position()) - 1)), True
         ))
-        nav_box.append(prev_button)
+        carousel_overlay.add_overlay(self.prev_button)
 
-        self.match_label = Gtk.Label(label="Match 1 de 3")
-        self.match_label.add_css_class("title-3")
-        nav_box.append(self.match_label)
-
-        next_button = Gtk.Button(label="Siguiente →")
-        next_button.connect("clicked", lambda b: self.carousel.scroll_to(
+        # Botón Siguiente (Overlay Derecha)
+        self.next_button = Gtk.Button(label="")
+        self.next_button.add_css_class("osd")
+        self.next_button.add_css_class("circular")
+        self.next_button.set_valign(Gtk.Align.CENTER)
+        self.next_button.set_halign(Gtk.Align.END)
+        self.next_button.set_margin_end(12)
+        self.next_button.connect("clicked", lambda b: self.carousel.scroll_to(
             self.carousel.get_nth_page(min(self.carousel.get_n_pages() - 1, int(self.carousel.get_position()) + 1)), True
         ))
-        nav_box.append(next_button)
+        carousel_overlay.add_overlay(self.next_button)
+
+        # Etiqueta de Match (Overlay Abajo Centro)
+        label_box = Gtk.Box()
+        label_box.add_css_class("osd")
+        label_box.add_css_class("pill")
+        label_box.set_valign(Gtk.Align.END)
+        label_box.set_halign(Gtk.Align.CENTER)
+        label_box.set_margin_bottom(12)
+        
+        self.match_label = Gtk.Label(label="Match 1 de 3")
+        label_box.append(self.match_label)
+        
+        carousel_overlay.add_overlay(label_box)
 
         # Conectar señal de cambio de página
         self.carousel.connect("page-changed", self.on_carousel_page_changed)
@@ -385,6 +404,9 @@ class AIClassificationWindow(Adw.Window):
 
         # Actualizar label
         self.match_label.set_text(f"Match 1 de {len(matches)}")
+        
+        # Actualizar botones de navegación
+        self._update_nav_buttons()
 
         # Actualizar status
         best_similarity = matches[0][1]
@@ -404,6 +426,8 @@ class AIClassificationWindow(Adw.Window):
         main_frame.set_margin_bottom(6)
         main_frame.set_margin_start(6)
         main_frame.set_margin_end(6)
+        main_frame.set_hexpand(True)
+        main_frame.set_halign(Gtk.Align.FILL)
 
         page_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         page_box.set_margin_top(12)
@@ -412,31 +436,7 @@ class AIClassificationWindow(Adw.Window):
         page_box.set_margin_end(24)
         main_frame.set_child(page_box)
 
-        # Badge "SELECCIONADO" prominente
-        selected_badge = Gtk.Label(label="⭐ ESTE MATCH SE APLICARÁ ⭐")
-        selected_badge.add_css_class("title-2")
-        selected_badge.add_css_class("success")
-        selected_badge.set_margin_bottom(6)
-        page_box.append(selected_badge)
-
-        # Header con ranking y similaridad
-        header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        header_box.set_halign(Gtk.Align.CENTER)
-        page_box.append(header_box)
-
-        rank_label = Gtk.Label(label=f"Match #{rank}")
-        rank_label.add_css_class("title-1")
-        header_box.append(rank_label)
-
-        similarity_label = Gtk.Label(label=f"{similarity:.1%}")
-        if similarity >= self.threshold:
-            similarity_label.add_css_class("success")
-        else:
-            similarity_label.add_css_class("warning")
-        similarity_label.add_css_class("title-1")
-        header_box.append(similarity_label)
-
-        # Cover reducido 25% (de 300x450 a 225x338)
+        # Cover ampliado (400x600)
         cover = self.session.query(ComicbookInfoCover).get(cover_id)
         if cover:
             cover_path = cover.obtener_ruta_local()
@@ -445,44 +445,28 @@ class AIClassificationWindow(Adw.Window):
                     picture = Gtk.Picture()
                     picture.set_can_shrink(True)
                     picture.set_halign(Gtk.Align.CENTER)
-                    # Cover 25% más pequeño
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(cover_path, 225, 338, True)
+                    # Cover mucho más grande
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(cover_path, 400, 600, True)
                     texture = Gdk.Texture.new_for_pixbuf(pixbuf)
                     picture.set_paintable(texture)
+                    
+                    # Tooltip con toda la info
+                    tooltip_text = (
+                        f"Match #{rank} ({similarity:.1%})\n"
+                        f"{info.titulo} #{info.numero}\n"
+                    )
+                    if info.volume:
+                        tooltip_text += f"Serie: {info.volume.nombre}\n"
+                    if info.fecha_tapa:
+                        tooltip_text += f"Fecha: {info.fecha_tapa}"
+                        
+                    picture.set_tooltip_text(tooltip_text)
                     page_box.append(picture)
                 except Exception as e:
                     error_label = Gtk.Label(label=f"Error cargando cover: {e}")
                     error_label.add_css_class("dim-label")
                     page_box.append(error_label)
-
-        # Info del comic
-        info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        info_box.set_halign(Gtk.Align.CENTER)
-        info_box.set_margin_top(12)
-        page_box.append(info_box)
-
-        title_label = Gtk.Label(label=info.titulo)
-        title_label.add_css_class("title-2")
-        title_label.set_wrap(True)
-        title_label.set_max_width_chars(50)
-        info_box.append(title_label)
-
-        number_label = Gtk.Label(label=f"Número: #{info.numero}")
-        number_label.add_css_class("title-3")
-        info_box.append(number_label)
-
-        if info.volume:
-            volume_label = Gtk.Label(label=f"Serie: {info.volume.nombre}")
-            volume_label.add_css_class("dim-label")
-            volume_label.set_wrap(True)
-            volume_label.set_max_width_chars(50)
-            info_box.append(volume_label)
-
-        if info.fecha_tapa:
-            date_label = Gtk.Label(label=f"Fecha: {info.fecha_tapa}")
-            date_label.add_css_class("dim-label")
-            info_box.append(date_label)
-
+                    
         return main_frame
 
     def on_carousel_page_changed(self, carousel, index):
@@ -491,6 +475,28 @@ class AIClassificationWindow(Adw.Window):
         if n_pages > 0:
             current_page = int(carousel.get_position()) + 1
             self.match_label.set_text(f"Match {current_page} de {n_pages}")
+            self._update_nav_buttons()
+
+    def _update_nav_buttons(self):
+        """Actualiza estado y etiquetas de botones de navegación"""
+        n_pages = self.carousel.get_n_pages()
+        current_page = int(self.carousel.get_position())
+        
+        # Botón anterior (izquierda)
+        if current_page > 0:
+            self.prev_button.set_label(str(current_page))  # Pagina anterior (1-based es current_page, porque current_page index es 0-based)
+            # Ejemplo: Si estoy en index 1 (pag 2), quiero ir a index 0 (pag 1). Label "1". Correcto.
+            self.prev_button.set_visible(True)
+        else:
+            self.prev_button.set_visible(False)
+            
+        # Botón siguiente (derecha)
+        if current_page < n_pages - 1:
+            self.next_button.set_label(str(current_page + 2)) # Pagina siguiente (current_page + 2 para ser 1-based de la proxima)
+            # Ejemplo: Si estoy en index 0 (pag 1), quiero ir a index 1 (pag 2). Label "2". Correcto.
+            self.next_button.set_visible(True)
+        else:
+            self.next_button.set_visible(False)
 
     def on_configure_threshold(self, button):
         """Configurar umbral"""

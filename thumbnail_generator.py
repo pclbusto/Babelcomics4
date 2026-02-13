@@ -22,8 +22,11 @@ class ThumbnailGenerator:
     - Extracción de primera página de comics
     """
     
-    def __init__(self, cache_dir="data/thumbnails"):
+    def __init__(self, cache_dir=None):
         # Configuración de rutas
+        if cache_dir is None:
+            from helpers.thumbnail_path import get_thumbnails_base_path
+            cache_dir = get_thumbnails_base_path()
         self.cache_dir = Path(cache_dir)
         self._create_cache_directories()
 
