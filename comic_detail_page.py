@@ -26,9 +26,23 @@ def create_comic_detail_page(comic, session, thumbnail_generator, main_window):
     page = Adw.NavigationPage()
     page.set_title(f"Cómic #{comic.id_comicbook}")
 
+    # Crear ToolbarView para manejo correcto de cabeceras
+    toolbar_view = Adw.ToolbarView()
+
+    # Crear HeaderBar estándar
+    header_bar = Adw.HeaderBar()
+    
+    # Agregar HeaderBar al ToolbarView
+    toolbar_view.add_top_bar(header_bar)
+
     # Crear contenido principal
     content = create_comic_detail_content(comic, session, thumbnail_generator, main_window)
-    page.set_child(content)
+    
+    # Establecer contenido en el ToolbarView
+    toolbar_view.set_content(content)
+    
+    # Establecer ToolbarView como hijo de la página
+    page.set_child(toolbar_view)
 
     return page
 
@@ -36,30 +50,26 @@ def create_comic_detail_page(comic, session, thumbnail_generator, main_window):
 def create_comic_detail_content(comic, session, thumbnail_generator, main_window):
     """Crear contenido de detalle del cómic"""
 
-    # Contenedor principal con scroll
-    scrolled = Gtk.ScrolledWindow()
-    scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-    scrolled.set_vexpand(True)
+    # Contenedor principal
+    # Usamos Gtk.Box en lugar de ScrolledWindow directo porque el TabView maneja su propio scroll
+    main_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
 
     # TabView y TabBar para organizar el contenido
     tab_view = Adw.TabView()
-    tab_view.set_vexpand(True)
+    # No establecemos vexpand en tab_view, dejaremos que el box lo maneje
 
     tab_bar = Adw.TabBar()
     tab_bar.set_view(tab_view)
 
-    # Contenedor para tab bar y contenido
-    tab_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-    tab_container.append(tab_bar)
-    tab_container.append(tab_view)
-    tab_container.set_vexpand(True)
-
+    # Agregar tab bar y view al contenedor
+    main_container.append(tab_bar)
+    main_container.append(tab_view)
+    
     # Crear pestañas
     create_info_tab(tab_view, comic, session, thumbnail_generator, main_window)
     create_pages_tab(tab_view, comic, session, thumbnail_generator, main_window)
 
-    scrolled.set_child(tab_container)
-    return scrolled
+    return main_container
 
 
 def create_info_tab(tab_view, comic, session, thumbnail_generator, main_window):

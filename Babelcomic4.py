@@ -56,6 +56,14 @@ except ImportError as e:
     print("Asegúrate de tener todos los archivos: comic_cards.py, filter_dialog.py, selectable_card.py, thumbnail_generator.py")
     sys.exit(1)
 
+# Importar Download Manager y Página de Descargas
+try:
+    from helpers.download_manager import DownloadManager
+    from downloads_page import create_downloads_page
+    print("Módulos de descarga importados correctamente")
+except ImportError as e:
+    print(f"Error importando módulos de descarga: {e}")
+
 # Importar módulos de IA (opcionales)
 try:
     from generate_embeddings_window import GenerateEmbeddingsWindow
@@ -119,7 +127,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         self.maximize()
         
         # Estado de la aplicación
-        self.current_view = "comics"
+        self.current_view = None # Se inicializará en setup_ui
         self.current_filters = {}
 
         # Filtros independientes por vista
@@ -133,9 +141,6 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Inicializar gestores
         self.selection_manager = SelectionManager()
         
-        # Variables para lazy loading
-        self.items_data = []
-        self.loaded_items = 0
         # Variables para lazy loading
         self.items_data = []
         self.loaded_items = 0
@@ -162,7 +167,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         self.setup_keyboard_shortcuts()
         
         # Cargar contenido inicial
-        self.load_items_batch()
+        # self.load_items_batch() # Eliminado para evitar race condition, lo maneja setup_ui
         
     def init_database(self):
         """Inicializar base de datos"""
@@ -196,8 +201,30 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             except Exception as mig_e:
                 print(f"Migración carpeta_thumbnails: {mig_e}")
 
+            # Migración: añadir columna window_state si no existe
+            try:
+                from sqlalchemy import text, inspect as sa_inspect
+                inspector = sa_inspect(engine)
+                columns = [col['name'] for col in inspector.get_columns('setups')]
+                if 'window_state' not in columns:
+                    with engine.begin() as conn:
+                        conn.execute(text("ALTER TABLE setups ADD COLUMN window_state VARCHAR DEFAULT '{}'"))
+                    print("Migración: columna window_state añadida a setups")
+            except Exception as mig_e:
+                print(f"Migración window_state: {mig_e}")
+
             # Cargar configuración
             self.config = self.setup_repository.obtener_o_crear_configuracion()
+            
+            # Aplicar configuración de batch size
+            if self.config and hasattr(self.config, 'items_per_batch'):
+                self.batch_size = self.config.items_per_batch
+                print(f"Configuración aplicada: Batch size = {self.batch_size}")
+
+            # Inicializar Download Manager
+            self.download_manager = DownloadManager.get_instance()
+            self.download_manager.set_main_session(self.session)
+            self.download_manager.set_engine(engine)
 
             # Inicializar módulo de ruta de thumbnails
             init_thumbnail_path(getattr(self.config, 'carpeta_thumbnails', None))
@@ -405,8 +432,12 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Toast overlay para notificaciones
         self.toast_overlay = Adw.ToastOverlay()
 
-        # Navigation View para la navegación fluida
-        self.navigation_view = Adw.NavigationView()
+        # Stack principal para manejar múltiples vistas persistentes
+        self.content_stack = Gtk.Stack()
+        self.content_stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        
+        # Diccionario para almacenar contextos de vista
+        self.view_contexts = {}
 
         # Contenedor principal con overlay split view
         self.overlay_split_view = Adw.OverlaySplitView()
@@ -415,11 +446,8 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         # Crear sidebar
         self.create_sidebar()
 
-        # Crear página principal (grilla de volúmenes/comics)
-        self.create_main_page()
-
-        # Configurar área principal con NavigationView
-        self.overlay_split_view.set_content(self.navigation_view)
+        # Configurar área principal con el Stack
+        self.overlay_split_view.set_content(self.content_stack)
 
         # Configurar jerarquía
         self.toast_overlay.set_child(self.overlay_split_view)
@@ -427,42 +455,98 @@ class ComicManagerWindow(Adw.ApplicationWindow):
 
         # CSS personalizado
         self.setup_css()
+        
+        # Inicializar vista por defecto (Comics)
+        if hasattr(self, 'nav_rows') and "comics" in self.nav_rows:
+            # Usar idle_add para asegurar que la UI esté lista
+            GLib.idle_add(lambda: self.on_navigation_button_clicked(self.nav_rows["comics"], "comics"))
 
-    def create_main_page(self):
-        """Crear página principal como NavigationPage"""
-        # Crear el contenido principal (sin el header, que va en NavigationPage)
+
+    def create_view_stack(self, view_id):
+        """Crear stack de navegación para una vista específica con sus propios controles"""
+        
+        # Caso especial para la página de descargas
+        if view_id == "downloads":
+            try:
+                downloads_page = create_downloads_page()
+                # Creamos un NavigationView básico para que encaje
+                nav_view = Adw.NavigationView()
+                nav_view.add(downloads_page)
+                
+                # Contexto vacío pero necesario para mantener la interfaz general
+                context = {
+                    "nav_view": nav_view,
+                    "root_page": downloads_page,
+                    "header": None,
+                    "search_entry": None,
+                    "flow_box": None,
+                    "status_label": None,
+                    "count_label": None,
+                    "selection_button": None,
+                    "download_button": None,
+                    "action_box": None,
+                    "selection_label": None,
+                    "scrolled_window": None,
+                    "filter_button": None,
+                    "items_data": None,
+                    "loaded_items": 0,
+                    "loaded": True
+                }
+                return nav_view, context
+            except Exception as e:
+                print(f"Error creando página de descargas: {e}")
+        
+        # Títulos por defecto
+        titles = {
+            "comics": "Todos los Cómics",
+            "volumes": "Bibioteca de Volúmenes",
+            "publishers": "Editoriales",
+            "arcs": "Arcos Argumentales"
+        }
+        title = titles.get(view_id, "Gestor de Cómics")
+
+        # Crear NavigationView
+        nav_view = Adw.NavigationView()
+        
+        # Crear página raíz
+        root_page = Adw.NavigationPage()
+        root_page.set_title(title)
+        
+        # Crear contenido principal
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
 
-        # Header bar
+        # Header bar específico para esta vista
         header = Adw.HeaderBar()
 
         # Botón toggle del sidebar
         sidebar_button = Gtk.ToggleButton()
         sidebar_button.set_icon_name("sidebar-show-symbolic")
         sidebar_button.set_tooltip_text("Mostrar/ocultar sidebar")
+        # Vincular con el split view global (esto funciona con múltiples botones)
         sidebar_button.bind_property("active", self.overlay_split_view, "show-sidebar",
                                    GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE)
-        sidebar_button.set_active(True)
+        # Inicialmente activo si el sidebar está visible (aunque el binding lo sincronizará)
+        sidebar_button.set_active(self.overlay_split_view.get_show_sidebar())
         header.pack_start(sidebar_button)
 
-        # Botón de selección múltiple
-        self.selection_button = Gtk.ToggleButton()
-        self.selection_button.set_icon_name("object-select-symbolic")
-        self.selection_button.set_tooltip_text("Modo selección (Ctrl+M)")
-        self.selection_button.connect("toggled", self.on_selection_mode_toggled)
-        header.pack_start(self.selection_button)
+        # Botón de selección múltiple específico
+        selection_button = Gtk.ToggleButton()
+        selection_button.set_icon_name("object-select-symbolic")
+        selection_button.set_tooltip_text("Modo selección (Ctrl+M)")
+        selection_button.connect("toggled", self.on_selection_mode_toggled)
+        header.pack_start(selection_button)
 
-        # Entrada de búsqueda
-        self.search_entry = Gtk.SearchEntry()
-        self.search_entry.set_placeholder_text("Buscar...")
-        self.search_entry.set_size_request(300, -1)
-        self.search_entry.connect("search-changed", self.on_search_changed)
-        header.set_title_widget(self.search_entry)
+        # Entrada de búsqueda específica
+        search_entry = Gtk.SearchEntry()
+        search_entry.set_placeholder_text(f"Buscar en {title}...")
+        search_entry.set_size_request(300, -1)
+        search_entry.connect("search-changed", self.on_search_changed)
+        header.set_title_widget(search_entry)
 
         # Botones de acción (inicialmente ocultos)
-        self.action_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        self.action_box.set_visible(False)
-        self.action_box.add_css_class("action-buttons-box")
+        action_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        action_box.set_visible(False)
+        action_box.add_css_class("action-buttons-box")
 
         # Botón catalogar
         if CATALOGING_AVAILABLE:
@@ -470,39 +554,38 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             catalog_button.set_icon_name("view-grid-symbolic")
             catalog_button.set_tooltip_text("Catalogar seleccionados (Shift+Ctrl+C)")
             catalog_button.connect("clicked", self.on_catalog_selected)
-            self.action_box.append(catalog_button)
+            action_box.append(catalog_button)
 
         # Botón clasificación por IA
         ai_classify_button = Gtk.Button()
         ai_classify_button.set_icon_name("network-wireless-symbolic")
         ai_classify_button.set_tooltip_text("Clasificación automática por IA")
         ai_classify_button.connect("clicked", lambda btn: self.on_ai_classify_action(None, None))
-        self.action_box.append(ai_classify_button)
+        action_box.append(ai_classify_button)
 
         # Botón papelera
         trash_button = Gtk.Button()
         trash_button.set_icon_name("user-trash-symbolic")
         trash_button.set_tooltip_text("Mover a papelera")
         trash_button.connect("clicked", self.on_trash_selected)
-        self.action_box.append(trash_button)
+        action_box.append(trash_button)
 
-        header.pack_end(self.action_box)
+        header.pack_end(action_box)
 
-        # Botón descargar (contextual)
-        self.download_button = Gtk.Button()
-        self.download_button.set_icon_name("folder-download-symbolic")
-        self.download_button.set_tooltip_text("Descargar volúmenes de ComicVine")
-        self.download_button.connect("clicked", self.on_download_button_clicked)
-        header.pack_end(self.download_button)
+        # Botón descargar (contextual según vista)
+        download_button = Gtk.Button()
+        download_button.set_icon_name("folder-download-symbolic")
+        download_button.set_tooltip_text("Descargar volúmenes de ComicVine") # Default
+        download_button.connect("clicked", self.on_download_button_clicked)
+        header.pack_end(download_button)
 
         # Botón filtros avanzados
-        self.filter_button = Gtk.Button()
-        self.filter_button.set_icon_name("preferences-system-symbolic")
-        self.filter_button.set_tooltip_text("Filtros avanzados")
-        self.filter_button.connect("clicked", self.on_advanced_filters_clicked)
-        # Agregar una clase CSS para asegurar que sea visible
-        self.filter_button.add_css_class("suggested-action")
-        header.pack_end(self.filter_button)
+        filter_button = Gtk.Button()
+        filter_button.set_icon_name("preferences-system-symbolic")
+        filter_button.set_tooltip_text("Filtros avanzados")
+        filter_button.connect("clicked", self.on_advanced_filters_clicked)
+        filter_button.add_css_class("suggested-action")
+        header.pack_end(filter_button)
 
         # Botón actualizar
         refresh_button = Gtk.Button()
@@ -541,57 +624,81 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         status_box.set_margin_top(8)
         status_box.set_margin_bottom(8)
 
-        self.status_label = Gtk.Label(label="Cargando...")
-        self.status_label.set_hexpand(True)
-        self.status_label.set_halign(Gtk.Align.START)
+        status_label = Gtk.Label(label="Cargando...")
+        status_label.set_hexpand(True)
+        status_label.set_halign(Gtk.Align.START)
 
-        self.count_label = Gtk.Label(label="0 items")
-        self.count_label.add_css_class("dim-label")
+        count_label = Gtk.Label(label="0 items")
+        count_label.add_css_class("dim-label")
 
         # Label para selección
-        self.selection_label = Gtk.Label(label="")
-        self.selection_label.add_css_class("accent")
-        self.selection_label.set_visible(False)
-
-        status_box.append(self.status_label)
-        status_box.append(self.selection_label)
-        status_box.append(self.count_label)
+        selection_label = Gtk.Label()
+        selection_label.set_halign(Gtk.Align.END)
+        selection_label.add_css_class("dim-label")
+        
+        status_box.append(status_label)
+        status_box.append(selection_label)
+        status_box.append(count_label)
+        
         main_box.append(status_box)
 
-        # Área de contenido scrollable
-        self.scrolled_window = Gtk.ScrolledWindow()
-        self.scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        self.scrolled_window.set_vexpand(True)
+        # Área principal con scroll
+        scrolled_window = Gtk.ScrolledWindow()
+        scrolled_window.set_vexpand(True)
+        
+        # FlowBox para items
+        flow_box = Gtk.FlowBox()
+        flow_box.set_valign(Gtk.Align.START)
+        flow_box.set_max_children_per_line(30)
+        flow_box.set_selection_mode(Gtk.SelectionMode.NONE)
+        flow_box.set_homogeneous(True)
+        flow_box.set_margin_start(20)
+        flow_box.set_margin_end(20)
+        flow_box.set_margin_top(20)
+        flow_box.set_margin_bottom(20)
+        flow_box.set_column_spacing(15)
+        flow_box.set_row_spacing(15)
 
-        # FlowBox para las cards
-        self.flow_box = Gtk.FlowBox()
-        self.flow_box.set_valign(Gtk.Align.START)
-        self.flow_box.set_max_children_per_line(6)
-        self.flow_box.set_selection_mode(Gtk.SelectionMode.NONE)
-        self.flow_box.set_homogeneous(True)
-        self.flow_box.set_margin_start(20)
-        self.flow_box.set_margin_end(20)
-        self.flow_box.set_margin_top(20)
-        self.flow_box.set_margin_bottom(20)
-        self.flow_box.set_column_spacing(15)
-        self.flow_box.set_row_spacing(15)
+        # Conectar scroll (necesito una referencia bound method para que funcione load_batch)
+        # Usaré un lambda que sepa qué contexto usar, o simplemente el global load_items_batch
+        # que usará self.current_view.
+        # Pero on_edge_reached necesita self.
+        
+        # Necesito definir on_edge_reached que use el contexto correcto?
+        # No, on_edge_reached es un método de instancia que usa self.load_items_batch().
+        # Siempre que self.load_items_batch use self.current_context, funcionará.
+        scrolled_window.connect("edge-reached", self.on_edge_reached)
 
-        # Conectar scroll
-        self.scrolled_window.connect("edge-reached", self.on_edge_reached)
+        scrolled_window.set_child(flow_box)
+        main_box.append(scrolled_window)
 
-        self.scrolled_window.set_child(self.flow_box)
-        main_box.append(self.scrolled_window)
+        # Configurar página raíz
+        root_page.set_child(main_box)
 
-        # Crear NavigationPage principal
-        self.main_page = Adw.NavigationPage()
-        self.main_page.set_title("Comic Manager")
-        self.main_page.set_child(main_box)
+        # Agregar raíz a NavigationView
+        nav_view.add(root_page)
 
-        # Agregar a NavigationView
-        self.navigation_view.add(self.main_page)
+        # Contexto de la vista
+        context = {
+            "nav_view": nav_view,
+            "root_page": root_page,
+            "header": header,
+            "search_entry": search_entry,
+            "flow_box": flow_box,
+            "status_label": status_label,
+            "count_label": count_label,
+            "selection_label": selection_label,
+            "selection_button": selection_button,
+            "action_box": action_box,
+            "download_button": download_button,
+            "filter_button": filter_button,
+            "scrolled_window": scrolled_window,  # Add scrolled_window to context
+            "items_data": None,     # Datos cargados
+            "loaded_items": 0,      # Contador de items cargados
+            "loaded": False         # Flag si ya se cargó inicialmente
+        }
 
-        # Inicializar datos
-        GLib.idle_add(self.load_items_batch)
+        return nav_view, context
 
     def create_sidebar(self):
         """Crear sidebar de navegación"""
@@ -616,6 +723,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             ("comics", "Comics", "media-optical-symbolic"),
             ("volumes", "Volúmenes", "folder-symbolic"),
             ("publishers", "Editoriales", "building-symbolic"),
+            ("downloads", "Descargas", "folder-download-symbolic"),
             ("arcs", "Arcos", "view-list-symbolic"),  # Para el futuro
         ]
         
@@ -693,69 +801,144 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Manejar click en botones de navegación"""
         print(f"BOTÓN CLICKEADO: {item_id}")
         
-        new_view = item_id
-        
-        if new_view != self.current_view and button.get_sensitive():
-            print(f"Cambiando vista de {self.current_view} → {new_view}")
-            
-            # Actualizar botón seleccionado visualmente
-            if hasattr(self, 'selected_nav_button'):
-                self.selected_nav_button.remove_css_class("selected")
-            
-            button.add_css_class("selected")
-            self.selected_nav_button = button
-            
-            # Cambiar vista
-            self.current_view = new_view
-            
-            # Salir del modo selección al cambiar vista
-            if self.selection_manager.selection_mode:
-                self.selection_button.set_active(False)
-            
-            # Limpiar contenido actual
-            self.clear_content()
-            
-            # Actualizar interfaz para la nueva vista
-            self.update_ui_for_view(new_view)
-            
-    def update_ui_for_view(self, view):
-        """Actualizar UI según la vista"""
-        placeholders = {
-            "comics": "Buscar comics (ej: Superman+2015)...",
-            "volumes": "Buscar volúmenes...",
-            "publishers": "Buscar editoriales...",
-            "arcs": "Buscar arcos..."
-        }
+        # Si es la misma vista, verificar si debemos volver a la raíz
+        if item_id == self.current_view:
+            if hasattr(self, 'navigation_view') and self.navigation_view:
+                try:
+                    # Pop to root implementation for current stack
+                    stack_size = self.navigation_view.get_navigation_stack().get_n_items()
+                    if stack_size > 1:
+                        print(f"Volviendo a raíz de {item_id}, stack size: {stack_size}")
+                        # Pop repetidamente hasta llegar al root
+                        # Nota: pop_to_page o pop_to_tag es mejor si es posible, 
+                        # pero un loop simple funciona.
+                        while self.navigation_view.get_navigation_stack().get_n_items() > 1:
+                            self.navigation_view.pop()
+                except Exception as e:
+                    print(f"Error haciendo pop to root: {e}")
+            return
 
-        # Actualizar tooltip del botón de descarga
+        # 1. Salir del modo selección en la vista actual antes de cambiar
+        if self.selection_manager.selection_mode:
+            self.selection_button.set_active(False)
+
+        # 2. Guardar estado de la vista anterior
+        if hasattr(self, 'current_view') and self.current_view and self.current_view in self.view_contexts:
+            self.save_current_view_state(self.current_view)
+
+        # 3. Actualizar botón visualmente
+        if hasattr(self, 'selected_nav_button') and self.selected_nav_button:
+            self.selected_nav_button.remove_css_class("selected")
+        
+        button.add_css_class("selected")
+        self.selected_nav_button = button
+        
+        # 4. Crear nueva vista si no existe
+        if item_id not in self.view_contexts:
+            print(f"Creando nueva vista persistent: {item_id}")
+            nav_view, context = self.create_view_stack(item_id)
+            self.content_stack.add_named(nav_view, item_id)
+            self.view_contexts[item_id] = context
+            
+        # 5. Cambiar a la nueva vista
+        self.current_view = item_id
+        
+        # 6. Restaurar contexto (actualiza self.search_entry, self.flow_box, etc.)
+        self.restore_view_context(item_id)
+        
+        # 7. Hacer visible el stack correspondiente
+        self.content_stack.set_visible_child_name(item_id)
+
+        # 8. Cargar datos si es la primera vez
+        if not self.view_contexts[item_id]['loaded']:
+            print(f"Cargando datos iniciales para {item_id}")
+            self.update_ui_for_view(item_id)
+            self.view_contexts[item_id]['loaded'] = True
+        else:
+            # Si ya estaba cargada, solo actualizamos el placeholder del search entry
+            # (esto ya se hace en restore_view_context implícitamente al restaurar widgets)
+            pass
+            
+            
+    def save_current_view_state(self, view_id):
+        """Guardar estado de la vista actual antes de cambiar"""
+        if view_id in self.view_contexts:
+            ctx = self.view_contexts[view_id]
+            # Guardar datos en memoria
+            ctx['items_data'] = self.items_data
+            ctx['loaded_items'] = self.loaded_items
+            print(f"Estado guardado para {view_id}: {self.loaded_items} items")
+
+    def restore_view_context(self, view_id):
+        """Restaurar referencias al contexto de la nueva vista"""
+        ctx = self.view_contexts[view_id]
+        
+        # Restaurar referencias a widgets activos
+        self.navigation_view = ctx['nav_view']
+        self.main_page = ctx['root_page']
+        self.search_entry = ctx['search_entry']
+        self.flow_box = ctx['flow_box']
+        self.status_label = ctx['status_label']
+        self.count_label = ctx['count_label']
+        self.selection_button = ctx['selection_button']
+        self.download_button = ctx['download_button'] # Botón contextual importante
+        self.action_box = ctx['action_box']
+        self.selection_label = ctx['selection_label']
+        self.scrolled_window = ctx['scrolled_window']
+        self.filter_button = ctx['filter_button']
+        
+        # Restaurar datos
+        self.items_data = ctx['items_data']
+        self.loaded_items = ctx['loaded_items']
+        
+        # IMPORTANTE: Restaurar filtros para esta vista
+        if view_id in self.search_states:
+            self.current_filters = self.search_states[view_id]["filters"].copy()
+            print(f"🔄 Filtros restaurados para {view_id}: {self.current_filters}")
+            self.update_filter_button_state()
+        
+        print(f"Contexto restaurado para {view_id}")
+
+
+    def update_ui_for_view(self, view):
+        """Actualizar datos según la vista (carga inicial o recarga)"""
+        # Ya no creamos UI aquí, solo gestionamos datos
+        
+        # Configurar tooltip botón descarga
         if hasattr(self, 'download_button'):
             if view == "publishers":
                 self.download_button.set_tooltip_text("Descargar editoriales de ComicVine")
             else:
                 self.download_button.set_tooltip_text("Descargar volúmenes de ComicVine")
 
-        self.search_entry.set_placeholder_text(placeholders.get(view, "Buscar..."))
-
-        # Guardar el estado actual antes de cambiar
-        if hasattr(self, 'current_view') and self.current_view in self.search_states:
-            self.search_states[self.current_view]["filters"] = self.current_filters.copy()
-            print(f"💾 Guardando filtros para {self.current_view}: {self.current_filters}")
-
-        # Restaurar estado de búsqueda de esta vista
+        # Restaurar filtros previos si existen
+        # Esto es handled por on_search_changed al restaurar el texto?
+        # search_entry.set_text dispara la señal? Sí.
+        
         search_state = self.search_states.get(view, {"text": "", "filters": {}})
-        self.search_entry.set_text(search_state["text"])
+        
+        # Evitar loop infinito si set_text dispara search-changed
+        # Pero search-changed usa self.current_view que ya está actualizado.
+        if hasattr(self, 'search_entry') and self.search_entry:
+            if self.search_entry.get_text() != search_state["text"]:
+                self.search_entry.set_text(search_state["text"])
+            
         self.current_filters = search_state["filters"].copy()
-        print(f"🔄 Restaurando filtros para {view}: {self.current_filters}")
-
+        
         # Actualizar estado visual del botón de filtros
         self.update_filter_button_state()
 
-        # Cargar contenido para la nueva vista
-        print(f"Cargando contenido para: {view}")
-        self.load_items_batch()
+        # Cargar contenido (solo si aplica la vista)
+        if hasattr(self, 'flow_box') and self.flow_box:
+            print(f"Iniciando carga de items para: {view}")
+            self.load_items_batch()
         
     def clear_content(self):
         """Limpiar contenido actual"""
+        # Verificar si flow_box existe y es válido
+        if not hasattr(self, 'flow_box') or not self.flow_box:
+            return
+
         while True:
             child = self.flow_box.get_first_child()
             if child:
@@ -763,13 +946,27 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             else:
                 break
 
+        # Limpiar conteos y estado de selección ANTES de eliminar las cards
+        self.selection_manager.clear_selection()
+        
         self.items_data = []
         self.loaded_items = 0
-        # NOTA: No limpiar current_filters aquí - los filtros persisten entre recargas
-        self.selection_manager.clear_cards()
+        
+        # FIX: Solo borrar referencias previas de cards de la vista actual
+        if hasattr(self, 'current_view') and self.current_view:
+            self.selection_manager.remove_cards_by_type(self.current_view)
+        else:
+            self.selection_manager.clear_cards()
+        
+
         
     def load_items_batch(self):
         """Cargar lote de items según la vista actual"""
+        # IMPORTANTE: Verificar que el contexto de la vista esté listo
+        if not hasattr(self, 'flow_box') or not self.flow_box:
+            print(f"⚠️ Contexto no listo para load_items_batch en vista {getattr(self, 'current_view', 'unknown')}")
+            return
+
         if not self.session:
             self.show_toast("Error: No hay conexión a la base de datos", "error")
             return
@@ -888,18 +1085,19 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         
     def on_catalog_selected(self, button):
         """Catalogar items seleccionados"""
-        selected_items = self.selection_manager.get_selected_items()
+        # FIX: Usar get_selected_cards para filtrar por tipo y evitar colisiones de ID con otras vistas
+        selected_cards = self.selection_manager.get_selected_cards()
         
-        if not selected_items:
-            self.show_toast("No hay items seleccionados", "warning")
-            return
-            
-        # Filtrar solo comics para catalogación
-        comics_to_catalog = [item_id for item_id in selected_items 
-                           if self.current_view == "comics"]
+        # Filtrar cards que sean de tipo comics
+        comics_to_catalog = [card.item_id for card in selected_cards 
+                           if card.item_type == "comics"]
         
         if not comics_to_catalog:
-            self.show_toast("Selecciona comics para catalogar", "warning")
+            # Si estamos en la vista de cómics pero no hay cómics seleccionados (quizás hay items de otras vistas)
+            if self.current_view == "comics":
+                self.show_toast("Selecciona comics para catalogar", "warning")
+            else:
+                self.show_toast("La catalogación solo está disponible para comics", "warning")
             return
             
         print(f"Catalogando {len(comics_to_catalog)} comics...")
@@ -907,16 +1105,21 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         
     def on_trash_selected(self, button):
         """Mover items seleccionados a papelera"""
-        selected_items = self.selection_manager.get_selected_items()
+        # FIX: Usar get_selected_cards para filtrar por tipo actual
+        selected_cards = self.selection_manager.get_selected_cards()
         
-        if not selected_items:
-            self.show_toast("No hay items seleccionados", "warning")
+        # Filtrar solo items de la vista actual
+        items_to_trash = [card.item_id for card in selected_cards 
+                        if card.item_type == self.current_view]
+        
+        if not items_to_trash:
+            self.show_toast(f"No hay {self.current_view} seleccionados", "warning")
             return
             
         # Confirmar acción
         dialog = Adw.MessageDialog.new(self)
         dialog.set_heading("Mover a papelera")
-        dialog.set_body(f"¿Mover {len(selected_items)} items a la papelera?")
+        dialog.set_body(f"¿Mover {len(items_to_trash)} items a la papelera?")
         dialog.add_response("cancel", "Cancelar")
         dialog.add_response("confirm", "Mover a papelera")
         dialog.set_response_appearance("confirm", Adw.ResponseAppearance.DESTRUCTIVE)
@@ -1288,15 +1491,12 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             self.show_toast("Funciones de IA no disponibles. Instala torch y transformers", "warning")
             return
 
-        selected_items = self.selection_manager.get_selected_items()
-
-        if not selected_items:
-            self.show_toast("No hay items seleccionados", "warning")
-            return
-
+        # FIX: Usar get_selected_cards para filtrar por tipo
+        selected_cards = self.selection_manager.get_selected_cards()
+        
         # Filtrar solo comics para clasificación
-        comics_to_classify = [item_id for item_id in selected_items
-                            if self.current_view == "comics"]
+        comics_to_classify = [card.item_id for card in selected_cards 
+                            if card.item_type == "comics"]
 
         if not comics_to_classify:
             self.show_toast("Selecciona comics para clasificar por IA", "warning")
@@ -1377,16 +1577,57 @@ class ComicManagerWindow(Adw.ApplicationWindow):
             traceback.print_exc()
             self.show_toast("Error cargando ventana de reorganización", "error")
 
+    def on_trash_confirmed(self, dialog, response):
+        """Confirmar movimiento a papelera"""
+        if response == "confirm":
+             # FIX: Usar get_selected_cards para filtrar por tipo actual
+            selected_cards = self.selection_manager.get_selected_cards()
+            items_to_trash = [card.item_id for card in selected_cards
+                            if card.item_type == self.current_view]
+
+            if items_to_trash:
+                self.move_items_to_trash(items_to_trash)
+
+        # Salir del modo selección
+        self.selection_button.set_active(False)
+
+    def on_trash_item_action(self, action, parameter):
+        """Mover un item individual a papelera (desde menú contextual)"""
+        item_id_str = parameter.get_string()
+        try:
+            item_id = int(item_id_str)
+
+            # Confirmar acción
+            dialog = Adw.MessageDialog.new(self)
+            dialog.set_heading("Mover a papelera")
+            dialog.set_body("¿Mover este item a la papelera?")
+            dialog.add_response("cancel", "Cancelar")
+            dialog.add_response("confirm", "Mover a papelera")
+            dialog.set_response_appearance("confirm", Adw.ResponseAppearance.DESTRUCTIVE)
+
+            def on_response(dialog, response):
+                if response == "confirm":
+                    self.move_items_to_trash([item_id])
+
+            dialog.connect("response", on_response)
+            dialog.present()
+
+        except ValueError:
+            print(f"Error parseando ID para trash: {item_id_str}")
+
     def on_reorganize_volumes_selected(self, button):
         """Reorganizar cómics de volúmenes seleccionados"""
         # Obtener volúmenes seleccionados
-        selected_ids = list(self.selection_manager.selected_items)
+        # FIX: Usar get_selected_cards para asegurar que son volumenes
+        selected_cards = self.selection_manager.get_selected_cards()
+        selected_ids = [card.item_id for card in selected_cards
+                       if card.item_type == "volumes"]
 
         if not selected_ids:
             self.show_toast("No hay volúmenes seleccionados", "warning")
             return
 
-        # Verificar que son volúmenes
+        # Verificar que son volúmenes desde la vista actual para mensaje adecuado
         if self.current_view != "volumes":
             self.show_toast("Esta acción solo funciona con volúmenes", "warning")
             return
@@ -1459,9 +1700,21 @@ class ComicManagerWindow(Adw.ApplicationWindow):
                 else:
                     self.show_toast(f"{moved_count} items movidos a papelera", "success")
 
-                # Refrescar vista
+                # Refrescar vista manteniendo el scroll
+                scrolled_window = self.view_contexts[self.current_view]["scrolled_window"]
+                adj = scrolled_window.get_vadjustment()
+                self.saved_scroll_pos = adj.get_value()
+                self.saved_loaded_count = self.loaded_items
+                original_batch_size = self.batch_size
+
+                if self.saved_loaded_count > 0:
+                    self.batch_size = max(self.saved_loaded_count, original_batch_size)
+
                 self.clear_content()
                 self.load_items_batch()
+                
+                self.batch_size = original_batch_size
+                GLib.idle_add(self.restore_scroll_position)
             else:
                 self.show_toast("No se encontraron items válidos", "error")
 
@@ -1488,16 +1741,21 @@ class ComicManagerWindow(Adw.ApplicationWindow):
                 self.show_toast("Archivo de comic no encontrado", "error")
                 return
 
-            print(f"Archivo existe: ✓")
-
-            # Obtener ruta del thumbnail actual
-            thumbnail_path = self.thumbnail_generator.get_cached_thumbnail_path(comic_id, "comics")
-            print(f"Ruta del thumbnail: {thumbnail_path}")
-            print(f"Thumbnail existe antes: {'✓' if thumbnail_path.exists() else '✗'}")
-
             # Limpiar thumbnail existente para forzar regeneración
             self.thumbnail_generator.clear_cache_for_item(comic_id, "comics")
             print(f"Cache limpiado: ✓")
+
+            # Callback para actualizar la UI cuando termine
+            def on_thumbnail_ready(path):
+                if not path:
+                    print("Error regenerando thumbnail")
+                    GLib.idle_add(self.show_toast, "Error regenerando portada", "error")
+                    return
+                    
+                print(f"✓ Thumbnail regenerado: {path}")
+                
+                # Actualizar la card en la UI (en el hilo principal)
+                GLib.idle_add(self.update_card_image, comic_id, path)
 
             # Usar el flujo normal del ThumbnailGenerator que ahora tiene lógica inteligente
             print(f"Regenerando usando flujo normal con lógica inteligente...")
@@ -1505,43 +1763,62 @@ class ComicManagerWindow(Adw.ApplicationWindow):
                 comic.path,
                 comic.id_comicbook,
                 "comics",
-                lambda path: print(f"✓ Thumbnail regenerado: {path}" if path else "✗ Error regenerando")
+                on_thumbnail_ready
             )
-
-            # Verificar resultado después de un momento
-            import time
-            time.sleep(0.5)  # Dar tiempo al worker thread
-            print(f"Thumbnail regenerado: {'✓' if thumbnail_path.exists() else '✗'}")
-
-            self.show_toast("Portada regenerada exitosamente", "success")
-
-
-            # Preservar posición de scroll antes de refrescar
-            adj = self.scrolled_window.get_vadjustment()
-            self.saved_scroll_pos = adj.get_value()
-            self.saved_loaded_count = self.loaded_items
-            original_batch_size = self.batch_size
-
-            # Cargar suficientes items para restaurar posición
-            if self.saved_loaded_count > 0:
-                self.batch_size = max(self.saved_loaded_count, original_batch_size)
-                print(f"DEBUG: Preservando scroll - items: {self.saved_loaded_count}, pos: {self.saved_scroll_pos}")
-
-            # Refrescar la vista actual para mostrar el nuevo thumbnail
-            self.clear_content()
-            self.load_items_batch()
-
-            # Restaurar batch size original
-            self.batch_size = original_batch_size
-
-            # Restaurar posición de scroll después de que la UI se actualice
-            GLib.idle_add(self.restore_scroll_position)
+            
+            self.show_toast("Regenerando portada en segundo plano...", "information")
 
         except Exception as e:
             print(f"Error regenerando portada: {e}")
             import traceback
             traceback.print_exc()
             self.show_toast(f"Error regenerando portada: {e}", "error")
+
+    def update_card_image(self, item_id, path):
+        """Actualizar imagen de una card específica sin recargar todo"""
+        try:
+            # Verificar si estamos en la vista correcta
+            # Nota: regenerate_cover generalmente se llama desde comics, pero verificamos
+            target_view = "comics" 
+            if self.current_view != target_view:
+                return False
+                
+            # Obtener el flowbox de la vista
+            if target_view in self.view_contexts:
+                current_flowbox = self.view_contexts[target_view]["flow_box"]
+            else:
+                return False
+            
+            # Buscar la card en el flowbox
+            # Iteramos sobre los hijos (GtkFlowBoxChild)
+            child = current_flowbox.get_first_child()
+            found = False
+            
+            while child:
+                # El hijo directo del FlowBoxChild es nuestro widget (SelectableCard)
+                widget = child.get_child()
+                
+                if isinstance(widget, SelectableCard) and widget.item_id == item_id:
+                    print(f"Card encontrada en UI para ID {item_id}")
+                    original_card = widget.get_original_card()
+                    
+                    # Verificar si tiene el método load_thumbnail
+                    if hasattr(original_card, 'load_thumbnail'):
+                        original_card.load_thumbnail(path)
+                        found = True
+                        self.show_toast("Portada actualizada", "success")
+                    break
+                
+                child = child.get_next_sibling()
+                
+            if not found:
+                print(f"Card para ID {item_id} no encontrada en UI visible (posiblemente fuera de rango cargado)")
+                
+            return False # Retornar False para que GLib.idle_add no repita la llamada
+            
+        except Exception as e:
+            print(f"Error actualizando imagen en UI: {e}")
+            return False
 
     def open_comic_reader(self, comic_id):
         """Abrir comic con el lector integrado"""
@@ -2101,6 +2378,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         """Abrir filtros avanzados"""
         try:
             dialog = AdvancedFilterDialog(self, self.current_view)
+            dialog.connect('filters-applied', self.on_filters_applied)
             dialog.present()
             print(f"Abriendo filtros avanzados para {self.current_view}")
         except Exception as e:
@@ -2134,7 +2412,7 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         if not filters:
             self.current_filters = {}
         else:
-            self.current_filters.update(filters)
+            self.current_filters = filters.copy()
         print(f"🔄 Filtros actuales después de actualizar: {self.current_filters}")
 
         # Guardar los filtros en el estado de la vista actual
@@ -2152,19 +2430,40 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         self.show_toast(f"Filtros aplicados para {self.current_view}", "success")
 
     def update_filter_button_state(self):
-        """Actualizar el estado visual del botón de filtros"""
+        """Actualizar apariencia del botón de filtros si hay filtros activos"""
+        # Obtener referencia al botón de filtros de la vista actual
+        filter_button = None
+        if hasattr(self, 'filter_button') and self.filter_button:
+            filter_button = self.filter_button
+        elif self.current_view in self.view_contexts:
+            filter_button = self.view_contexts[self.current_view].get('filter_button')
+
+        # Si no se encontró el botón, salir
+        if not filter_button:
+            return
+
         try:
             if self.current_filters:
-                # Hay filtros activos - mostrar como activo
-                self.filter_button.remove_css_class("suggested-action")
-                self.filter_button.add_css_class("accent")
-                filter_count = len(self.current_filters)
-                self.filter_button.set_tooltip_text(f"Filtros avanzados ({filter_count} activos)")
+
+                if filter_button:
+                    # Hay filtros activos - mostrar como activo
+                    filter_button.remove_css_class("suggested-action")
+                    filter_button.add_css_class("accent")
+                    filter_count = len(self.current_filters)
+                    filter_button.set_tooltip_text(f"Filtros avanzados ({filter_count} activos)")
             else:
-                # Sin filtros - mostrar normal
-                self.filter_button.remove_css_class("accent")
-                self.filter_button.add_css_class("suggested-action")
-                self.filter_button.set_tooltip_text("Filtros avanzados")
+                # Obtener referencia al botón de filtros de la vista actual
+                filter_button = None
+                if hasattr(self, 'filter_button'):
+                    filter_button = self.filter_button
+                elif self.current_view in self.view_contexts:
+                     filter_button = self.view_contexts[self.current_view].get('filter_button')
+
+                if filter_button:
+                    # Sin filtros - mostrar normal
+                    filter_button.remove_css_class("accent")
+                    filter_button.add_css_class("suggested-action")
+                    filter_button.set_tooltip_text("Filtros avanzados")
         except Exception as e:
             print(f"Error actualizando estado del botón de filtros: {e}")
 
@@ -2204,7 +2503,8 @@ class ComicManagerWindow(Adw.ApplicationWindow):
         self.show_toast("Actualizando contenido...", "info")
         
         # Preservar posición de scroll
-        adj = self.scrolled_window.get_vadjustment()
+        scrolled_window = self.view_contexts[self.current_view]["scrolled_window"]
+        adj = scrolled_window.get_vadjustment()
         self.saved_scroll_pos = adj.get_value()
         self.saved_loaded_count = self.loaded_items
         original_batch_size = self.batch_size

@@ -27,10 +27,6 @@ class ComicbookInfoCover(Base):
             # Limpiar el nombre del volumen pero conservando espacios
             clean_volume_name = "".join([c if c.isalnum() or c.isspace() else "" for c in self.comic_info.volume.nombre]).strip()
 
-            print(f"Nombre limpio del volumen: {clean_volume_name}")
-            print(f"Nombre del archivo de la portada: {nombre_archivo}")
-            print(f"nombre del volumen: {self.comic_info.volume.nombre}")
-
             from helpers.thumbnail_path import get_thumbnails_base_path
             covers_destination_folder = os.path.join(
                 get_thumbnails_base_path(),
@@ -38,7 +34,24 @@ class ComicbookInfoCover(Base):
                 f"{clean_volume_name}_{self.comic_info.volume.id_volume}" # Combinar nombre limpio y ID
             )
             ruta = os.path.join(covers_destination_folder, nombre_archivo)
-            print(f"Ruta de destino de las portadas: {ruta}")
             if os.path.exists(ruta):
                 return ruta
+                
+            # Si no existe exactamente, podría ser una imagen secundaria (variant) 
+            # cuyo nombre fue modificado al descargar agregando "_variant_X"
+            if os.path.exists(covers_destination_folder):
+                import glob
+                
+                if '.' in nombre_archivo:
+                    name, ext = nombre_archivo.rsplit('.', 1)
+                    pattern = os.path.join(covers_destination_folder, f"{name}_variant_*.{ext}")
+                else:
+                    issue_num = self.comic_info.numero
+                    pattern = os.path.join(covers_destination_folder, f"issue_{issue_num}_variant_*.jpg")
+                    
+                matches = glob.glob(pattern)
+                if matches:
+                    # Devolver la primera coincidencia
+                    return matches[0]
+
         return "images/Comic_sin_caratula.png"

@@ -384,73 +384,47 @@ def create_volume_detail_content(volume, session, thumbnail_generator, main_wind
 
 
 def create_volume_detail_page_with_header(volume, session, thumbnail_generator, main_window):
-    """Crear NavigationPage completa con botón de actualización"""
+    """Crear NavigationPage completa con ToolbarView y HeaderBar"""
 
     # Crear la página de navegación
     page = Adw.NavigationPage()
     year_text = f" ({volume.anio_inicio})" if volume.anio_inicio and volume.anio_inicio > 0 else ""
     page.set_title(f"{volume.nombre}{year_text}")
 
-    # Crear contenido con botón de actualización integrado
-    content_with_button = create_content_with_update_button(volume, session, thumbnail_generator, main_window)
-    page.set_child(content_with_button)
+    # Crear ToolbarView para manejo correcto de cabeceras
+    toolbar_view = Adw.ToolbarView()
 
-    return page
-
-
-def create_content_with_update_button(volume, session, thumbnail_generator, main_window):
-    """Crear contenido con botón de actualización en la parte superior"""
-
-    # Contenedor principal
-    main_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-
-    # Header con botón de actualización
-    header_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-    header_bar.set_margin_start(20)
-    header_bar.set_margin_end(20)
-    header_bar.set_margin_top(12)
-    header_bar.set_margin_bottom(12)
-    header_bar.add_css_class("toolbar")
-
-    # Título del volumen
-    title_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-    title_box.set_hexpand(True)
-
-    title_label = Gtk.Label()
-    title_label.set_markup(f"<span size='large' weight='bold'>{volume.nombre}</span>")
-    title_label.set_halign(Gtk.Align.START)
-    title_box.append(title_label)
-
-    if volume.anio_inicio and volume.anio_inicio > 0:
-        year_label = Gtk.Label()
-        year_label.set_text(f"({volume.anio_inicio})")
-        year_label.add_css_class("dim-label")
-        title_box.append(year_label)
-
+    # Crear HeaderBar estándar
+    header_bar = Adw.HeaderBar()
+    
     # Botón de actualización
     update_button = Gtk.Button()
     update_button.set_icon_name("view-refresh-symbolic")
     update_button.set_tooltip_text("Actualizar desde ComicVine")
     update_button.add_css_class("suggested-action")
+    
+    header_bar.pack_end(update_button)
+    
+    # Agregar HeaderBar al ToolbarView
+    toolbar_view.add_top_bar(header_bar)
 
-    header_bar.append(title_box)
-    header_bar.append(update_button)
-
-    # Crear el contenido principal
+    # Crear contenido principal
     content, tab_view = create_volume_detail_content(volume, session, thumbnail_generator, main_window)
-
-    # Conectar el botón después de tener tab_view
+    
+    # Conectar el botón de actualización
     update_button.connect("clicked", lambda btn: update_volume_from_comicvine(volume, session, main_window, tab_view))
 
-    # Separator
-    separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+    # Establecer contenido en el ToolbarView
+    toolbar_view.set_content(content)
+    
+    # Establecer ToolbarView como hijo de la página
+    page.set_child(toolbar_view)
 
-    # Agregar todo al contenedor principal
-    main_container.append(header_bar)
-    main_container.append(separator)
-    main_container.append(content)
+    return page
 
-    return main_container
+
+# Función create_content_with_update_button eliminada ya que se integró en la función principal
+
 
 
 def clean_html_text(text):
@@ -576,7 +550,7 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
     comics_box.set_margin_bottom(20)
     comics_box.set_vexpand(True)
 
-    # Header: título + filtro
+    # Header: título + barra de búsqueda y filtros
     header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
     header_box.set_margin_bottom(10)
 
@@ -584,18 +558,36 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
     comics_title = Gtk.Label(label=f"Issues de {volume.nombre}")
     comics_title.add_css_class("title-2")
     comics_title.set_halign(Gtk.Align.START)
-    comics_title.set_hexpand(True)
     header_box.append(comics_title)
 
-    # Filtro con SegmentedButton
+    # Controles de Ordenamiento y Búsqueda
+    search_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+    search_box.set_hexpand(True)
+    search_box.set_halign(Gtk.Align.END)
+    
+    # Dropdown de campos (Número, Título)
+    sort_model = Gtk.StringList.new(["Número", "Título"])
+    sort_dropdown = Gtk.DropDown.new(sort_model, None)
+    sort_dropdown.set_selected(0)  # Por defecto: Número
+    sort_dropdown.set_tooltip_text("Campo por el cual buscar y ordenar")
+    search_box.append(sort_dropdown)
+
+    # Campo de búsqueda
+    search_entry = Gtk.SearchEntry()
+    search_entry.set_placeholder_text("Buscar...")
+    search_entry.set_width_chars(25)
+    search_entry.set_hexpand(True)
+    search_box.append(search_entry)
+
     # Filtro con Botón y Dialogo
     filter_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-    filter_box.set_halign(Gtk.Align.END)
     
     # Estado actual de los filtros
     filter_state = {
         "status": "all",  # all, with, without
-        "min_quantity": 0
+        "min_quantity": 0,
+        "search_text": "",
+        "sort_field": "Número"
     }
     
     # Label de estado del filtro
@@ -608,7 +600,8 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
     filter_button.set_tooltip_text("Filtrar issues")
     filter_box.append(filter_button)
     
-    header_box.append(filter_box)
+    search_box.append(filter_box)
+    header_box.append(search_box)
 
     comics_box.append(header_box)
 
@@ -699,6 +692,40 @@ def create_issues_tab(tab_view, volume, session, thumbnail_generator, main_windo
         
         # 5. Cargar primer lote
         GLib.idle_add(load_comics_batch, volume, session, thumbnail_generator, main_window, comics_flow_box)
+
+    search_timeout_id = 0
+
+    def process_search():
+        """Procesa la búsqueda y aplica los filtros"""
+        nonlocal search_timeout_id
+        search_timeout_id = 0
+        search_text = search_entry.get_text().strip()
+        sort_field = sort_dropdown.get_selected_item().get_string()
+        
+        filter_state["search_text"] = search_text
+        filter_state["sort_field"] = sort_field
+        apply_current_filters()
+        return False
+
+    def on_search_changed(entry):
+        """Maneja los cambios en la entrada de búsqueda con debounce"""
+        nonlocal search_timeout_id
+        if search_timeout_id != 0:
+            GLib.source_remove(search_timeout_id)
+        # Esperar 500ms antes de ejecutar la búsqueda
+        search_timeout_id = GLib.timeout_add(500, process_search)
+
+    def on_sort_changed(dropdown, param):
+        """Maneja el cambio de campo de ordenamiento/búsqueda"""
+        # Limpia el campo de búsqueda cuando cambia el criterio de ordenamiento/búsqueda
+        search_entry.set_text("")
+        sort_field = dropdown.get_selected_item().get_string()
+        filter_state["sort_field"] = sort_field
+        filter_state["search_text"] = ""
+        apply_current_filters()
+
+    search_entry.connect("search-changed", on_search_changed)
+    sort_dropdown.connect("notify::selected", on_sort_changed)
 
     def on_filter_clicked(btn):
         """Abrir diálogo de filtros"""
@@ -1063,7 +1090,12 @@ def load_comics_batch(volume, session, thumbnail_generator, main_window, comics_
 
         # Si es la primera carga, obtener el total de issues (sin cargar los datos)
         if not hasattr(comics_flow_box, 'current_filters'):
-             comics_flow_box.current_filters = {"status": "all", "min_quantity": 0}
+             comics_flow_box.current_filters = {
+                 "status": "all", 
+                 "min_quantity": 0,
+                 "search_text": "",
+                 "sort_field": "Número"
+             }
 
         filters = comics_flow_box.current_filters
         print(f"📥 DEBUG: Cargando batch con filtros: {filters}")
@@ -1098,9 +1130,19 @@ def load_comics_batch(volume, session, thumbnail_generator, main_window, comics_
                 elif filters["status"] == "without":
                     query = query.filter(or_(physical_counts.c.count == 0, physical_counts.c.count.is_(None)))
                     
-                if filters["min_quantity"] > 0:
+                if filters.get("min_quantity", 0) > 0:
                     # Nota: si min_quantity > 0, implícitamente es "with" physicals
                     query = query.filter(physical_counts.c.count >= filters["min_quantity"])
+
+        # Aplicar filtro de búsqueda de texto si no está vacío
+        search_text = filters.get("search_text", "")
+        sort_field = filters.get("sort_field", "Número")
+        if search_text:
+            if sort_field == "Título":
+                # Usar case insensitive LIKE o match
+                query = query.filter(ComicbookInfo.titulo.ilike(f"%{search_text}%"))
+            else: # Número
+                query = query.filter(ComicbookInfo.numero.ilike(f"%{search_text}%"))
 
         # Filtro de volumen siempre aplica
         query = query.filter(ComicbookInfo.id_volume == volume.id_volume)
@@ -1126,13 +1168,19 @@ def load_comics_batch(volume, session, thumbnail_generator, main_window, comics_
 
         print(f"Cargando lote: offset={offset}, limit={limit}")
 
+        # Configurar orden
+        sort_field = filters.get("sort_field", "Número")
+        if sort_field == "Título":
+            order_criteria = [ComicbookInfo.titulo]
+        else: # Número
+            order_criteria = [ComicbookInfo.numero.cast(Integer), ComicbookInfo.numero]
+
         # Cargar solo el lote actual desde la base de datos
         from sqlalchemy.orm import joinedload
         batch_issues = query.options(
             joinedload(ComicbookInfo.portadas)
         ).order_by(
-            ComicbookInfo.numero.cast(Integer),
-            ComicbookInfo.numero
+            *order_criteria
         ).offset(offset).limit(limit).all()
 
         print(f"Lote obtenido: {len(batch_issues)} issues")
@@ -1439,38 +1487,16 @@ def create_comicbook_info_detail_page(comic_info, physical_count, session, main_
     page = Adw.NavigationPage()
     page.set_title(f"{comic_info.titulo} #{comic_info.numero}")
 
-    # Contenedor principal
-    main_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+    # Crear ToolbarView
+    toolbar_view = Adw.ToolbarView()
 
-    # Header con botón de volver
-    header_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-    header_bar.set_margin_start(20)
-    header_bar.set_margin_end(20)
-    header_bar.set_margin_top(12)
-    header_bar.set_margin_bottom(12)
-    header_bar.add_css_class("toolbar")
+    # Crear HeaderBar estándar (el botón 'Back' se maneja automáticamente)
+    header_bar = Adw.HeaderBar()
+    toolbar_view.add_top_bar(header_bar)
 
-    # Spacer para empujar el botón hacia la derecha
-    spacer = Gtk.Box()
-    spacer.set_hexpand(True)
-    header_bar.append(spacer)
+    # Contenedor principal para el contenido scrolling
+    # (Ya no usamos el HeaderBar manual ni el botón Back manual)
 
-    # Botón de volver
-    back_button = Gtk.Button()
-    back_button.set_icon_name("go-previous-symbolic")
-    back_button.set_tooltip_text("Volver")
-    back_button.add_css_class("circular")
-
-    def on_back_clicked(button):
-        """Manejar click en botón volver"""
-        if hasattr(main_window, 'navigation_view') and main_window.navigation_view:
-            if main_window.navigation_view.get_navigation_stack().get_n_items() > 1:
-                main_window.navigation_view.pop()
-
-    back_button.connect('clicked', on_back_clicked)
-    header_bar.append(back_button)
-
-    main_container.append(header_bar)
 
     # Contenedor principal con scroll
     scrolled = Gtk.ScrolledWindow()
@@ -1497,7 +1523,9 @@ def create_comicbook_info_detail_page(comic_info, physical_count, session, main_
 
     main_box.append(header_box)
     scrolled.set_child(main_box)
-    main_container.append(scrolled)
+    
+    # Establecer el contenido escroleable como contenido del ToolbarView
+    toolbar_view.set_content(scrolled)
 
     # Agregar controlador de eventos de teclado para manejar ESC
     key_controller = Gtk.EventControllerKey()
@@ -1506,6 +1534,7 @@ def create_comicbook_info_detail_page(comic_info, physical_count, session, main_
         """Manejar eventos de teclado"""
         if keyval == Gdk.KEY_Escape:
             # ESC presionado: ir hacia atrás en la navegación
+            # Solo si no es la primera página
             if hasattr(main_window, 'navigation_view') and main_window.navigation_view:
                 if main_window.navigation_view.get_navigation_stack().get_n_items() > 1:
                     main_window.navigation_view.pop()
@@ -1525,7 +1554,8 @@ def create_comicbook_info_detail_page(comic_info, physical_count, session, main_
 
     page.connect('show', on_page_shown)
 
-    page.set_child(main_container)
+    # Usar el ToolbarView como hijo de la página
+    page.set_child(toolbar_view)
 
     return page
 

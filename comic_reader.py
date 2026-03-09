@@ -10,6 +10,7 @@ import tempfile
 import threading
 import time
 import shutil
+import json
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
@@ -175,6 +176,9 @@ class ComicReader(Adw.ApplicationWindow):
 
         # Configurar atajos de teclado
         self.setup_keyboard_shortcuts()
+        
+        # Crear menú contextual
+        self.setup_context_menu()
 
         # Conectar señales para reajuste automático
         self.scrolled_window.connect("notify::width", self.on_window_size_changed)
@@ -769,6 +773,12 @@ class ComicReader(Adw.ApplicationWindow):
         click_controller = Gtk.GestureClick()
         click_controller.connect("pressed", self.on_image_clicked)
         self.comic_image.add_controller(click_controller)
+
+        # Click controller para menú contextual (click derecho)
+        right_click_controller = Gtk.GestureClick()
+        right_click_controller.set_button(3) # Botón derecho
+        right_click_controller.connect("pressed", self.on_right_click)
+        self.comic_image.add_controller(right_click_controller)
 
         # Scroll controller para zoom
         scroll_controller = Gtk.EventControllerScroll()
@@ -1436,6 +1446,130 @@ class ComicReader(Adw.ApplicationWindow):
                 # Click derecho - página siguiente
                 self.on_next_page()
             # Click centro - no hacer nada
+
+    def get_export_config_path(self):
+        """Obtener la ruta del archivo de configuración de exportación"""
+        config_dir = os.path.expanduser("~/.config/babelcomics")
+        os.makedirs(config_dir, exist_ok=True)
+        return os.path.join(config_dir, "reader_config.json")
+
+    def get_last_export_dir(self):
+        """Obtener el último directorio usado para exportar"""
+        config_path = self.get_export_config_path()
+        try:
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+                    return config.get('last_export_dir')
+        except Exception as e:
+            print(f"Error leyendo config de exportación: {e}")
+        return None
+
+    def save_last_export_dir(self, directory):
+        """Guardar el último directorio usado para exportar"""
+        config_path = self.get_export_config_path()
+        try:
+            config = {}
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+            config['last_export_dir'] = directory
+            with open(config_path, 'w', encoding='utf-8') as f:
+                json.dump(config, f)
+        except Exception as e:
+            print(f"Error guardando config de exportación: {e}")
+
+    def setup_context_menu(self):
+        """Crear el menú contextual para click derecho"""
+        self.context_popover = Gtk.Popover()
+        self.context_popover.set_has_arrow(False)
+        self.context_popover.set_halign(Gtk.Align.START)
+        
+        menu_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        
+        # Botón Exportar página actual
+        export_btn = Gtk.Button()
+        export_btn.set_label("Exportar página actual...")
+        export_btn.set_icon_name("document-save-symbolic")
+        export_btn.add_css_class("flat")
+        export_btn.set_halign(Gtk.Align.FILL)
+        export_btn.connect("clicked", self.on_export_page)
+        
+        menu_box.append(export_btn)
+        self.context_popover.set_child(menu_box)
+
+    def on_right_click(self, gesture, n_press, x, y):
+        """Manejar click derecho para mostrar el menú contextual"""
+        if n_press == 1:
+            # Asociar el popover a la imagen en la que se hizo click
+            self.context_popover.set_parent(self.comic_image)
+            
+            # Crear un rectángulo en las coordenadas del click
+            rect = Gdk.Rectangle()
+            rect.x = int(x)
+            rect.y = int(y)
+            rect.width = 1
+            rect.height = 1
+            
+            self.context_popover.set_pointing_to(rect)
+            self.context_popover.popup()
+
+    def on_export_page(self, button):
+        """Mostrar diálogo para exportar la página actual"""
+        self.context_popover.popdown()
+        
+        if not getattr(self, 'current_page_path', None) or not os.path.exists(self.current_page_path):
+            self.show_toast("No hay página disponible para exportar", "error")
+            return
+            
+        dialog = Gtk.FileDialog()
+        dialog.set_title("Exportar página actual")
+        
+        # Nombre de archivo por defecto
+        original_ext = os.path.splitext(self.current_page_path)[1]
+        if not original_ext:
+            original_ext = ".jpg"
+        default_name = f"{self.comic_title}_pagina_{self.current_page + 1}{original_ext}"
+        # Limpiar nombre para que sea seguro
+        for char in ['/', '\\', ':', '*', '?', '"', '<', '>', '|']:
+            default_name = default_name.replace(char, '_')
+            
+        dialog.set_initial_name(default_name)
+        
+        # Directorio inicial
+        last_dir = self.get_last_export_dir()
+        if last_dir and os.path.exists(last_dir) and os.path.isdir(last_dir):
+            dialog.set_initial_folder(Gio.File.new_for_path(last_dir))
+        else:
+            pictures_dir = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES)
+            if pictures_dir:
+                dialog.set_initial_folder(Gio.File.new_for_path(pictures_dir))
+                
+        dialog.save(
+            parent=self,
+            cancellable=None,
+            callback=self.on_export_file_selected
+        )
+
+    def on_export_file_selected(self, dialog, result):
+        """Callback cuando se selecciona dónde guardar la página"""
+        try:
+            file = dialog.save_finish(result)
+            if file:
+                dest_path = file.get_path()
+                
+                # Copiar el archivo
+                shutil.copy2(self.current_page_path, dest_path)
+                
+                # Guardar el directorio usado en la config
+                dest_dir = os.path.dirname(dest_path)
+                self.save_last_export_dir(dest_dir)
+                
+                self.show_toast(f"Página exportada a {os.path.basename(dest_path)}", "success")
+        except Exception as e:
+            if "cancelled" not in str(e).lower():
+                print(f"Error exportando página: {e}")
+                self.show_toast(f"Error al exportar: {e}", "error")
 
     def on_image_scroll(self, controller, dx, dy):
         """Manejar scroll inteligente: normal + acumulación en bordes"""

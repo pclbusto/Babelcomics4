@@ -661,10 +661,22 @@ class VolumeSearchDialog(Adw.Window):
         
         self.set_content(main_box)
         
-    def load_volumes(self):
+    def load_volumes(self, search_text=""):
         """Cargar lista de volúmenes"""
         try:
-            volumes = self.session.query(Volume).order_by(Volume.nombre).limit(1000).all()
+            # Limpiar lista actual
+            while True:
+                child = self.volumes_list.get_first_child()
+                if child:
+                    self.volumes_list.remove(child)
+                else:
+                    break
+                    
+            query = self.session.query(Volume).order_by(Volume.nombre)
+            if search_text:
+                query = query.filter(Volume.nombre.ilike(f"%{search_text}%"))
+                
+            volumes = query.limit(50).all()
             
             for volume in volumes:
                 row = Adw.ActionRow()
@@ -684,14 +696,17 @@ class VolumeSearchDialog(Adw.Window):
             
     def on_search_changed(self, entry):
         """Filtrar volúmenes por búsqueda"""
-        search_text = entry.get_text().lower()
+        if hasattr(self, 'search_timeout') and self.search_timeout:
+            GLib.source_remove(self.search_timeout)
+            
+        self.search_timeout = GLib.timeout_add(300, self.perform_search)
         
-        row = self.volumes_list.get_first_child()
-        while row:
-            if hasattr(row, 'volume'):
-                visible = search_text in row.volume.nombre.lower()
-                row.set_visible(visible)
-            row = row.get_next_sibling()
+    def perform_search(self):
+        """Ejecutar búsqueda"""
+        search_text = self.search_entry.get_text().strip()
+        self.load_volumes(search_text)
+        self.search_timeout = None
+        return False
             
     def on_volume_activated(self, list_box, row):
         """Manejar activación de fila"""

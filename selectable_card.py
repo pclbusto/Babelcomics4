@@ -201,6 +201,30 @@ class SelectionManager:
         """Limpiar todas las cards"""
         self.selectable_cards.clear()
         self.selected_items.clear()
+        self._notify_callbacks('selection_changed', set())
+
+    def remove_cards_by_type(self, item_type):
+        """
+        Remover cards de un tipo específico (ej: 'comics', 'volumes')
+        
+        Args:
+            item_type (str): Tipo de items a remover
+        """
+        # Identificar cards a remover
+        cards_to_remove = [card for card in self.selectable_cards if card.item_type == item_type]
+        
+        if not cards_to_remove:
+            return
+            
+        # Remover del set de seleccionados
+        for card in cards_to_remove:
+            self.selected_items.discard(card.item_id)
+            
+        # Remover de la lista principal
+        self.selectable_cards = [card for card in self.selectable_cards if card.item_type != item_type]
+        
+        # Notificar cambio de selección si hubo cambios
+        self._notify_callbacks('selection_changed', self.selected_items.copy())
         
     def set_selection_mode(self, enabled):
         """Cambiar modo de selección global"""

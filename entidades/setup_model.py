@@ -15,6 +15,7 @@ class Setup(Base):
     modo_oscuro = Column(Boolean, nullable=False, default=False)
     actualizar_metadata = Column(Boolean, nullable=False, default=False)
     custom_regexes = Column(String, default='[]') # Lista JSON de regex guardados
+    window_state = Column(String, default='{}') # JSON con estados de ventanas
 
     # Configuración API
     api_key_encrypted = Column(String, nullable=False, default='')

@@ -22,18 +22,27 @@ from repositories.volume_repository import VolumeRepository
 class VolumeSearchCard(Gtk.Box):
     """Card para mostrar un volumen en los resultados de búsqueda"""
 
-    def __init__(self, volume_data, is_downloaded=False):
+    def __init__(self, volume_data, is_downloaded=False, is_grouped=False):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         self.volume_data = volume_data
         self.is_downloaded = is_downloaded
         self.selected = False
 
-        self.set_size_request(200, 320)
-        self.add_css_class("card")
-        self.set_margin_top(8)
-        self.set_margin_bottom(8)
-        self.set_margin_start(8)
-        self.set_margin_end(8)
+        self.is_grouped = is_grouped
+
+        if not self.is_grouped:
+            self.set_size_request(200, 320)
+            self.add_css_class("card")
+            self.set_margin_top(8)
+            self.set_margin_bottom(8)
+            self.set_margin_start(8)
+            self.set_margin_end(8)
+        else:
+            self.set_size_request(200, 320)
+            self.set_margin_top(4)
+            self.set_margin_bottom(4)
+            self.set_margin_start(4)
+            self.set_margin_end(4)
 
         self.create_ui()
 
@@ -219,6 +228,88 @@ class VolumeSearchCard(Gtk.Box):
 # Registrar señal personalizada
 GObject.signal_new('selection-changed', VolumeSearchCard, GObject.SignalFlags.RUN_FIRST, None, (bool,))
 
+class VolumeGroupCard(Gtk.Box):
+    """Card que agrupa múltiples variantes del mismo volumen en un Adw.Carousel"""
+
+    def __init__(self, volumes_data, downloaded_cv_ids):
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.volumes_data = volumes_data
+        self.cards = []
+
+        self.set_size_request(200, 320)
+        self.add_css_class("card")
+        self.set_margin_top(8)
+        self.set_margin_bottom(8)
+        self.set_margin_start(8)
+        self.set_margin_end(8)
+
+        self.create_ui(downloaded_cv_ids)
+
+    def create_ui(self, downloaded_cv_ids):
+        """Crear el carousel y agregar las cards"""
+        # Contenedor para el carousel con indicadores
+        carousel_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        
+        # Ocultar botones de navegación si solo hay uno
+        interactive = len(self.volumes_data) > 1
+
+        self.carousel = Adw.Carousel()
+        self.carousel.set_allow_scroll_wheel(interactive)
+        self.carousel.set_allow_mouse_drag(interactive)
+        self.carousel.set_allow_long_swipes(interactive)
+        self.carousel.set_interactive(interactive)
+
+        for volume in self.volumes_data:
+            is_downloaded = volume.get('id') in downloaded_cv_ids
+            card = VolumeSearchCard(volume, is_downloaded, is_grouped=True)
+            card.connect('selection-changed', self.on_card_selection_changed)
+            self.cards.append(card)
+            self.carousel.append(card)
+
+        carousel_box.append(self.carousel)
+
+        if interactive:
+            indicators = Adw.CarouselIndicatorDots()
+            indicators.set_carousel(self.carousel)
+            indicators.set_margin_bottom(4)
+            carousel_box.append(indicators)
+            
+            # Controles overlay para prev/next opcionales
+            # (No estrictamente requeridos ya que el mouse drag/scroll funciona en el carousel)
+
+        self.append(carousel_box)
+
+    def on_card_selection_changed(self, card, selected):
+        """Re-emitir evento cuando uno de los cards internos cambia"""
+        self.emit('selection-changed', selected)
+        
+    def get_selected_volumes(self):
+        """Obtener la lista de volumenes internos seleccionados"""
+        return [card.volume_data for card in self.cards if card.selected]
+        
+    def get_selected_new_volumes(self):
+        """Obtener la lista de volumenes internos seleccionados y no descargados"""
+        return [card.volume_data for card in self.cards if card.selected and not card.is_downloaded]
+        
+    def select_all_new(self):
+        """Seleccionar todos los items internos no descargados"""
+        for card in self.cards:
+            if not card.is_downloaded:
+                card.set_selected(True)
+                
+    def deselect_all(self):
+        """Deseleccionar todos los items internos"""
+        for card in self.cards:
+            card.set_selected(False)
+            
+    def has_any_selected(self):
+        """Retorna True si al menos un item interno esta seleccionado"""
+        return any(card.selected for card in self.cards)
+        
+    def get_internal_cards(self):
+        return self.cards
+
+GObject.signal_new('selection-changed', VolumeGroupCard, GObject.SignalFlags.RUN_FIRST, None, (bool,))
 
 class PublisherSearchCard(Gtk.Box):
     """Card para mostrar una editorial en los resultados de búsqueda"""
@@ -442,6 +533,9 @@ class ComicVineDownloadWindow(Adw.Window):
             print("Conectando callbacks de filtros...")
             self.year_from_spin.connect("value-changed", self.on_year_filter_changed)
             self.year_to_spin.connect("value-changed", self.on_year_filter_changed)
+            self.issues_from_spin.connect("value-changed", self.on_issues_filter_changed)
+            self.issues_to_spin.connect("value-changed", self.on_issues_filter_changed)
+            self.downloaded_combo.connect("changed", self.on_downloaded_filter_changed)
             self.sort_combo.connect("changed", self.on_sort_changed)
         except:
             pass
@@ -489,28 +583,40 @@ class ComicVineDownloadWindow(Adw.Window):
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         main_box.append(header_bar)
 
-        # Contenedor scrollable para todo el contenido
+        # Fila superior fija (Búsqueda)
+        search_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        search_box.set_margin_start(12)
+        search_box.set_margin_end(12)
+        search_box.set_margin_top(12)
+        search_box.set_margin_bottom(0)
+        # Header con búsqueda (compacto y fijo)
+        self.create_search_header(search_box)
+        main_box.append(search_box)
+
+        # Contenedor scrollable SÓLO para el área de resultados
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         scrolled_window.set_vexpand(True)
 
-        content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        content_box.set_margin_start(12)
-        content_box.set_margin_end(12)
-        content_box.set_margin_top(12)
-        content_box.set_margin_bottom(12)
-
-        # Header con búsqueda (compacto)
-        self.create_search_header(content_box)
-
-        # Área de resultados
-        self.create_results_area(content_box)
-
-        # Footer con controles de descarga (compacto)
-        self.create_download_footer(content_box)
-
-        scrolled_window.set_child(content_box)
+        results_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        results_box.set_margin_start(12)
+        results_box.set_margin_end(12)
+        results_box.set_margin_top(12)
+        results_box.set_margin_bottom(12)
+        # Área de resultados (scrollable)
+        self.create_results_area(results_box)
+        scrolled_window.set_child(results_box)
         main_box.append(scrolled_window)
+
+        # Fila inferior fija (Footer)
+        footer_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        footer_box.set_margin_start(12)
+        footer_box.set_margin_end(12)
+        footer_box.set_margin_top(0)
+        footer_box.set_margin_bottom(12)
+        # Footer con controles de descarga (compacto y fijo)
+        self.create_download_footer(footer_box)
+        main_box.append(footer_box)
 
         self.set_content(main_box)
 
@@ -602,10 +708,57 @@ class ComicVineDownloadWindow(Adw.Window):
         separator1_5 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         filters_box.append(separator1_5)
 
+        # Filtros por cantidad de comics
+        issues_filter_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        issues_label = Gtk.Label(label="Números:")
+        issues_filter_box.append(issues_label)
+
+        # Cantidad desde
+        self.issues_from_spin = Gtk.SpinButton()
+        self.issues_from_spin.set_range(1, 10000)
+        self.issues_from_spin.set_value(1)
+        self.issues_from_spin.set_tooltip_text("Mínimo de números")
+        issues_filter_box.append(self.issues_from_spin)
+
+        dash_label_issues = Gtk.Label(label="—")
+        issues_filter_box.append(dash_label_issues)
+
+        # Cantidad hasta
+        self.issues_to_spin = Gtk.SpinButton()
+        self.issues_to_spin.set_range(1, 10000)
+        self.issues_to_spin.set_value(5000)
+        self.issues_to_spin.set_tooltip_text("Máximo de números")
+        issues_filter_box.append(self.issues_to_spin)
+
+        filters_box.append(issues_filter_box)
+
+        # Separador visual
+        separator1_6 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        filters_box.append(separator1_6)
+
+        # Filtro por estado de descarga
+        downloaded_filter_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        downloaded_label = Gtk.Label(label="Estado:")
+        downloaded_filter_box.append(downloaded_label)
+
+        self.downloaded_combo = Gtk.ComboBoxText()
+        self.downloaded_combo.append("todos", "Todos")
+        self.downloaded_combo.append("descargados", "Descargados")
+        self.downloaded_combo.append("no_descargados", "No descargados")
+        self.downloaded_combo.set_active(0)
+        downloaded_filter_box.append(self.downloaded_combo)
+
+        filters_box.append(downloaded_filter_box)
+
+        # Separador visual
+        separator1_7 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        filters_box.append(separator1_7)
+
         # Ordenamiento
         sort_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        sort_label = Gtk.Label(label="Ordenar por:")
-        sort_box.append(sort_label)
+        sort_icon = Gtk.Image.new_from_icon_name("view-sort-descending-symbolic")
+        sort_icon.set_tooltip_text("Ordenar resultados")
+        sort_box.append(sort_icon)
 
         self.sort_combo = Gtk.ComboBoxText()
         self.sort_combo.append("date_desc", "Fecha (más reciente)")
@@ -629,9 +782,12 @@ class ComicVineDownloadWindow(Adw.Window):
         reset_and_info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
 
         # Botón resetear filtros
-        reset_filters_button = Gtk.Button.new_with_label("Mostrar Todo")
-        reset_filters_button.set_tooltip_text("Resetear todos los filtros")
+        reset_filters_button = Gtk.Button()
+        reset_filters_button.set_icon_name("edit-clear-all-symbolic")
+        reset_filters_button.set_tooltip_text("Limpiar todos los filtros")
         reset_filters_button.connect("clicked", self.on_reset_filters_clicked)
+        # Hacer que el botón no ocupe todo el ancho
+        reset_filters_button.set_halign(Gtk.Align.CENTER)
         reset_and_info_box.append(reset_filters_button)
 
         # Label informativo de filtros (automáticos)
@@ -906,37 +1062,30 @@ class ComicVineDownloadWindow(Adw.Window):
 
     def on_card_selection_changed(self, card, selected):
         """Card seleccionado/deseleccionado"""
-        selected_count = sum(1 for card in self.volume_cards if card.selected)
-        self.download_button.set_sensitive(selected_count > 0)
+        self.download_button.set_sensitive(any(c.has_any_selected() for c in self.volume_cards))
 
     def on_select_all_clicked(self, button):
-        """Seleccionar todos los volúmenes"""
+        """Seleccionar todos los volúmenes descubiertos recientemente"""
         for card in self.volume_cards:
-            if not card.is_downloaded:  # Solo seleccionar los no descargados
-                card.set_selected(True)
+            card.select_all_new()
 
     def on_deselect_all_clicked(self, button):
         """Deseleccionar todos los volúmenes"""
         for card in self.volume_cards:
-            card.set_selected(False)
+            card.deselect_all()
 
     def on_download_clicked(self, button):
         """Descargar volúmenes seleccionados"""
         update_existing = self.update_existing_switch.get_active()
 
-        # Si la opción de actualizar está activada, incluir también volúmenes ya descargados
-        if update_existing:
-            selected_volumes = [
-                card.volume_data for card in self.volume_cards
-                if card.selected
-            ]
-            action_text = "descargar/actualizar"
-        else:
-            selected_volumes = [
-                card.volume_data for card in self.volume_cards
-                if card.selected and not card.is_downloaded
-            ]
-            action_text = "descargar"
+        selected_volumes = []
+        for card in self.volume_cards:
+            if update_existing:
+                selected_volumes.extend(card.get_selected_volumes())
+            else:
+                selected_volumes.extend(card.get_selected_new_volumes())
+
+        action_text = "descargar/actualizar" if update_existing else "descargar"
 
         if not selected_volumes:
             message = "Selecciona al menos un volumen para descargar"
@@ -948,9 +1097,16 @@ class ComicVineDownloadWindow(Adw.Window):
         # Confirmar descarga
         total_issues = sum(vol.get('count_of_issues', 0) for vol in selected_volumes)
 
-        # Contar nuevos vs existentes
-        new_volumes = sum(1 for card in self.volume_cards if card.selected and not card.is_downloaded)
-        existing_volumes = sum(1 for card in self.volume_cards if card.selected and card.is_downloaded)
+        # Contar nuevos vs existentes en todo el conjunto
+        new_volumes = 0
+        existing_volumes = 0
+        for card in self.volume_cards:
+            for v_card in card.get_internal_cards():
+                if v_card.selected:
+                    if not v_card.is_downloaded:
+                        new_volumes += 1
+                    else:
+                        existing_volumes += 1
 
         dialog = Adw.MessageDialog.new(self)
         dialog.set_heading("Confirmar Descarga")
@@ -984,158 +1140,39 @@ class ComicVineDownloadWindow(Adw.Window):
             self.start_download(selected_volumes)
 
     def start_download(self, selected_volumes):
-        """Iniciar descarga de volúmenes CON INFORMACIÓN COMPLETA"""
+        """Iniciar descarga de volúmenes a través del DownloadManager"""
         # Guardar texto original para restaurar después
         self._original_results_text = self.results_label.get_text()
 
         # Deshabilitar controles
         self.download_button.set_sensitive(False)
         self.search_button.set_sensitive(False)
-        self.progress_bar.set_visible(True)
 
-        # Actualizar mensaje inicial
-        total_volumes = len(selected_volumes)
-        self.results_label.set_text(f"Iniciando descarga completa de {total_volumes} volúmenes...")
-
-        # Descargar en background
-        threading.Thread(
-            target=self.download_volumes_background,
-            args=(selected_volumes,),
-            daemon=True
-        ).start()
-
-    def download_volumes_background(self, selected_volumes):
-        """Descargar volúmenes en background"""
         try:
-            total_volumes = len(selected_volumes)
-            downloaded_volumes = []
-
-            for i, volume_data in enumerate(selected_volumes):
-                try:
-                    progress = (i + 1) / total_volumes
-                    GLib.idle_add(self.update_download_progress, progress, f"Descargando {volume_data.get('name', 'volumen')}...")
-
-                    # Descargar volumen
-                    success = self.download_single_volume(volume_data)
-                    if success:
-                        downloaded_volumes.append(volume_data)
-
-                except Exception as e:
-                    print(f"Error descargando volumen {volume_data.get('name', 'N/A')}: {e}")
-
-            # Completado
-            GLib.idle_add(self.download_completed, downloaded_volumes, total_volumes)
-
-        except Exception as e:
-            print(f"Error en descarga background: {e}")
-            GLib.idle_add(self.download_error, str(e))
-
-    def download_single_volume(self, volume_data):
-        """Descargar un solo volumen CON INFORMACIÓN COMPLETA"""
-        try:
-            volume_repo = VolumeRepository(self.session)
+            from helpers.download_manager import DownloadManager
+            manager = DownloadManager.get_instance()
             download_covers = self.download_covers_switch.get_active()
 
-            # Usar la nueva función de descarga completa que incluye:
-            # - Información del volumen
-            # - Todos los issues
-            # - Covers del volumen e issues
-            # - Todos los issues
-            # - Covers del volumen e issues
-            def progress_callback(message):
-                # Actualizar progreso en la interfaz
-                progress_message = f"[{volume_data.get('name', 'Volumen')}] {message}"
-                print(progress_message)
-                
-            def save_cover_result(result):
-                """Callback para guardar resultados de covers en el hilo principal (safe DB access)"""
-                def _update_db_in_main_thread():
-                    try:
-                        # Usar la sesión de la ventana
-                        from entidades.comicbook_info_model import ComicbookInfo
-                        from entidades.comicbook_info_cover_model import ComicbookInfoCover
-                        
-                        issue_num = result.get('issue_number')
-                        results_list = result.get('results', [])
-                        
-                        if not results_list: return False
-                            
-                        # El volumen puede haber sido creado recién, necesitamos asegurarnos de tener el ID correcto
-                        # Como 'saved_volume' es local a la función padre y esto es asíncrono, 
-                        # mejor buscamos el volumen por su ID de comicvine si es posible, o confiamos 
-                        # en que volume_repo devuelve el objeto actualizado.
-                        # PERO: saved_volume no está disponible todavía cuando se define esto.
-                        # Solución: Usar el volume_data['id'] para buscarlo, o pasar el objeto volume 
-                        # si volume_repo lo permitiera (pero volume_repo crea el volumen dentro).
-                        
-                        # Estrategia: Buscar el volumen por id_comicvine
-                        from entidades.volume_model import Volume
-                        vol = self.session.query(Volume).filter_by(id_comicvine=volume_data.get('id')).first()
-                        
-                        if not vol: return False
-                        
-                        comic_info = self.session.query(ComicbookInfo).filter(
-                            ComicbookInfo.id_volume == vol.id_volume,
-                            ComicbookInfo.numero == str(issue_num)
-                        ).first()
-                        
-                        if not comic_info: return False
+            total_volumes = len(selected_volumes)
+            
+            for volume_data in selected_volumes:
+                manager.add_download(volume_data, self.comicvine_client, download_covers)
 
-                        changes_made = False
-                        for item in results_list:
-                            url = item.get('url')
-                            embedding_json = item.get('embedding')
-                            
-                            cover_record = next((c for c in comic_info.portadas if c.url_imagen == url), None)
-                            
-                            if not cover_record:
-                                cover_record = ComicbookInfoCover(
-                                    id_comicbook_info=comic_info.id_comicbook_info,
-                                    url_imagen=url
-                                )
-                                self.session.add(cover_record)
-                                comic_info.portadas.append(cover_record)
-                                changes_made = True
-                            
-                            if embedding_json and cover_record.embedding != embedding_json:
-                                cover_record.embedding = embedding_json
-                                changes_made = True
-                                    
-                        if changes_made:
-                            self.session.commit()
-                            
-                        return False
-                    except Exception as e:
-                        print(f"❌ Error guardando cover result en DB (download window): {e}")
-                        self.session.rollback()
-                        return False
-
-                GLib.idle_add(_update_db_in_main_thread)
-
-            print(f"🚀 Iniciando descarga completa de: {volume_data.get('name', 'Volumen')}")
-
-            # Usar la función de descarga completa del repositorio
-            saved_volume = volume_repo.download_complete_volume_data(
-                volume_data=volume_data,
-                comicvine_client=self.comicvine_client,
-                download_covers=download_covers,
-                progress_callback=progress_callback,
-                result_callback=save_cover_result
+            self.results_label.set_text(f"{total_volumes} volúmenes en cola...")
+            
+            # Notificar al usuario que la descarga ha sido encolada
+            self.show_success(
+                "Descargas en cola", 
+                f"Se han añadido {total_volumes} volúmenes a la cola de descargas.\nPuedes ver el progreso detallado en la solapa 'Descargas' del menú principal."
             )
-
-            print(f"✅ Descarga completa exitosa: '{saved_volume.nombre}'")
-            print(f"   - Volumen creado/actualizado")
-            print(f"   - Issues descargados e integrados")
-            if download_covers:
-                print(f"   - Covers descargándose en segundo plano")
-
-            return True
-
+            
         except Exception as e:
-            print(f"❌ Error en descarga completa del volumen: {e}")
-            import traceback
-            traceback.print_exc()
-            return False
+            print(f"Error encolando descargas: {e}")
+            self.show_error("Error", f"No se pudieron encolar las descargas: {e}")
+            
+        finally:
+            self.download_button.set_sensitive(True)
+            self.search_button.set_sensitive(True)
 
     def download_volume_cover(self, volume, volume_details):
         """Descargar cover del volumen"""
@@ -1190,8 +1227,8 @@ class ComicVineDownloadWindow(Adw.Window):
             if saved_volume:
                 self.selected_volume_callback(saved_volume)
 
-        # Cerrar ventana
-        self.close()
+        # No cerrar la ventana automáticamente para permitir más búsquedas
+        # self.close()
 
     def download_error(self, error_message):
         """Error en descarga"""
@@ -1235,11 +1272,28 @@ class ComicVineDownloadWindow(Adw.Window):
         if self.search_results:
             self.apply_filters_and_sorting()
 
+    def on_issues_filter_changed(self, spin_button):
+        """Filtro de cantidad de issues cambió"""
+        if self.search_results:
+            self.apply_filters_and_sorting()
+
+    def on_downloaded_filter_changed(self, combo):
+        """Filtro de estado de descarga cambió"""
+        if self.search_results:
+            self.apply_filters_and_sorting()
+
     def on_reset_filters_clicked(self, button):
         """Resetear todos los filtros para mostrar todo"""
         # Resetear filtros de año a valores amplios
         self.year_from_spin.set_value(1900)
         self.year_to_spin.set_value(2030)
+
+        # Resetear filtros de issues a valores amplios
+        self.issues_from_spin.set_value(1)
+        self.issues_to_spin.set_value(5000)
+
+        # Resetear filtro de estado a "Todos"
+        self.downloaded_combo.set_active(0)
 
         # Resetear filtro de editorial a "Todas las editoriales"
         self.publisher_combo.set_active(0)
@@ -1256,12 +1310,25 @@ class ComicVineDownloadWindow(Adw.Window):
         # Obtener valores de filtros
         year_from = int(self.year_from_spin.get_value())
         year_to = int(self.year_to_spin.get_value())
+        issues_from = int(self.issues_from_spin.get_value())
+        issues_to = int(self.issues_to_spin.get_value())
         selected_publisher_id = self.publisher_combo.get_active_id()
+        downloaded_status = self.downloaded_combo.get_active_id()
+
+        # Obtener IDs ya descargados si necesitamos filtrar por estado de descarga
+        volume_repo = VolumeRepository(self.session)
+        downloaded_cv_ids = set()
+        if downloaded_status in ["descargados", "no_descargados"]:
+            for volume in self.search_results:
+                if volume.get('id'):
+                    existing = volume_repo.get_by_comicvine_id(volume['id'])
+                    if existing:
+                        downloaded_cv_ids.add(volume['id'])
 
         filtered_volumes = []
         for volume in self.search_results:
             # Filtrar por año
-            print(f"Volumen: {volume.get('name')} - Año inicio: {volume.get('start_year')}")
+            # print(f"Volumen: {volume.get('name')} - Año inicio: {volume.get('start_year')}")
             volume_year = volume.get('start_year')
             year_passes = True
 
@@ -1274,6 +1341,17 @@ class ComicVineDownloadWindow(Adw.Window):
                     # Si no se puede convertir el año, incluir el volumen
                     pass
             # Si no tiene año, incluir el volumen (year_passes permanece True)
+
+            # Filtrar por cantidad de números
+            issues_passes = True
+            volume_issues = volume.get('count_of_issues')
+            if volume_issues is not None:
+                try:
+                    issues = int(str(volume_issues))
+                    if not (issues_from <= issues <= issues_to):
+                        issues_passes = False
+                except (ValueError, TypeError):
+                    pass
 
             # Filtrar por editorial
             publisher_passes = True
@@ -1288,8 +1366,17 @@ class ComicVineDownloadWindow(Adw.Window):
                 else:
                     publisher_passes = False
 
+            # Filtrar por estado de descarga
+            downloaded_passes = True
+            if downloaded_status == "descargados":
+                if volume.get('id') not in downloaded_cv_ids:
+                    downloaded_passes = False
+            elif downloaded_status == "no_descargados":
+                if volume.get('id') in downloaded_cv_ids:
+                    downloaded_passes = False
+
             # Solo incluir si pasa todos los filtros
-            if year_passes and publisher_passes:
+            if year_passes and issues_passes and publisher_passes and downloaded_passes:
                 filtered_volumes.append(volume)
 
         # Ordenar resultados
@@ -1313,9 +1400,14 @@ class ComicVineDownloadWindow(Adw.Window):
 
         # Actualizar label informativo de filtros
         publisher_name = self.publisher_combo.get_active_text()
-        filter_info = f"Año: {year_from}-{year_to}"
+        downloaded_name = self.downloaded_combo.get_active_text()
+
+        filter_info = f"Año: {year_from}-{year_to} | Números: {issues_from}-{issues_to}"
         if publisher_name and publisher_name != "Todas las editoriales":
             filter_info += f" | Editorial: {publisher_name}"
+        if downloaded_name and downloaded_name != "Todos":
+            filter_info += f" | Estado: {downloaded_name}"
+
         filter_info += f" | {len(filtered_volumes)}/{len(self.search_results)} resultados"
         self.filter_info_label.set_text(filter_info)
 
@@ -1352,10 +1444,23 @@ class ComicVineDownloadWindow(Adw.Window):
             else:
                 self.results_label.set_text(f"Mostrando {filtered_count} de {total_results} volúmenes")
 
-            # Crear cards para volúmenes filtrados
+            # Crear cards para volúmenes filtrados agrupando duplicados
+            
+            from collections import OrderedDict
+            grouped_volumes = OrderedDict()
+            
             for volume in self.filtered_results:
-                is_downloaded = volume.get('id') in downloaded_cv_ids
-                card = VolumeSearchCard(volume, is_downloaded)
+                v_name = (volume.get('name') or '').lower().strip()
+                publisher_data = volume.get('publisher') or {}
+                v_publisher = (publisher_data.get('name') or '').lower().strip()
+                group_key = f"{v_name}::{v_publisher}"
+                
+                if group_key not in grouped_volumes:
+                    grouped_volumes[group_key] = []
+                grouped_volumes[group_key].append(volume)
+            
+            for group_key, volumes_in_group in grouped_volumes.items():
+                card = VolumeGroupCard(volumes_in_group, downloaded_cv_ids)
                 card.connect('selection-changed', self.on_card_selection_changed)
 
                 self.volume_cards.append(card)

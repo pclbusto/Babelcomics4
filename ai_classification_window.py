@@ -17,6 +17,9 @@ from entidades.comicbook_info_model import ComicbookInfo
 from helpers.embedding_generator import get_embedding_generator
 
 
+import json
+import numpy as np
+
 class AIClassificationWindow(Adw.Window):
     def __init__(self, parent, session, comic_ids):
         super().__init__()
@@ -25,14 +28,30 @@ class AIClassificationWindow(Adw.Window):
         self.comic_ids = comic_ids  # IDs de comics pre-seleccionados
         self.set_transient_for(parent)
         self.set_modal(True)
-        self.set_default_size(1200, 800)
+        
+        # Restore window size
+        default_width, default_height = 1200, 800
+        try:
+            if hasattr(self.parent, 'config') and self.parent.config and self.parent.config.window_state:
+                states = json.loads(self.parent.config.window_state)
+                if 'ai_classify_window' in states:
+                    w, h = states['ai_classify_window']
+                    default_width, default_height = w, h
+        except Exception as e:
+            print(f"Error restaurando tamaño ventana: {e}")
+            
+        self.set_default_size(default_width, default_height)
         self.set_title("Auto-Clasificación por IA")
+        
+        # Conectar señal de cierre
+        self.connect("close-request", self.on_close_request)
 
         self.threshold = 0.75
         self.current_index = 0
         self.comics_to_classify = []
         self.classified_count = 0
         self.skipped_count = 0
+        self.trashed_count = 0
         self.emb_gen = None
         self.candidate_embeddings = []
         self.cover_to_info = {}
@@ -74,11 +93,13 @@ class AIClassificationWindow(Adw.Window):
         self.total_label = self._create_stat_card("Total", "0")
         self.classified_label = self._create_stat_card("Clasificados", "0", "success")
         self.skipped_label = self._create_stat_card("Omitidos", "0", "warning")
+        self.trashed_label = self._create_stat_card("Papelera", "0", "error")
         self.remaining_label = self._create_stat_card("Restantes", "0")
 
         stats_box.append(self.total_label)
         stats_box.append(self.classified_label)
         stats_box.append(self.skipped_label)
+        stats_box.append(self.trashed_label)
         stats_box.append(self.remaining_label)
 
         # Comic actual
@@ -184,6 +205,13 @@ class AIClassificationWindow(Adw.Window):
         action_box.set_margin_top(12)
         content_box.append(action_box)
 
+        self.trash_button = Gtk.Button(label="🗑️ Mover a papelera")
+        self.trash_button.set_size_request(180, 50)
+        self.trash_button.add_css_class("destructive-action")
+        self.trash_button.add_css_class("pill")
+        self.trash_button.connect("clicked", self.on_trash_clicked)
+        action_box.append(self.trash_button)
+
         self.skip_button = Gtk.Button(label="⏭️ Omitir Este Comic")
         self.skip_button.set_size_request(180, 50)
         self.skip_button.add_css_class("pill")
@@ -196,6 +224,11 @@ class AIClassificationWindow(Adw.Window):
         self.apply_button.add_css_class("pill")
         self.apply_button.connect("clicked", self.on_apply_clicked)
         action_box.append(self.apply_button)
+        
+        # Atajos de teclado
+        key_controller = Gtk.EventControllerKey.new()
+        key_controller.connect("key-pressed", self.on_key_pressed)
+        self.add_controller(key_controller)
 
         # Inicializar
         GLib.idle_add(self.initialize)
@@ -230,6 +263,7 @@ class AIClassificationWindow(Adw.Window):
         self.total_label.get_last_child().set_text(str(total))
         self.classified_label.get_last_child().set_text(str(self.classified_count))
         self.skipped_label.get_last_child().set_text(str(self.skipped_count))
+        self.trashed_label.get_last_child().set_text(str(self.trashed_count))
         self.remaining_label.get_last_child().set_text(str(remaining))
 
     def initialize(self):
@@ -241,14 +275,9 @@ class AIClassificationWindow(Adw.Window):
     def _load_data(self):
         """Carga datos (thread)"""
         try:
-            GLib.idle_add(self.status_label.set_text, "🔄 Cargando modelo CLIP...")
-
-            # Cargar generador de embeddings
-            self.emb_gen = get_embedding_generator()
-
             GLib.idle_add(self.status_label.set_text, "📊 Cargando embeddings de covers...")
 
-            # Cargar todos los embeddings de covers
+            # Cargar todos los embeddings de covers (sin cargar CLIP)
             covers_con_embedding = self.session.query(ComicbookInfoCover).filter(
                 ComicbookInfoCover.embedding != None,
                 ComicbookInfoCover.embedding != ''
@@ -258,10 +287,10 @@ class AIClassificationWindow(Adw.Window):
                 GLib.idle_add(self._show_error, "No hay covers con embeddings. Ejecuta 'Generar Embeddings' primero.")
                 return
 
-            # Crear índice
+            # Crear índice convirtiendo JSON a numpy sin necesitar el modelo CLIP
             self.cover_to_info = {cover.id_cover: cover.id_comicbook_info for cover in covers_con_embedding}
             self.candidate_embeddings = [
-                (cover.id_cover, self.emb_gen.json_to_embedding(cover.embedding))
+                (cover.id_cover, np.array(json.loads(cover.embedding)))
                 for cover in covers_con_embedding
             ]
 
@@ -292,6 +321,7 @@ class AIClassificationWindow(Adw.Window):
         self.status_label.set_text(f"❌ {message}")
         self.apply_button.set_sensitive(False)
         self.skip_button.set_sensitive(False)
+        self.trash_button.set_sensitive(False)
 
     def show_current_comic(self):
         """Muestra el comic actual y busca matches"""
@@ -323,37 +353,51 @@ class AIClassificationWindow(Adw.Window):
     def _find_matches(self, comic):
         """Busca los mejores matches (thread)"""
         try:
-            # Obtener embedding del comic
             cover_path = comic.obtener_cover()
 
             if not os.path.exists(cover_path) or "Comic_sin_caratula" in cover_path:
                 GLib.idle_add(self._show_no_thumbnail)
                 return
 
-            # Generar o usar embedding existente
             if comic.embedding:
-                embedding = self.emb_gen.json_to_embedding(comic.embedding)
+                # Embedding ya guardado: no necesitamos CLIP
+                embedding = np.array(json.loads(comic.embedding))
             else:
-                embedding = self.emb_gen.generate_embedding(cover_path)
-                if embedding:
-                    comic.embedding = self.emb_gen.embedding_to_json(embedding)
+                # Cargar CLIP solo si este comic no tiene embedding
+                if self.emb_gen is None:
+                    GLib.idle_add(self.status_label.set_text, "⏳ Cargando modelo CLIP...")
+                    self.emb_gen = get_embedding_generator()
+
+                raw = self.emb_gen.generate_embedding(cover_path)
+                if raw:
+                    comic.embedding = json.dumps(raw)
                     self.session.commit()
+                    embedding = np.array(raw)
+
+                    # Si no quedan más comics sin embedding, liberar CLIP
+                    restantes_sin_embedding = sum(
+                        1 for c in self.comics_to_classify[self.current_index + 1:]
+                        if not c.embedding
+                    )
+                    if restantes_sin_embedding == 0:
+                        from helpers.embedding_generator import release_embedding_generator
+                        release_embedding_generator()
+                        self.emb_gen = None
+                else:
+                    embedding = None
 
             if embedding is None:
                 GLib.idle_add(self._show_error, "Error generando embedding del comic")
                 return
 
-            # Buscar todos los matches y ordenar por similaridad
+            # Calcular similaridades con numpy directamente (sin modelo CLIP)
             matches = []
             for cover_id, candidate_emb in self.candidate_embeddings:
-                similarity = self.emb_gen.calculate_similarity(embedding, candidate_emb)
+                similarity = float(np.dot(embedding, candidate_emb))
                 comicbook_info_id = self.cover_to_info[cover_id]
                 matches.append((comicbook_info_id, similarity, cover_id))
 
-            # Ordenar por similaridad (mayor primero)
             matches.sort(key=lambda x: x[1], reverse=True)
-
-            # Tomar top 3
             top_matches = matches[:3]
 
             GLib.idle_add(self._display_matches, top_matches)
@@ -551,6 +595,28 @@ class AIClassificationWindow(Adw.Window):
         self.update_stats()
         self.show_current_comic()
 
+    def on_trash_clicked(self, button=None):
+        """Mover a papelera el comic actual"""
+        # Evitar doble accion si el proceso ya completó o los botones están deshabilitados
+        if not hasattr(self, 'trash_button') or not self.trash_button.get_sensitive():
+            return
+            
+        comic = self.comics_to_classify[self.current_index]
+        comic.en_papelera = True
+        self.session.commit()
+        
+        self.trashed_count += 1
+        self.current_index += 1
+        self.update_stats()
+        self.show_current_comic()
+        
+    def on_key_pressed(self, controller, keyval, keycode, state):
+        """Manejar atajos de teclado"""
+        if keyval == Gdk.KEY_Delete:
+            self.on_trash_clicked()
+            return True
+        return False
+
     def on_apply_clicked(self, button):
         """Aplicar clasificación seleccionada (del match visible en el carousel)"""
         if not self.current_matches:
@@ -582,7 +648,7 @@ class AIClassificationWindow(Adw.Window):
         """Proceso completado"""
         self.current_comic_label.set_text("✅ Clasificación Completada!")
         self.status_label.set_text(
-            f"Clasificados: {self.classified_count} | Omitidos: {self.skipped_count}"
+            f"Clasificados: {self.classified_count} | Omitidos: {self.skipped_count} | Papelera: {self.trashed_count}"
         )
         self.current_comic_image.set_paintable(None)
 
@@ -591,6 +657,39 @@ class AIClassificationWindow(Adw.Window):
             self.carousel.remove(self.carousel.get_nth_page(0))
 
         self.apply_button.set_sensitive(False)
+        self.trash_button.set_sensitive(False)
         self.skip_button.set_label("Cerrar")
         self.skip_button.disconnect_by_func(self.on_skip_clicked)
         self.skip_button.connect("clicked", lambda b: self.close())
+
+    def on_close_request(self, *args):
+        """Guardar tamaño al cerrar"""
+        try:
+            if hasattr(self.parent, 'config') and self.parent.config:
+                width = self.get_width()
+                height = self.get_height()
+                
+                # Obtener estado actual
+                current_state = {}
+                if self.parent.config.window_state:
+                    try:
+                        current_state = json.loads(self.parent.config.window_state)
+                    except:
+                        pass
+                
+                # Actualizar
+                current_state['ai_classify_window'] = [width, height]
+                self.parent.config.window_state = json.dumps(current_state)
+                
+                # Guardar en BD
+                if hasattr(self, 'session') and self.session:
+                    # AIClassificationWindow has its own session reference
+                    self.session.commit()
+                elif hasattr(self.parent, 'session') and self.parent.session:
+                    self.parent.session.commit()
+                    
+                print(f"Tamaño ventana AI classify guardado: {width}x{height}")
+        except Exception as e:
+            print(f"Error guardando tamaño ventana: {e}")
+            
+        return False # Propagar evento de cierre

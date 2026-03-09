@@ -29,8 +29,19 @@ class EmbeddingGenerator:
             print("Cargando modelo CLIP...")
             # Usar modelo pequeño para velocidad
             model_name = "openai/clip-vit-base-patch32"
-            self._model = CLIPModel.from_pretrained(model_name)
-            self._processor = CLIPProcessor.from_pretrained(model_name)
+            
+            try:
+                # Intentar cargar localmente primero y sin convertir a safetensors (evita timeouts)
+                print("   Intentando cargar CLIP desde caché local...")
+                self._model = CLIPModel.from_pretrained(model_name, local_files_only=True, use_safetensors=False)
+                self._processor = CLIPProcessor.from_pretrained(model_name, local_files_only=True, use_safetensors=False)
+                print("   ✓ Cargado desde caché local")
+            except Exception as e:
+                print(f"   ⚠️ No encontrado en caché local o error: {e}")
+                print("   Descargando modelo (esto puede tardar)...")
+                # Fallback a descarga normal pero evitando la conversión automática si es posible
+                self._model = CLIPModel.from_pretrained(model_name, use_safetensors=False)
+                self._processor = CLIPProcessor.from_pretrained(model_name, use_safetensors=False)
 
             # Verificar compatibilidad de GPU con versión de PyTorch
             # PyTorch 2.x con CUDA 11.8+: soporta CUDA capability >= 3.7
@@ -79,16 +90,18 @@ class EmbeddingGenerator:
             None si hay error
         """
         try:
-            # Cargar y procesar imagen
-            image = Image.open(image_path).convert("RGB")
+            with Image.open(image_path) as raw:
+                image = raw.convert("RGB")
 
-            # Procesar con CLIP
             inputs = self._processor(images=image, return_tensors="pt")
+            del image
+
             inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
-            # Generar embedding
             with torch.no_grad():
                 image_features = self._model.get_image_features(**inputs)
+
+            del inputs
 
             # Versiones recientes de transformers pueden devolver un objeto en vez de tensor
             if not isinstance(image_features, torch.Tensor):
@@ -97,14 +110,25 @@ class EmbeddingGenerator:
             # Normalizar el embedding (importante para cosine similarity)
             image_features = image_features / image_features.norm(dim=-1, keepdim=True)
 
-            # Convertir a lista de Python
             embedding = image_features.cpu().numpy()[0].tolist()
+            del image_features
 
             return embedding
 
         except Exception as e:
             print(f"Error generando embedding para {image_path}: {e}")
             return None
+
+    def unload(self):
+        """Libera el modelo CLIP de memoria."""
+        import gc
+        EmbeddingGenerator._model = None
+        EmbeddingGenerator._processor = None
+        EmbeddingGenerator._instance = None
+        self._model = None
+        self._processor = None
+        gc.collect()
+        print("Modelo CLIP liberado de memoria")
 
     def embedding_to_json(self, embedding):
         """Convierte un embedding a string JSON para guardar en DB."""
@@ -191,3 +215,10 @@ def get_embedding_generator():
     if _embedding_generator is None:
         _embedding_generator = EmbeddingGenerator()
     return _embedding_generator
+
+def release_embedding_generator():
+    """Libera el modelo CLIP de memoria completamente."""
+    global _embedding_generator
+    if _embedding_generator is not None:
+        _embedding_generator.unload()
+        _embedding_generator = None

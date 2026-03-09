@@ -282,9 +282,12 @@ class VolumeRepository(BaseRepository):
             Volume: Objeto volumen creado/actualizado
         """
         try:
-            def report_progress(message):
+            def report_progress(message, fraction=None):
                 if progress_callback:
-                    progress_callback(message)
+                    try:
+                        progress_callback(message, fraction=fraction)
+                    except TypeError:
+                        progress_callback(message)
                 print(f"📥 {message}")
 
             comicvine_id = volume_data.get('id')
@@ -308,7 +311,7 @@ class VolumeRepository(BaseRepository):
                 issue_ids = [issue['id'] for issue in issues_list if 'id' in issue]
 
                 if issue_ids:
-                    report_progress(f"Descargando información de {len(issue_ids)} issues...")
+                    report_progress(f"Descargando información de {len(issue_ids)} issues...", fraction=0.1)
                     detailed_issues = comicvine_client.get_issues_by_ids(issue_ids)
 
                     if detailed_issues:
@@ -316,7 +319,7 @@ class VolumeRepository(BaseRepository):
                             volume, detailed_issues, report_progress
                         )
 
-                        report_progress(f"Issues procesados: {new_issues_count} nuevos, {updated_issues_count} actualizados")
+                        report_progress(f"Issues procesados: {new_issues_count} nuevos, {updated_issues_count} actualizados", fraction=0.5)
 
                         # 4. Descargar covers si está habilitado
                         if download_covers:
@@ -355,7 +358,11 @@ class VolumeRepository(BaseRepository):
         for i, issue_data in enumerate(detailed_issues):
             try:
                 if progress_callback and i % 10 == 0:  # Reportar cada 10 issues
-                    progress_callback(f"Procesando issues... {i+1}/{len(detailed_issues)}")
+                    frac = 0.1 + (0.4 * (i / max(1, len(detailed_issues))))
+                    try:
+                        progress_callback(f"Procesando issues... {i+1}/{len(detailed_issues)}", fraction=frac)
+                    except TypeError:
+                        progress_callback(f"Procesando issues... {i+1}/{len(detailed_issues)}")
 
                 issue_number = issue_data.get('issue_number')
                 issue_id = issue_data.get('id')
@@ -421,6 +428,13 @@ class VolumeRepository(BaseRepository):
         if issue_data.get('site_detail_url'):
             existing_issue.url_sitio_web = issue_data['site_detail_url']
             print(f"🔄 DEBUG: Actualizando site URL para issue #{existing_issue.numero}")
+
+        # Refresh portadas to ensure we have the latest data from DB and avoid IntegrityError
+        try:
+            self.session.refresh(existing_issue, ['portadas'])
+            print(f"🔄 Refreshed portadas for issue #{existing_issue.numero}")
+        except Exception as e:
+            print(f"⚠️ Warning: Could not refresh portadas: {e}")
 
         # Actualizar covers - siempre verificar si hay nuevas associated_images
         print(f"📸 DEBUG: Issue #{existing_issue.numero} tiene {len(existing_issue.portadas)} covers existentes")
@@ -678,7 +692,11 @@ class VolumeRepository(BaseRepository):
 
                         # Actualizar progreso UI
                         if progress_callback and completed_count % 3 == 0:
-                             progress_callback(f"Procesando: {completed_count}/{total_issues}")
+                            frac = 0.5 + (0.5 * (completed_count / max(1, total_issues)))
+                            try:
+                                progress_callback(f"Procesando portadas: {completed_count}/{total_issues}", fraction=frac)
+                            except TypeError:
+                                progress_callback(f"Procesando portadas: {completed_count}/{total_issues}")
                                 
                     except Exception as e:
                         print(f"❌ Error procesando resultados para issue #{issue_num}: {e}")
@@ -686,12 +704,18 @@ class VolumeRepository(BaseRepository):
             final_message = f"✅ Finalizado: {downloaded_count} descargas, {embeddings_generated} embeddings calculados"
             print(final_message)
             if progress_callback:
-                progress_callback(final_message)
+                try:
+                    progress_callback(final_message, fraction=1.0)
+                except TypeError:
+                    progress_callback(final_message)
                 
         except Exception as e:
             print(f"❌ Error grave en worker de descarga: {e}")
             if progress_callback:
-                progress_callback(f"Error: {str(e)}")
+                try:
+                    progress_callback(f"Error: {str(e)}", fraction=0.0)
+                except TypeError:
+                    progress_callback(f"Error: {str(e)}")
 
     def _download_single_issue_covers_pure(self, volume_id, volume_name, issue_data):
         """
